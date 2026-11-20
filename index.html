@@ -2,15 +2,20 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="refresh" content="0; url=frontend/index.html">
-  <title>Mengarahkan ke Undangan Digital...</title>
+  <title>The Wedding of Dimas &amp; Anindya - Undangan Digital</title>
+  <link rel="icon" type="image/png" href="frontend/assets/images/favicon.png">
   <script>
-    // Mempertahankan query string seperti ?to=Bapak%20Budi%20Santoso
-    window.location.href = "frontend/index.html" + window.location.search;
+    // Mempertahankan nama tamu dari query string (?to=Nama+Tamu)
+    window.location.replace("frontend/index.html" + window.location.search);
   </script>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 50px;">
-  <p>Mengarahkan ke website undangan pernikahan digital...</p>
-  <p><a href="frontend/index.html">Klik di sini jika tidak diarahkan otomatis</a></p>
+<body style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 60px 20px; background: #0c1017; color: #d4af37;">
+  <h2 style="font-family: Georgia, serif; margin-bottom: 15px;">The Wedding of Dimas &amp; Anindya</h2>
+  <p style="color: #cbd5e1; font-size: 15px;">Sedang mengalihkan ke halaman undangan digital...</p>
+  <p style="margin-top: 25px;">
+    <a href="frontend/index.html" style="display: inline-block; padding: 10px 24px; background: #d4af37; color: #0c1017; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;">Buka Undangan Sekarang &rarr;</a>
+  </p>
 </body>
 </html>

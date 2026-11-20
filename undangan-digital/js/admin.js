@@ -474,11 +474,6 @@ const AdminApp = (function () {
       `;
     }).join("");
   }
-          </td>
-        </tr>
-      `;
-    }).join("");
-  }
 
   function copyGuestLink(link) {
     navigator.clipboard.writeText(link).then(() => {

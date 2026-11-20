@@ -2,20 +2,780 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=frontend/index.html">
-  <title>The Wedding of Dimas &amp; Anindya - Undangan Digital</title>
-  <link rel="icon" type="image/png" href="frontend/assets/images/favicon.png">
-  <script>
-    // Mempertahankan nama tamu dari query string (?to=Nama+Tamu)
-    window.location.replace("frontend/index.html" + window.location.search);
-  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>The Wedding of Dimas & Anindya - Undangan Pernikahan Digital</title>
+  <meta name="description" content="Undangan Pernikahan Digital Dimas Pratama & Anindya Putri. Kami mengundang Anda untuk merayakan momen bahagia pernikahan kami.">
+
+  <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Mobile) -->
+  <link rel="icon" type="image/png" sizes="32x32" id="browser-favicon" href="assets/images/favicon.png">
+  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon.png">
+
+  <!-- Google Fonts: Great Vibes, Cormorant Garamond, Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+  <!-- CSS Stylesheets Terpisah -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/animation.css">
 </head>
-<body style="font-family: 'Plus Jakarta Sans', sans-serif; text-align: center; padding: 60px 20px; background: #0c1017; color: #d4af37;">
-  <h2 style="font-family: Georgia, serif; margin-bottom: 15px;">The Wedding of Dimas &amp; Anindya</h2>
-  <p style="color: #cbd5e1; font-size: 15px;">Sedang mengalihkan ke halaman undangan digital...</p>
-  <p style="margin-top: 25px;">
-    <a href="frontend/index.html" style="display: inline-block; padding: 10px 24px; background: #d4af37; color: #0c1017; text-decoration: none; border-radius: 20px; font-weight: bold; font-size: 14px;">Buka Undangan Sekarang &rarr;</a>
-  </p>
+<body class="scroll-locked">
+
+  <!-- ============================================================== -->
+  <!-- 1. OPENING COVER SECTION (Halaman Sampul Awal - Tema Wayang)   -->
+  <!-- ============================================================== -->
+  <div id="cover-section" class="cover-section">
+    <div class="cover-bg-container">
+      <img src="assets/images/cover.jpg" alt="Sampul Undangan" class="cover-bg-image" id="cover-photo-img">
+      <div class="cover-batik-overlay"></div>
+      <div class="cover-overlay"></div>
+    </div>
+
+    <!-- Gunungan Wayang Pembuka Tirai (Kiri & Kanan) - Dapat Dikustom di Admin -->
+    <div class="gunungan-curtain gunungan-left" id="gunungan-left-container" aria-hidden="true">
+      <img src="assets/images/gunungan-gold.svg" alt="Gunungan Wayang Kiri" id="gunungan-left-img">
+    </div>
+    <div class="gunungan-curtain gunungan-right" id="gunungan-right-container" aria-hidden="true">
+      <img src="assets/images/gunungan-gold.svg" alt="Gunungan Wayang Kanan" id="gunungan-right-img">
+    </div>
+
+    <!-- Cahaya Kilau Emas / Light Flare saat Tirai Wayang Terbelah -->
+    <div class="curtain-light-flare" id="curtain-light-flare" aria-hidden="true"></div>
+
+    <!-- Ornamen Sudut Ukir Keraton - Dapat Dikustom di Admin -->
+    <div class="javanese-corner-ornament corner-top-left" aria-hidden="true">
+      <img src="assets/images/javanese-corner.svg" alt="Ornamen Sudut" class="corner-ornament-img">
+    </div>
+    <div class="javanese-corner-ornament corner-top-right" aria-hidden="true">
+      <img src="assets/images/javanese-corner.svg" alt="Ornamen Sudut" class="corner-ornament-img">
+    </div>
+    <div class="javanese-corner-ornament corner-bottom-left" aria-hidden="true">
+      <img src="assets/images/javanese-corner.svg" alt="Ornamen Sudut" class="corner-ornament-img">
+    </div>
+    <div class="javanese-corner-ornament corner-bottom-right" aria-hidden="true">
+      <img src="assets/images/javanese-corner.svg" alt="Ornamen Sudut" class="corner-ornament-img">
+    </div>
+
+    <div class="cover-content">
+      <!-- Lambang Gunungan Pusat Bercahaya - Dapat Dikustom di Admin -->
+      <div class="cover-gunungan-center" id="cover-gunungan-center">
+        <img src="assets/images/gunungan-gold.svg" alt="Gunungan Wayang Kayon" id="gunungan-center-img">
+      </div>
+
+      <!-- Foto Pasangan di Dalam Kotak Sampul (Opsional Kustom di Admin) -->
+      <div class="cover-couple-photo-wrapper" id="cover-couple-photo-wrapper" style="display: none;">
+        <img src="assets/images/cover.jpg" alt="Foto Pasangan Sampul" class="cover-couple-photo-circle" id="cover-couple-photo-img" onerror="this.src='assets/images/cover.jpg'">
+      </div>
+
+      <p class="cover-tagline">UNDANGAN PERNIKAHAN</p>
+      
+      <div class="cover-wayang-decor" id="cover-wayang-decor">
+        <img src="assets/images/wayang-kamajaya.svg" alt="Wayang Pria" class="wayang-mini-fig" id="cover-wayang-groom-mini">
+        <span class="cover-wayang-divider">&diams;</span>
+        <img src="assets/images/wayang-kamaratih.svg" alt="Wayang Wanita" class="wayang-mini-fig" id="cover-wayang-bride-mini">
+      </div>
+
+      <h1 class="cover-names couple-call-names">Dimas & Anindya</h1>
+      <p class="akad-day-date cover-date-badge">Sabtu, 19 Desember 2026</p>
+
+      <!-- Kotak Penerima Tamu -->
+      <div class="cover-guest-card">
+        <p class="cover-guest-greeting" id="cover-guest-greeting">Kepada Yth. Bapak/Ibu/Saudara/i:</p>
+        <h2 class="cover-guest-name" id="cover-guest-name">Tamu Undangan</h2>
+      </div>
+
+      <!-- Tombol Buka Undangan -->
+      <button type="button" class="btn-open-invitation" id="btn-open-invitation">
+        <i class="fas fa-envelope-open-text"></i>
+        <span>Buka Undangan</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 2. HOME / HERO SECTION (Sambutan Utama & Countdown)            -->
+  <!-- ============================================================== -->
+  <section id="home" class="hero-section">
+    <div class="hero-card animate-on-scroll">
+      <p class="hero-subtitle">The Wedding Of</p>
+      <h1 class="hero-title couple-call-names">Dimas & Anindya</h1>
+      
+      <div class="ornament-divider">
+        <i class="fas fa-heart"></i>
+      </div>
+
+      <div class="hero-date-badge akad-day-date">Sabtu, 19 Desember 2026</div>
+
+      <!-- Hitung Mundur (Countdown Real-Time) -->
+      <div class="countdown-box" id="countdown-container">
+        <div class="countdown-grid">
+          <div class="countdown-item">
+            <span class="countdown-number" id="cd-days">00</span>
+            <span class="countdown-label">Hari</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-number" id="cd-hours">00</span>
+            <span class="countdown-label">Jam</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-number" id="cd-minutes">00</span>
+            <span class="countdown-label">Menit</span>
+          </div>
+          <div class="countdown-item">
+            <span class="countdown-number" id="cd-seconds">00</span>
+            <span class="countdown-label">Detik</span>
+          </div>
+        </div>
+
+        <!-- Pesan jika waktu telah lewat -->
+        <div class="countdown-passed hidden" id="countdown-passed-message"></div>
+
+        <!-- Tombol Tambahkan ke Kalender -->
+        <a href="#" class="btn-calendar" id="add-to-calendar-btn">
+          <i class="far fa-calendar-plus"></i>
+          <span>Simpan ke Google Kalender</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 3. MEMPELAI SECTION (Profil Mempelai Pria & Wanita)            -->
+  <!-- ============================================================== -->
+  <section id="couple" class="couple-section">
+    <div class="container">
+      
+      <!-- Doa & Ayat Suci -->
+      <div class="quote-box animate-on-scroll">
+        <i class="fas fa-quote-left quote-icon"></i>
+        <p class="quote-verse">
+          "Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir."
+        </p>
+        <p class="quote-source quote-title">QS. Ar-Rum Ayat 21</p>
+      </div>
+
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Kedua Mempelai</span>
+        <h2 class="section-title">Mempelai Bahagia</h2>
+        <p class="section-desc">Dengan memohon rahmat dan ridho Allah SWT, kami bermaksud melangsungkan akad dan resepsi pernikahan:</p>
+      </div>
+
+      <!-- Kartu Profil Kedua Mempelai -->
+      <div class="couple-grid">
+        <!-- Mempelai Pria -->
+        <div class="couple-card animate-on-scroll animate-delay-1" id="couple-groom-card">
+          <img src="assets/images/wayang-kamajaya.svg" class="wayang-card-watermark" id="wayang-groom-watermark" alt="Siluet Mempelai Pria" aria-hidden="true">
+          <div class="couple-role-badge">Mempelai Pria</div>
+          <div class="couple-photo-wrapper">
+            <img src="assets/images/couple-1.jpg" alt="Mempelai Pria" class="couple-photo photo-reveal" id="groom-photo">
+          </div>
+          <h3 class="couple-name groom-full-name">Dimas Pratama, S.Kom.</h3>
+          <p class="couple-parents groom-parents">Putra pertama dari Bpk. Bambang Sutrisno & Ibu Siti Rahmawati</p>
+          <p class="couple-bio groom-bio">Seorang insan yang bertekad menjaga komitmen suci, membimbing dalam kasih sayang, dan membangun bahtera rumah tangga yang sakinah, mawaddah, warahmah.</p>
+          <a href="#" class="couple-social" id="groom-instagram" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-instagram"></i>
+            <span class="groom-call-name">Dimas</span>
+          </a>
+        </div>
+
+        <!-- Ampersand Simbol Dan (&) -->
+        <div class="couple-ampersand animate-on-scroll animate-delay-2">&</div>
+
+        <!-- Mempelai Wanita -->
+        <div class="couple-card animate-on-scroll animate-delay-3" id="couple-bride-card">
+          <img src="assets/images/wayang-kamaratih.svg" class="wayang-card-watermark" id="wayang-bride-watermark" alt="Siluet Mempelai Wanita" aria-hidden="true">
+          <div class="couple-role-badge">Mempelai Wanita</div>
+          <div class="couple-photo-wrapper">
+            <img src="assets/images/couple-2.jpg" alt="Mempelai Wanita" class="couple-photo photo-reveal" id="bride-photo">
+          </div>
+          <h3 class="couple-name bride-full-name">Anindya Putri, S.E.</h3>
+          <p class="couple-parents bride-parents">Putri kedua dari Bpk. H. Hendra Wijaya & Ibu Hj. Nurul Hasanah</p>
+          <p class="couple-bio bride-bio">Sosok wanita penyayang yang siap menyempurnakan separuh agama, melangkah bersama dalam suka dan duka menggapai sakinah, mawaddah, warahmah.</p>
+          <a href="#" class="couple-social" id="bride-instagram" target="_blank" rel="noopener noreferrer">
+            <i class="fab fa-instagram"></i>
+            <span class="bride-call-name">Anindya</span>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 4. LOVE STORY SECTION (Cerita Perjalanan Pasangan)             -->
+  <!-- ============================================================== -->
+  <section id="story" class="story-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Kisah Kasih</span>
+        <h2 class="section-title">Perjalanan Cinta Kami</h2>
+        <p class="section-desc">Setiap kisah cinta itu indah, namun kisah kami adalah yang paling kami syukuri dalam setiap langkahnya.</p>
+      </div>
+
+      <!-- Container Timeline Perjalanan Cinta -->
+      <div class="timeline" id="love-story-timeline">
+        <!-- Dirender secara dinamis oleh main.js dari data config.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 5. DETAIL ACARA SECTION (Akad & Resepsi)                       -->
+  <!-- ============================================================== -->
+  <section id="event" class="event-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Waktu & Tempat</span>
+        <h2 class="section-title">Rangkaian Acara</h2>
+        <p class="section-desc">Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir di hari istimewa kami.</p>
+      </div>
+
+      <div class="event-grid">
+        <!-- 1. AKAD NIKAH -->
+        <div class="event-card animate-on-scroll animate-delay-1">
+          <div class="event-card-header">
+            <div class="event-icon-circle">
+              <i class="fas fa-ring"></i>
+            </div>
+            <h3 class="event-title">Akad Nikah</h3>
+          </div>
+
+          <div class="event-details">
+            <div class="event-detail-item">
+              <p class="event-detail-label">Hari & Tanggal</p>
+              <p class="event-detail-value akad-day-date">Sabtu, 19 Desember 2026</p>
+            </div>
+            <div class="event-detail-item">
+              <p class="event-detail-label">Waktu</p>
+              <p class="event-detail-value akad-time">08.00 - 10.00 WIB</p>
+            </div>
+            <div class="event-detail-item">
+              <p class="event-detail-label">Lokasi</p>
+              <p class="event-venue-name akad-venue-name">Masjid Agung Al-Barkah</p>
+              <p class="event-venue-address akad-venue-address">Jl. Veteran No. 45, Margajaya, Bekasi Selatan, Kota Bekasi, Jawa Barat</p>
+            </div>
+          </div>
+
+          <a href="#" class="btn-maps" id="akad-maps-btn" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Buka Google Maps</span>
+          </a>
+        </div>
+
+        <!-- 2. RESEPSI PERNIKAHAN -->
+        <div class="event-card animate-on-scroll animate-delay-2">
+          <div class="event-card-header">
+            <div class="event-icon-circle">
+              <i class="fas fa-glass-cheers"></i>
+            </div>
+            <h3 class="event-title">Resepsi Pernikahan</h3>
+          </div>
+
+          <div class="event-details">
+            <div class="event-detail-item">
+              <p class="event-detail-label">Hari & Tanggal</p>
+              <p class="event-detail-value resepsi-day-date">Sabtu, 19 Desember 2026</p>
+            </div>
+            <div class="event-detail-item">
+              <p class="event-detail-label">Waktu</p>
+              <p class="event-detail-value resepsi-time">11.00 - 14.00 WIB</p>
+            </div>
+            <div class="event-detail-item">
+              <p class="event-detail-label">Lokasi</p>
+              <p class="event-venue-name resepsi-venue-name">Grand Ballroom Hotel Horison</p>
+              <p class="event-venue-address resepsi-venue-address">Jl. KH. Noer Ali, Pekayon Jaya, Bekasi Selatan, Kota Bekasi, Jawa Barat</p>
+            </div>
+          </div>
+
+          <a href="#" class="btn-maps" id="resepsi-maps-btn" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Buka Google Maps</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 3. UNDUH MANTU (NGUNDUH MANTU) - Dapat diatur & diaktifkan di Admin -->
+      <div class="unduh-mantu-wrapper" id="unduh-mantu-wrapper" style="margin-top: 2rem;">
+        <div class="event-card unduh-mantu-card animate-on-scroll animate-delay-2" style="max-width: 820px; margin: 0 auto; border: 1px solid rgba(223, 177, 91, 0.45); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), 0 0 20px rgba(223, 177, 91, 0.12);">
+          <div class="event-card-header">
+            <div class="event-icon-circle">
+              <i class="fas fa-home-user"></i>
+            </div>
+            <div>
+              <span style="display: inline-block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary-gold-light); font-weight: 700; margin-bottom: 4px;">Tasyakuran & Ngunduh Mantu</span>
+              <h3 class="event-title" id="unduh-mantu-title" style="margin: 0;">Acara Unduh Mantu</h3>
+            </div>
+          </div>
+
+          <div class="event-details">
+            <div class="event-detail-item">
+              <p class="event-detail-label">Hari & Tanggal</p>
+              <p class="event-detail-value unduh-mantu-day-date">Minggu, 20 Desember 2026</p>
+            </div>
+            <div class="event-detail-item">
+              <p class="event-detail-label">Waktu</p>
+              <p class="event-detail-value unduh-mantu-time">10.00 - 14.00 WIB</p>
+            </div>
+            <div class="event-detail-item">
+              <p class="event-detail-label">Lokasi</p>
+              <p class="event-venue-name unduh-mantu-venue-name">Kediaman Keluarga Mempelai Pria</p>
+              <p class="event-venue-address unduh-mantu-venue-address">Jl. Kemang Pratama Raya No. 12, Kel. Bojong Rawalumbu, Kec. Rawalumbu, Kota Bekasi, Jawa Barat</p>
+            </div>
+          </div>
+
+          <a href="#" class="btn-maps" id="unduh-mantu-maps-btn" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Buka Google Maps</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 6. GALERI FOTO SECTION                                         -->
+  <!-- ============================================================== -->
+  <section id="gallery" class="gallery-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Potret Bahagia</span>
+        <h2 class="section-title">Galeri Foto</h2>
+        <p class="section-desc">Beberapa cuplikan momen berharga kami dalam menyongsong ikatan suci pernikahan.</p>
+      </div>
+
+      <!-- Grid Galeri Foto -->
+      <div class="gallery-grid" id="gallery-grid">
+        <!-- Foto diinjeksi oleh main.js dari data config.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 7. RSVP / KONFIRMASI KEHADIRAN SECTION                         -->
+  <!-- ============================================================== -->
+  <section id="rsvp" class="rsvp-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Reservasi Kehadiran</span>
+        <h2 class="section-title">Konfirmasi Kehadiran (RSVP)</h2>
+        <p class="section-desc">Mohon kesediaan Bapak/Ibu/Saudara/i untuk mengonfirmasi kehadiran agar kami dapat mempersiapkan jamuan terbaik.</p>
+      </div>
+
+      <div class="rsvp-wrapper animate-on-scroll">
+        <!-- Kotak Peringatan / Alert Feedback -->
+        <div id="rsvp-alert" class="alert-box"></div>
+
+        <form id="rsvp-form">
+          <div class="form-group">
+            <label for="rsvp-name" class="form-label">Nama Lengkap *</label>
+            <input type="text" id="rsvp-name" class="form-control" placeholder="Masukkan nama Anda" required>
+          </div>
+
+          <div class="form-group">
+            <label for="rsvp-code" class="form-label">Kode Undangan (Opsional)</label>
+            <input type="text" id="rsvp-code" class="form-control" placeholder="Contoh: WDG-001">
+          </div>
+
+          <div class="form-group">
+            <label for="rsvp-status" class="form-label">Konfirmasi Kehadiran *</label>
+            <select id="rsvp-status" class="form-control" required>
+              <option value="" disabled selected>-- Pilih Konfirmasi Kehadiran --</option>
+              <option value="hadir">Ya, Saya Akan Hadir</option>
+              <option value="tidak-hadir">Maaf, Tidak Bisa Hadir</option>
+              <option value="ragu">Masih Ragu-ragu / Belum Pasti</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="rsvp-guests-group">
+            <label for="rsvp-guests" class="form-label">Jumlah Tamu yang Hadir</label>
+            <select id="rsvp-guests" class="form-control">
+              <option value="1">1 Orang</option>
+              <option value="2">2 Orang</option>
+              <option value="3">3 Orang</option>
+              <option value="4">4 Orang</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <div class="form-label-row">
+              <label for="rsvp-message" class="form-label" style="margin-bottom: 0;">Ucapan & Doa Restu</label>
+              <div class="quick-emojis" id="rsvp-quick-emojis" title="Klik untuk menyelipkan emotikon">
+                <button type="button" class="quick-emoji-btn" data-emoji="🤍" title="Love Putih">🤍</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="🩷" title="Love Pink">🩷</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="💖" title="Hati Pink Berbinar">💖</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="😘" title="Cium">😘</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="💋" title="Cium Bibir">💋</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="😜" title="Melet Kedip">😜</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="😛" title="Melet">😛</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="❤️" title="Hati">❤️</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="💍" title="Cincin">💍</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="💐" title="Bunga">💐</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="🎉" title="Pesta">🎉</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="🥰" title="Cinta">🥰</button>
+                <button type="button" class="quick-emoji-btn" data-emoji="🤲" title="Doa">🤲</button>
+              </div>
+            </div>
+            <textarea id="rsvp-message" class="form-control" rows="3" placeholder="Tuliskan ucapan dan doa terbaik Anda untuk kedua mempelai..."></textarea>
+          </div>
+
+          <!-- Stiker GIF Bergerak untuk RSVP -->
+          <div class="form-group sticker-picker-section" style="margin-top: 0.5rem; margin-bottom: 1rem;">
+            <input type="hidden" id="rsvp-selected-sticker" value="">
+            
+            <div class="sticker-action-bar">
+              <button type="button" id="btn-toggle-rsvp-stickers" class="btn-toggle-stickers" style="font-size: 0.85rem; padding: 6px 14px;">
+                <i class="far fa-smile-beam"></i>
+                <span>Sertakan Stiker GIF Bergerak (Opsional)</span>
+                <span class="badge-sticker-count">50 GIF</span>
+              </button>
+            </div>
+
+            <!-- Selected Sticker Preview Box for RSVP -->
+            <div id="rsvp-sticker-preview" class="sticker-selected-preview" style="display: none; margin-top: 8px;">
+              <div class="preview-sticker-info">
+                <span class="preview-label"><i class="fas fa-check-circle" style="color: #22c55e;"></i> Stiker Terpilih:</span>
+                <span id="rsvp-preview-sticker-name" class="preview-name">Kucing Kedip</span>
+              </div>
+              <div class="preview-sticker-img-wrap">
+                <img id="rsvp-preview-sticker-img" src="" alt="Stiker Terpilih" class="preview-img" style="height: 48px;">
+                <button type="button" id="btn-remove-rsvp-sticker" class="btn-remove-sticker" title="Hapus Stiker">
+                  <i class="fas fa-times"></i> Hapus
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit-rsvp" id="btn-submit-rsvp">
+            <i class="fab fa-whatsapp" style="font-size: 1.15rem; color: #25D366; margin-right: 4px;"></i>
+            <span>Simpan Konfirmasi Kehadiran (WhatsApp)</span>
+          </button>
+
+          <p class="rsvp-note">
+            <i class="fas fa-shield-alt"></i> Konfirmasi Anda tersimpan aman secara online di sistem database pernikahan dan terhubung langsung ke WhatsApp panitia / mempelai.
+          </p>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 8. KADO DIGITAL / ANGPAO SECTION                               -->
+  <!-- ============================================================== -->
+  <section id="gift" class="gift-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Tanda Kasih</span>
+        <h2 class="section-title">Kado Digital</h2>
+        <p class="section-desc">Doa restu Anda merupakan karunia terindah bagi kami. Namun jika Anda bermaksud memberikan tanda kasih, Anda dapat menyalurkannya melalui:</p>
+      </div>
+
+      <!-- Kartu Rekening Bank -->
+      <div class="bank-cards-grid" id="bank-accounts-container">
+        <!-- Render dinamis dari config.js -->
+      </div>
+
+      <!-- QRIS Kado Digital -->
+      <div class="qris-card animate-on-scroll">
+        <h4 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 0.25rem;">QRIS Tanda Kasih</h4>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Klik gambar di bawah untuk memperbesar QR Code:</p>
+        <div class="qris-img-container" id="qris-preview-trigger" title="Klik untuk memperbesar QR Code">
+          <img src="assets/images/qrcode.png" alt="QRIS Kado Digital" class="qris-img" id="qris-image">
+        </div>
+        <p class="qris-note">Mendukung BCA, Mandiri, BRI, BNI, GoPay, OVO, Dana, ShopeePay, dan seluruh m-Banking berlogo QRIS.</p>
+      </div>
+
+      <!-- Alamat Pengiriman Kado Fisik -->
+      <div class="physical-gift-box animate-on-scroll">
+        <p class="physical-gift-title">
+          <i class="fas fa-box-open" style="color: var(--primary-gold);"></i>
+          <span>Kirim Kado Fisik / Parsel</span>
+        </p>
+        <p style="font-size: 0.9rem; margin-bottom: 0.4rem;">
+          Penerima: <strong class="gift-recipient-name">Dimas & Anindya</strong> (<span class="gift-recipient-phone">+62 812-3456-7890</span>)
+        </p>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem;" class="gift-recipient-address">
+          Jl. Kemang Pratama Raya No. 12, Kel. Bojong Rawalumbu, Kec. Rawalumbu, Kota Bekasi, Jawa Barat 17116
+        </p>
+        <button type="button" class="btn-copy" onclick="MainApp.copyToClipboard(document.querySelector('.gift-recipient-address').textContent.trim(), 'Alamat pengiriman berhasil disalin!');">
+          <i class="far fa-copy"></i> Salin Alamat Kado
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 9. BUKU TAMU & DOA RESTU (Guestbook)                           -->
+  <!-- ============================================================== -->
+  <section id="guestbook" class="guestbook-section">
+    <div class="container">
+      <div class="section-header animate-on-scroll">
+        <span class="section-subtitle">Untaian Doa</span>
+        <h2 class="section-title">Buku Tamu & Ucapan <span id="guestbook-count" style="font-size: 1.1rem; color: var(--primary-gold);"></span></h2>
+        <p class="section-desc">Kirimkan doa dan ucapan hangat Anda untuk mengiringi langkah baru kedua mempelai.</p>
+      </div>
+
+      <div class="guestbook-wrapper">
+        <!-- Form Kirim Ucapan -->
+        <div class="guestbook-form-card animate-on-scroll">
+          <form id="guestbook-form">
+            <div class="form-group">
+              <label for="guestbook-name" class="form-label">Nama Anda *</label>
+              <input type="text" id="guestbook-name" class="form-control" placeholder="Nama Anda atau Keluarga" required>
+            </div>
+            
+            <div class="form-group">
+              <div class="form-label-row">
+                <label for="guestbook-message" class="form-label" style="margin-bottom: 0;">Doa & Ucapan *</label>
+                <!-- Quick emoji buttons -->
+                <div class="quick-emojis" id="guestbook-quick-emojis" title="Klik untuk menyelipkan emotikon ucapan">
+                  <button type="button" class="quick-emoji-btn" data-emoji="🤍" title="Love Putih">🤍</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🩷" title="Love Pink">🩷</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="💖" title="Hati Pink Berbinar">💖</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="😘" title="Cium">😘</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="💋" title="Cium Bibir">💋</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="😜" title="Melet Kedip">😜</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="😛" title="Melet">😛</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🤪" title="Melet Lucu">🤪</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="❤️" title="Hati">❤️</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="💍" title="Cincin">💍</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="💐" title="Buket Bunga">💐</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🎉" title="Pesta">🎉</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🥂" title="Bersulang">🥂</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🥰" title="Cinta">🥰</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🤲" title="Doa">🤲</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="👰" title="Pengantin Wanita">👰</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="🤵" title="Pengantin Pria">🤵</button>
+                  <button type="button" class="quick-emoji-btn" data-emoji="✨" title="Kilau">✨</button>
+                </div>
+              </div>
+              <textarea id="guestbook-message" class="form-control" rows="3" placeholder="Tuliskan ucapan selamat dan doa..." required></textarea>
+            </div>
+
+            <!-- Stiker GIF Bergerak Picker Area -->
+            <div class="form-group sticker-picker-section">
+              <input type="hidden" id="guestbook-selected-sticker" value="">
+              
+              <div class="sticker-action-bar">
+                <button type="button" id="btn-toggle-stickers" class="btn-toggle-stickers">
+                  <i class="far fa-smile-beam"></i>
+                  <span>Pilih Stiker GIF Lucu</span>
+                  <span class="badge-sticker-count">50 GIF Bergerak</span>
+                </button>
+              </div>
+
+              <!-- Selected Sticker Preview Box -->
+              <div id="sticker-selected-preview" class="sticker-selected-preview" style="display: none;">
+                <div class="preview-sticker-info">
+                  <span class="preview-label"><i class="fas fa-check-circle" style="color: #22c55e;"></i> Stiker Terpilih:</span>
+                  <span id="preview-sticker-name" class="preview-name">Kucing Kedip</span>
+                </div>
+                <div class="preview-sticker-img-wrap">
+                  <img id="preview-sticker-img" src="" alt="Stiker Terpilih" class="preview-img">
+                  <button type="button" id="btn-remove-sticker" class="btn-remove-sticker" title="Hapus Stiker">
+                    <i class="fas fa-times"></i> Hapus Stiker
+                  </button>
+                </div>
+              </div>
+
+              <!-- Drawer / Pop-up Pilihan Stiker GIF -->
+              <div id="sticker-drawer" class="sticker-drawer" style="display: none;">
+                <div class="sticker-drawer-header">
+                  <span class="sticker-drawer-title"><i class="far fa-grin-hearts"></i> Pilih Stiker Bergerak (50 GIF Lucu)</span>
+                  <button type="button" id="btn-close-sticker-drawer" class="btn-close-drawer" aria-label="Tutup Pilihan Stiker">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+                
+                <!-- Category Tabs -->
+                <div class="sticker-categories">
+                  <button type="button" class="sticker-cat-btn active" data-cat="all">🌟 Semua (50)</button>
+                  <button type="button" class="sticker-cat-btn" data-cat="cat">🐱 Kucing Lucu (15)</button>
+                  <button type="button" class="sticker-cat-btn" data-cat="love">💍 Cinta &amp; Nikah (10)</button>
+                  <button type="button" class="sticker-cat-btn" data-cat="party">🎉 Pesta Ucapan (12)</button>
+                  <button type="button" class="sticker-cat-btn" data-cat="animals">🐾 Hewan Gemas (13)</button>
+                </div>
+
+                <!-- Grid of Stickers -->
+                <div class="sticker-grid" id="sticker-grid">
+                  <!-- Dimuat dinamis oleh main.js -->
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-send-wish">
+              <i class="far fa-paper-plane"></i>
+              <span>Kirim Ucapan</span>
+            </button>
+          </form>
+        </div>
+
+        <!-- Daftar Ucapan yang Tersimpan -->
+        <div class="guestbook-list-container" id="guestbook-list">
+          <!-- Render dinamis oleh main.js -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================== -->
+  <!-- 10. FOOTER SECTION                                             -->
+  <!-- ============================================================== -->
+  <footer class="footer-section">
+    <div class="container">
+      <h2 class="footer-names couple-call-names" id="footer-couple-names">agus &amp; agis</h2>
+      <p class="footer-closing closing-greeting" id="footer-closing-greeting">
+        Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.
+      </p>
+      
+      <div class="ornament-divider" style="margin-bottom: 1.5rem;">
+        <i class="fas fa-heart"></i>
+      </div>
+
+      <p class="footer-copyright" id="footer-copyright-text">
+        &copy; 2026 agus &amp; agis Wedding Invitation. Dibuat dengan penuh cinta.
+      </p>
+    </div>
+  </footer>
+
+  <!-- ============================================================== -->
+  <!-- FLOATING ELEMENTS (Musik Vinyl Estetik, Navigasi, Lightbox)    -->
+  <!-- ============================================================== -->
+
+  <!-- Wadah Tersembunyi untuk Pemutar Musik YouTube IFrame API (Off-screen dengan ukuran valid agar tidak diblokir YouTube) -->
+  <div id="youtube-audio-player-container" style="position: fixed; left: -9999px; top: 0; width: 320px; height: 180px; pointer-events: none; z-index: -1;">
+    <div id="youtube-audio-frame"></div>
+  </div>
+
+  <!-- 1. Pemutar Musik Piringan Hitam Vinyl Estetik (Pojok Kiri Bawah) -->
+  <aside id="aesthetic-music-widget" class="aesthetic-music-widget" role="button" tabindex="0" aria-label="Putar / Jeda Musik Latar" title="Klik untuk Putar / Jeda Musik">
+    <!-- Piringan Hitam (Vinyl Record) -->
+    <div class="vinyl-disc-wrapper" id="vinyl-disc">
+      <div class="vinyl-disc" id="vinyl-disc-element">
+        <div class="vinyl-groove-outer"></div>
+        <div class="vinyl-groove-middle"></div>
+        <div class="vinyl-groove-inner"></div>
+        <div class="vinyl-center-art">
+          <img src="assets/images/cover.jpg" alt="Dimas & Anindya" class="vinyl-label-img" id="vinyl-label-img">
+          <div class="vinyl-center-hole"></div>
+        </div>
+      </div>
+      <!-- Ikon Status Putar / Jeda di Tengah -->
+      <div class="vinyl-state-badge" id="vinyl-state-badge">
+        <i class="fas fa-play" id="vinyl-icon-state"></i>
+      </div>
+    </div>
+
+    <!-- Gelombang Musik Mini (Equalizer Soundwaves) -->
+    <div class="vinyl-soundwaves" id="vinyl-soundwaves">
+      <span class="v-bar v1"></span>
+      <span class="v-bar v2"></span>
+      <span class="v-bar v3"></span>
+      <span class="v-bar v4"></span>
+    </div>
+
+    <!-- Tooltip Melayang Anggun Menampilkan Judul Lagu -->
+    <div class="vinyl-tooltip-pill" id="vinyl-tooltip-pill">
+      <i class="fas fa-music"></i>
+      <span id="vinyl-track-title">Beautiful in White</span>
+    </div>
+  </aside>
+
+  <!-- 2. Tombol Kembali ke Atas (Back to Top) -->
+  <button type="button" id="back-to-top-btn" class="back-to-top" aria-label="Kembali ke Atas" title="Kembali ke Atas">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+
+  <!-- 3. Navigasi Bawah Mengambang (Floating Bottom Nav) -->
+  <nav class="bottom-nav">
+    <a href="#home" class="nav-link active">
+      <i class="fas fa-home"></i>
+      <span>Home</span>
+    </a>
+    <a href="#couple" class="nav-link">
+      <i class="fas fa-heart"></i>
+      <span>Mempelai</span>
+    </a>
+    <a href="#story" class="nav-link">
+      <i class="fas fa-book-open"></i>
+      <span>Cerita</span>
+    </a>
+    <a href="#event" class="nav-link">
+      <i class="fas fa-calendar-alt"></i>
+      <span>Acara</span>
+    </a>
+    <a href="#gallery" class="nav-link">
+      <i class="fas fa-images"></i>
+      <span>Galeri</span>
+    </a>
+    <a href="#rsvp" class="nav-link">
+      <i class="fas fa-envelope"></i>
+      <span>RSVP</span>
+    </a>
+    <a href="#gift" class="nav-link">
+      <i class="fas fa-gift"></i>
+      <span>Kado</span>
+    </a>
+    <a href="#guestbook" class="nav-link">
+      <i class="fas fa-comments"></i>
+      <span>Ucapan</span>
+    </a>
+  </nav>
+
+  <!-- 4. Modal Lightbox Galeri Foto -->
+  <div id="lightbox-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <button type="button" id="lightbox-close" class="modal-close-btn" aria-label="Tutup Galeri">
+      <i class="fas fa-times"></i>
+    </button>
+    <button type="button" id="lightbox-prev" class="lightbox-nav-btn lightbox-prev" aria-label="Foto Sebelumnya">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <div class="lightbox-content">
+      <img src="assets/images/background.jpg" alt="Foto Galeri" id="lightbox-img" class="lightbox-img">
+      <p id="lightbox-caption" class="lightbox-caption"></p>
+      <span id="lightbox-counter" class="lightbox-counter"></span>
+    </div>
+    <button type="button" id="lightbox-next" class="lightbox-nav-btn lightbox-next" aria-label="Foto Selanjutnya">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <!-- 5. Modal QRIS Kado Digital -->
+  <div id="qris-modal" class="modal-backdrop" role="dialog" aria-modal="true">
+    <div class="modal-container">
+      <button type="button" id="qris-modal-close" class="modal-close-btn" aria-label="Tutup Modal QRIS">
+        <i class="fas fa-times"></i>
+      </button>
+      <h3 style="font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark);">QRIS Kado Digital</h3>
+      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">Pindai kode QRIS di bawah ini melalui aplikasi m-Banking atau dompet digital Anda:</p>
+      <div style="max-width: 300px; margin: 0 auto; padding: 10px; background: #ffffff; border-radius: var(--radius-md); border: 1px solid var(--border-card);">
+        <img src="assets/images/qrcode.png" alt="QRIS Kado Digital Besar" style="width: 100%; height: auto; display: block;">
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 1rem;">
+        a.n. Dimas Pratama / Anindya Putri
+      </p>
+    </div>
+  </div>
+
+  <!-- 6. Toast Notifikasi Mengambang -->
+  <div id="global-toast" class="global-toast">Teks disalin ke clipboard!</div>
+
+  <!-- ============================================================== -->
+  <!-- SKRIP JAVASCRIPT (Sesuai Urutan Ketergantungan Modul)           -->
+  <!-- ============================================================== -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/guest.js"></script>
+  <script src="js/countdown.js"></script>
+  <script src="js/music.js"></script>
+  <script src="js/rsvp.js"></script>
+  <script src="js/qrcode.js"></script>
+  <script src="js/main.js"></script>
 </body>
 </html>

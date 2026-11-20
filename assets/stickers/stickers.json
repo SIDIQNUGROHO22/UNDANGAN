@@ -1,0 +1,352 @@
+[
+  {
+    "id": "cat-wink",
+    "category": "cat",
+    "name": "Kucing Kedip",
+    "emoji": "😉",
+    "url": "assets/stickers/cat-wink.gif"
+  },
+  {
+    "id": "cat-heart",
+    "category": "cat",
+    "name": "Kucing Hati",
+    "emoji": "💖",
+    "url": "assets/stickers/cat-heart.gif"
+  },
+  {
+    "id": "cat-dance",
+    "category": "cat",
+    "name": "Kucing Joget",
+    "emoji": "💃",
+    "url": "assets/stickers/cat-dance.gif"
+  },
+  {
+    "id": "cat-hug",
+    "category": "cat",
+    "name": "Kucing Pelukan",
+    "emoji": "🫂",
+    "url": "assets/stickers/cat-hug.gif"
+  },
+  {
+    "id": "cat-flowers",
+    "category": "cat",
+    "name": "Kucing Bunga",
+    "emoji": "💐",
+    "url": "assets/stickers/cat-flowers.gif"
+  },
+  {
+    "id": "cat-cute",
+    "category": "cat",
+    "name": "Kucing Gemas",
+    "emoji": "🐾",
+    "url": "assets/stickers/cat-cute.gif"
+  },
+  {
+    "id": "cat-love",
+    "category": "cat",
+    "name": "Kucing Cinta",
+    "emoji": "😻",
+    "url": "assets/stickers/cat-love.gif"
+  },
+  {
+    "id": "cat-popcorn",
+    "category": "cat",
+    "name": "Kucing Hore",
+    "emoji": "🍿",
+    "url": "assets/stickers/cat-popcorn.gif"
+  },
+  {
+    "id": "love-hearts",
+    "category": "love",
+    "name": "Hati Bertebaran",
+    "emoji": "💕",
+    "url": "assets/stickers/love-hearts.gif"
+  },
+  {
+    "id": "wedding-flowers",
+    "category": "love",
+    "name": "Bunga Cinta",
+    "emoji": "🌸",
+    "url": "assets/stickers/wedding-flowers.gif"
+  },
+  {
+    "id": "cheers",
+    "category": "party",
+    "name": "Bersulang Gelas",
+    "emoji": "🥂",
+    "url": "assets/stickers/cheers.gif"
+  },
+  {
+    "id": "party-celebrate",
+    "category": "party",
+    "name": "Pesta Meriah",
+    "emoji": "🎉",
+    "url": "assets/stickers/party-celebrate.gif"
+  },
+  {
+    "id": "applause",
+    "category": "party",
+    "name": "Tepuk Tangan",
+    "emoji": "👏",
+    "url": "assets/stickers/applause.gif"
+  },
+  {
+    "id": "happy-dance",
+    "category": "party",
+    "name": "Joget Bahagia",
+    "emoji": "🥳",
+    "url": "assets/stickers/happy-dance.gif"
+  },
+  {
+    "id": "congrats-jump",
+    "category": "party",
+    "name": "Lompat Selamat",
+    "emoji": "✨",
+    "url": "assets/stickers/congrats-jump.gif"
+  },
+  {
+    "id": "bear-hug",
+    "category": "animals",
+    "name": "Beruang Peluk",
+    "emoji": "🐻",
+    "url": "assets/stickers/bear-hug.gif"
+  },
+  {
+    "id": "bear-kiss",
+    "category": "animals",
+    "name": "Beruang Cium",
+    "emoji": "😘",
+    "url": "assets/stickers/bear-kiss.gif"
+  },
+  {
+    "id": "panda-love",
+    "category": "animals",
+    "name": "Panda Sayang",
+    "emoji": "🐼",
+    "url": "assets/stickers/panda-love.gif"
+  },
+  {
+    "id": "bunny-love",
+    "category": "animals",
+    "name": "Kelinci Manis",
+    "emoji": "🐰",
+    "url": "assets/stickers/bunny-love.gif"
+  },
+  {
+    "id": "shiba-happy",
+    "category": "animals",
+    "name": "Shiba Senyum",
+    "emoji": "🐶",
+    "url": "assets/stickers/shiba-happy.gif"
+  },
+  {
+    "id": "cat-roll",
+    "category": "cat",
+    "name": "Kucing Guling",
+    "emoji": "😸",
+    "url": "assets/stickers/cat-roll.gif"
+  },
+  {
+    "id": "cat-sleepy",
+    "category": "cat",
+    "name": "Kucing Bobo",
+    "emoji": "😴",
+    "url": "assets/stickers/cat-sleepy.gif"
+  },
+  {
+    "id": "cat-nyan",
+    "category": "cat",
+    "name": "Kucing Pelangi",
+    "emoji": "🌈",
+    "url": "assets/stickers/cat-nyan.gif"
+  },
+  {
+    "id": "cat-hug2",
+    "category": "cat",
+    "name": "Kucing Peluk Hangat",
+    "emoji": "🫂",
+    "url": "assets/stickers/cat-hug2.gif"
+  },
+  {
+    "id": "cat-purr",
+    "category": "cat",
+    "name": "Kucing Manja",
+    "emoji": "😻",
+    "url": "assets/stickers/cat-purr.gif"
+  },
+  {
+    "id": "cat-vibe",
+    "category": "cat",
+    "name": "Kucing Asyik",
+    "emoji": "🎧",
+    "url": "assets/stickers/cat-vibe.gif"
+  },
+  {
+    "id": "cat-hi",
+    "category": "cat",
+    "name": "Kucing Halo",
+    "emoji": "🐾",
+    "url": "assets/stickers/cat-hi.gif"
+  },
+  {
+    "id": "love-kiss",
+    "category": "love",
+    "name": "Kecup Mesra",
+    "emoji": "💋",
+    "url": "assets/stickers/love-kiss.gif"
+  },
+  {
+    "id": "love-sparkle",
+    "category": "love",
+    "name": "Hati Berbinar",
+    "emoji": "💖",
+    "url": "assets/stickers/love-sparkle.gif"
+  },
+  {
+    "id": "love-couple",
+    "category": "love",
+    "name": "Pasangan Bahagia",
+    "emoji": "👫",
+    "url": "assets/stickers/love-couple.gif"
+  },
+  {
+    "id": "love-dove",
+    "category": "love",
+    "name": "Merpati Cinta",
+    "emoji": "🕊️",
+    "url": "assets/stickers/love-dove.gif"
+  },
+  {
+    "id": "love-letter",
+    "category": "love",
+    "name": "Surat Cinta",
+    "emoji": "💌",
+    "url": "assets/stickers/love-letter.gif"
+  },
+  {
+    "id": "love-forever",
+    "category": "love",
+    "name": "Cinta Abadi",
+    "emoji": "♾️",
+    "url": "assets/stickers/love-forever.gif"
+  },
+  {
+    "id": "love-hands",
+    "category": "love",
+    "name": "Genggam Tangan",
+    "emoji": "🤝",
+    "url": "assets/stickers/love-hands.gif"
+  },
+  {
+    "id": "love-champagne",
+    "category": "love",
+    "name": "Tuang Sampanye",
+    "emoji": "🍾",
+    "url": "assets/stickers/love-champagne.gif"
+  },
+  {
+    "id": "party-confetti",
+    "category": "party",
+    "name": "Hujan Konfeti",
+    "emoji": "🎊",
+    "url": "assets/stickers/party-confetti.gif"
+  },
+  {
+    "id": "party-fireworks",
+    "category": "party",
+    "name": "Kembang Api",
+    "emoji": "🎆",
+    "url": "assets/stickers/party-fireworks.gif"
+  },
+  {
+    "id": "party-toast",
+    "category": "party",
+    "name": "Toast Bersulang",
+    "emoji": "🥂",
+    "url": "assets/stickers/party-toast.gif"
+  },
+  {
+    "id": "party-thumbsup",
+    "category": "party",
+    "name": "Jempol Mantap",
+    "emoji": "👍",
+    "url": "assets/stickers/party-thumbsup.gif"
+  },
+  {
+    "id": "party-hat",
+    "category": "party",
+    "name": "Topi Pesta",
+    "emoji": "🥳",
+    "url": "assets/stickers/party-hat.gif"
+  },
+  {
+    "id": "party-streamers",
+    "category": "party",
+    "name": "Pita Meriah",
+    "emoji": "🎗️",
+    "url": "assets/stickers/party-streamers.gif"
+  },
+  {
+    "id": "party-cheerleader",
+    "category": "party",
+    "name": "Sorak Semangat",
+    "emoji": "📣",
+    "url": "assets/stickers/party-cheerleader.gif"
+  },
+  {
+    "id": "duck-dance",
+    "category": "animals",
+    "name": "Bebek Goyang",
+    "emoji": "🦆",
+    "url": "assets/stickers/duck-dance.gif"
+  },
+  {
+    "id": "hamster-cute",
+    "category": "animals",
+    "name": "Hamster Gemas",
+    "emoji": "🐹",
+    "url": "assets/stickers/hamster-cute.gif"
+  },
+  {
+    "id": "bunny-hop",
+    "category": "animals",
+    "name": "Kelinci Lompat",
+    "emoji": "🐇",
+    "url": "assets/stickers/bunny-hop.gif"
+  },
+  {
+    "id": "otter-cute",
+    "category": "animals",
+    "name": "Berang-berang Lucu",
+    "emoji": "🦦",
+    "url": "assets/stickers/otter-cute.gif"
+  },
+  {
+    "id": "bird-sing",
+    "category": "animals",
+    "name": "Burung Kicau",
+    "emoji": "🐦",
+    "url": "assets/stickers/bird-sing.gif"
+  },
+  {
+    "id": "seal-spin",
+    "category": "animals",
+    "name": "Anjing Laut Putar",
+    "emoji": "🦭",
+    "url": "assets/stickers/seal-spin.gif"
+  },
+  {
+    "id": "animals-deer",
+    "category": "animals",
+    "name": "Rusa Manis",
+    "emoji": "🦌",
+    "url": "assets/stickers/animals-deer.gif"
+  },
+  {
+    "id": "animals-puppy",
+    "category": "animals",
+    "name": "Anak Anjing Ceria",
+    "emoji": "🐶",
+    "url": "assets/stickers/animals-puppy.gif"
+  }
+]

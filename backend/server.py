@@ -28,10 +28,11 @@ except Exception:
 
 PORT = int(os.environ.get('PORT', 3000))
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.dirname(BASE_DIR)
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 CONFIG_DIR = os.path.join(BASE_DIR, 'config')
-FRONTEND_DIR = os.path.join(os.path.dirname(BASE_DIR), 'frontend')
-UNDANGAN_DIR = os.path.join(os.path.dirname(BASE_DIR), 'undangan-digital')
+FRONTEND_DIR = os.path.join(ROOT_DIR, 'frontend')
+UNDANGAN_DIR = os.path.join(ROOT_DIR, 'undangan-digital')
 
 os.makedirs(DATA_DIR, exist_ok=True)
 
@@ -142,7 +143,7 @@ def update_settings(new_data):
     
     # Sync config.js
     js_content = f"/**\n * KONFIGURASI OTOMATIS TERSINKRON DARI SERVER\n */\nconst WEDDING_CONFIG = {json.dumps(current, indent=2, ensure_ascii=False)};\nif (typeof module !== 'undefined' && module.exports) {{\n  module.exports = WEDDING_CONFIG;\n}}\n"
-    for dest in [os.path.join(FRONTEND_DIR, 'js', 'config.js'), os.path.join(UNDANGAN_DIR, 'js', 'config.js')]:
+    for dest in [os.path.join(ROOT_DIR, 'js', 'config.js'), os.path.join(FRONTEND_DIR, 'js', 'config.js'), os.path.join(UNDANGAN_DIR, 'js', 'config.js')]:
         try:
             if os.path.exists(os.path.dirname(dest)):
                 with open(dest, 'w', encoding='utf-8') as f:
@@ -576,7 +577,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
 
             rel_path = f"assets/music/{safe_name}"
             saved_paths = []
-            for target_dir in [FRONTEND_DIR, UNDANGAN_DIR]:
+            for target_dir in [ROOT_DIR, FRONTEND_DIR, UNDANGAN_DIR]:
                 music_dir = os.path.join(target_dir, 'assets', 'music')
                 os.makedirs(music_dir, exist_ok=True)
                 dest_file = os.path.join(music_dir, safe_name)
@@ -710,7 +711,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
 
             rel_path = f"assets/images/{safe_name}"
             saved_paths = []
-            for target_dir in [FRONTEND_DIR, UNDANGAN_DIR]:
+            for target_dir in [ROOT_DIR, FRONTEND_DIR, UNDANGAN_DIR]:
                 img_dir = os.path.join(target_dir, 'assets', 'images')
                 os.makedirs(img_dir, exist_ok=True)
                 dest_file = os.path.join(img_dir, safe_name)

@@ -923,6 +923,10 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', mime_type)
             self.send_header('Content-Length', str(len(content)))
+            if file_path.endswith(('.js', '.css', '.html', '.json')):
+                self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                self.send_header('Pragma', 'no-cache')
+                self.send_header('Expires', '0')
             self.send_cors()
             self.end_headers()
             self.wfile.write(content)

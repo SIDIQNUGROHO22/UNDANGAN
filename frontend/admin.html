@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dasbor Admin - Kelola Undangan Digital & Tamu WhatsApp</title>
+
+  <!-- Google Fonts & Font Awesome 6 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Mobile) -->
+  <link rel="icon" type="image/png" sizes="32x32" id="browser-favicon" href="assets/images/favicon-admin.png">
+  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon-admin.png">
+  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon-admin.png">
+
+  <!-- Admin Stylesheet -->
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+  <!-- ============================================================== -->
+  <!-- 1. VIEW LOGIN ADMIN                                            -->
+  <!-- ============================================================== -->
+  <div id="login-view" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-brand-aesthetic">
+          <img src="assets/images/gunungan-gold.svg" alt="Wayang Gunungan" class="login-gunungan-logo">
+          <div class="login-brand-text">WEDDING DASBOR</div>
+        </div>
+        <h1 class="login-title">Portal Dasbor Undangan</h1>
+        <p class="login-subtitle">Masuk untuk mengelola tamu, RSVP, ucapan, dan kustomisasi undangan</p>
+      </div>
+
+      <div id="login-alert" class="login-alert"></div>
+
+      <form id="admin-login-form">
+        <div class="form-group">
+          <label for="admin-email" class="form-label">Email Admin</label>
+          <input type="email" id="admin-email" class="form-control" placeholder="admin@wedding.com" value="admin@wedding.com" required autocomplete="email">
+        </div>
+
+        <div class="form-group">
+          <label for="admin-password" class="form-label">Password</label>
+          <input type="password" id="admin-password" class="form-control" placeholder="••••••••" value="admin123" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="btn-primary" id="btn-submit-login">
+          <i class="fas fa-sign-in-alt"></i> Masuk ke Dasbor
+        </button>
+      </form>
+
+      <div class="demo-credentials-note">
+        <p><strong><i class="fas fa-key"></i> Kredensial Default:</strong></p>
+        <p>Email: <strong>admin@wedding.com</strong><br>Password: <strong>admin123</strong></p>
+        <p style="margin-top: 6px; font-size: 0.78rem; color: var(--admin-text-muted);">
+          Terhubung otomatis dengan server Node.js backend. Password dapat Anda ganti setelah masuk.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- 2. VIEW DASHBOARD ADMIN                                        -->
+  <!-- ============================================================== -->
+  <div id="dashboard-view" class="dashboard-layout" style="display: none;">
+    
+    <!-- Navbar Header -->
+    <header class="admin-navbar">
+      <div class="navbar-brand">
+        <div class="navbar-brand-aesthetic">
+          <div class="navbar-gunungan-icon">
+            <img src="assets/images/gunungan-gold.svg" alt="Wayang Gunungan" class="navbar-gunungan-img">
+          </div>
+          <div class="navbar-brand-info">
+            <div class="navbar-brand-name">PANEL ADMIN</div>
+          </div>
+        </div>
+      </div>
+      <div class="navbar-user-actions">
+        <span class="user-badge" id="navbar-user-badge" title="Klik untuk ubah email & password" style="cursor: pointer;">
+          <i class="fas fa-user-circle"></i>
+          <span id="navbar-user-email">admin@wedding.com</span>
+        </span>
+        <button type="button" class="btn-account-security" id="btn-open-account-modal" title="Ubah Email & Password Admin">
+          <i class="fas fa-key"></i> <span>Ganti Akun &amp; Password</span>
+        </button>
+        <a href="index.html" target="_blank" class="btn-view-site">
+          <i class="fas fa-external-link-alt"></i> Buka Undangan
+        </a>
+        <button type="button" class="btn-logout" id="btn-logout">
+          <i class="fas fa-sign-out-alt"></i> Keluar
+        </button>
+      </div>
+    </header>
+
+    <!-- Tab Navigasi Menu -->
+    <nav class="admin-tab-nav">
+      <div class="tab-link active" data-tab="tab-overview">
+        <i class="fas fa-chart-pie"></i> Ringkasan
+      </div>
+      <div class="tab-link" data-tab="tab-guests">
+        <i class="fas fa-users"></i> Daftar Tamu
+      </div>
+      <div class="tab-link" data-tab="tab-rsvps">
+        <i class="fas fa-envelope-open-text"></i> Konfirmasi RSVP
+      </div>
+      <div class="tab-link" data-tab="tab-guestbook">
+        <i class="fas fa-comments"></i> Moderasi Ucapan
+        <span class="badge-count" id="pending-wishes-badge" style="display: none;">0</span>
+      </div>
+      <div class="tab-link" data-tab="tab-wa">
+        <i class="fab fa-whatsapp"></i> Broadcast WA
+      </div>
+      <div class="tab-link" data-tab="tab-settings">
+        <i class="fas fa-sliders-h"></i> Kustomisasi Undangan
+      </div>
+    </nav>
+
+    <!-- Konten Tab Utama -->
+    <main class="dashboard-main">
+
+      <!-- ========================================================== -->
+      <!-- TAB 1: RINGKASAN (OVERVIEW)                                -->
+      <!-- ========================================================== -->
+      <section id="tab-overview" class="tab-pane active">
+        <!-- Header Ringkasan & Tombol Refresh -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 10px;">
+          <div>
+            <h2 style="font-size: 1.35rem; color: var(--admin-text); margin: 0; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-chart-pie" style="color: var(--admin-gold);"></i> Ringkasan &amp; Data Real-Time
+            </h2>
+            <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">
+              Data tamu, konfirmasi RSVP, dan ucapan doa langsung tersinkron dari formulir website undangan ke database server.
+            </p>
+          </div>
+          <button type="button" class="btn-sm btn-export" id="btn-refresh-all-data" style="background: var(--admin-gold); color: white; border: none; font-weight: 600; padding: 8px 16px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-sync-alt" id="refresh-icon"></i> Muat Ulang Data Terbaru
+          </button>
+        </div>
+
+        <!-- Grid Kartu Statistik -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon gold"><i class="fas fa-address-book"></i></div>
+            <div>
+              <div class="metric-number" id="metric-total-guests">0</div>
+              <div class="metric-label">Total Tamu Terdaftar</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon blue"><i class="fas fa-envelope"></i></div>
+            <div>
+              <div class="metric-number" id="metric-total-rsvps">0</div>
+              <div class="metric-label">Total Konfirmasi Masuk</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon green"><i class="fas fa-user-check"></i></div>
+            <div>
+              <div class="metric-number" id="metric-hadir-count">0</div>
+              <div class="metric-label">Hadir <span id="metric-hadir-pax" style="font-weight: 600;">(0 orang)</span></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon red"><i class="fas fa-user-times"></i></div>
+            <div>
+              <div class="metric-number" id="metric-tidak-hadir-count">0</div>
+              <div class="metric-label">Berhalangan Hadir</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon yellow"><i class="fas fa-question-circle"></i></div>
+            <div>
+              <div class="metric-number" id="metric-ragu-count">0</div>
+              <div class="metric-label">Masih Ragu / Belum Pasti</div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon gold"><i class="fas fa-comment-dots"></i></div>
+            <div>
+              <div class="metric-number" id="metric-total-wishes">0</div>
+              <div class="metric-label">Ucapan & Doa Masuk</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Status Server Backend -->
+        <div class="panel-card">
+          <h3 class="panel-title"><i class="fas fa-server" style="color: #10b981;"></i> Status Server Backend & Database</h3>
+          <p style="font-size: 0.9rem; color: var(--admin-text-muted); margin-top: 0.5rem;">
+            🟢 <strong>Server Berjalan Normal</strong> pada port lokal atau hosting cloud. Seluruh data tamu, konfirmasi kehadiran (RSVP), dan ucapan tersimpan otomatis di database server backend.
+          </p>
+          <div style="margin-top: 1rem; display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-sm btn-export-excel" id="btn-overview-export-rsvps">
+              <i class="fas fa-file-excel"></i> Export Data RSVP ke Excel (.xlsx)
+            </button>
+            <button type="button" class="btn-sm btn-export-excel" id="btn-overview-export-guests">
+              <i class="fas fa-file-excel"></i> Export Daftar Tamu ke Excel (.xlsx)
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Activity Section: 5 RSVP Terbaru & 5 Ucapan & Stiker Terbaru -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.25rem; margin-top: 1.25rem;">
+          
+          <!-- Box 1: 5 RSVP Terbaru -->
+          <div class="panel-card" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h4 class="panel-title" style="font-size: 1.05rem;"><i class="fas fa-envelope-open-text" style="color: var(--admin-gold);"></i> 5 RSVP Masuk Terbaru</h4>
+              <button type="button" class="btn-sm btn-export" onclick="document.querySelector('.admin-tab-nav .tab-link[data-tab=\'tab-rsvps\']').click()">Lihat Semua</button>
+            </div>
+            <div class="table-responsive" style="margin-top: 0.5rem;">
+              <table class="data-table" style="font-size: 0.85rem;">
+                <thead>
+                  <tr>
+                    <th>Nama Tamu</th>
+                    <th>Status</th>
+                    <th>Pax</th>
+                    <th>Waktu</th>
+                  </tr>
+                </thead>
+                <tbody id="overview-recent-rsvps">
+                  <!-- Dirender otomatis oleh admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Box 2: 5 Ucapan & Stiker Terbaru -->
+          <div class="panel-card" style="margin-bottom: 0;">
+            <div class="panel-header">
+              <h4 class="panel-title" style="font-size: 1.05rem;"><i class="fas fa-comment-heart" style="color: #ec4899;"></i> 5 Doa &amp; Stiker Terbaru</h4>
+              <button type="button" class="btn-sm btn-export" onclick="document.querySelector('.admin-tab-nav .tab-link[data-tab=\'tab-guestbook\']').click()">Lihat Semua</button>
+            </div>
+            <div class="table-responsive" style="margin-top: 0.5rem;">
+              <table class="data-table" style="font-size: 0.85rem;">
+                <thead>
+                  <tr>
+                    <th>Nama</th>
+                    <th>Stiker</th>
+                    <th>Doa &amp; Ucapan</th>
+                    <th>Waktu</th>
+                  </tr>
+                </thead>
+                <tbody id="overview-recent-wishes">
+                  <!-- Dirender otomatis oleh admin.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- TAB 2: DAFTAR TAMU (GUEST MANAGEMENT)                      -->
+      <!-- ========================================================== -->
+      <section id="tab-guests" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-users"></i> Daftar Tamu & Link WhatsApp</h3>
+            <div class="panel-actions">
+              <input type="text" id="search-guest-input" class="search-input" placeholder="Cari nama atau kode...">
+              <button type="button" class="btn-sm btn-add" id="btn-open-add-guest">
+                <i class="fas fa-user-plus"></i> Tambah Tamu
+              </button>
+              <button type="button" class="btn-sm btn-export-excel" id="btn-guests-export-excel">
+                <i class="fas fa-file-excel"></i> Export ke Excel (.xlsx)
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">No</th>
+                  <th>Nama Tamu</th>
+                  <th>Kode</th>
+                  <th>Kategori</th>
+                  <th>Pax</th>
+                  <th>Status RSVP</th>
+                  <th>Catatan</th>
+                  <th style="width: 175px;">Aksi WhatsApp &amp; Hapus</th>
+                </tr>
+              </thead>
+              <tbody id="guests-table-body">
+                <!-- Data dirender oleh admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- TAB 3: KONFIRMASI RSVP                                      -->
+      <!-- ========================================================== -->
+      <section id="tab-rsvps" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-envelope-open-text"></i> Data Masuk RSVP Online</h3>
+            <div class="panel-actions">
+              <input type="text" id="search-rsvp-input" class="search-input" placeholder="Cari nama tamu...">
+              <select id="filter-rsvp-status" class="search-input" style="width: auto;">
+                <option value="all">Semua Status</option>
+                <option value="hadir">Akan Hadir</option>
+                <option value="tidak-hadir">Tidak Hadir</option>
+                <option value="ragu">Ragu-ragu</option>
+              </select>
+              <button type="button" class="btn-sm btn-export-excel" id="btn-rsvps-export-excel">
+                <i class="fas fa-file-excel"></i> Export ke Excel (.xlsx)
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">No</th>
+                  <th>Nama Tamu &amp; Waktu</th>
+                  <th>Kode</th>
+                  <th>Status RSVP</th>
+                  <th>Pax</th>
+                  <th>Pesan &amp; Stiker</th>
+                  <th style="width: 80px;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="rsvp-table-body">
+                <!-- Data dirender oleh admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- TAB 4: MODERASI BUKU TAMU                                  -->
+      <!-- ========================================================== -->
+      <section id="tab-guestbook" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-comments"></i> Moderasi Ucapan & Doa Restu</h3>
+            <div class="panel-actions">
+              <button type="button" class="btn-sm wish-filter-btn active" data-filter="all" style="background: #e6dfd5; color: #333;">Semua</button>
+              <button type="button" class="btn-sm wish-filter-btn" data-filter="PENDING" style="background: #fef3c7; color: #b45309;"><i class="fas fa-clock"></i> Butuh Persetujuan</button>
+              <button type="button" class="btn-sm wish-filter-btn" data-filter="APPROVED" style="background: #dcfce7; color: #15803d;"><i class="fas fa-check"></i> Disetujui</button>
+              <button type="button" class="btn-sm wish-filter-btn" data-filter="REJECTED" style="background: #fee2e2; color: #b91c1c;"><i class="fas fa-ban"></i> Ditolak</button>
+            </div>
+          </div>
+
+          <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 0.85rem;">
+            Kelola ucapan dari tamu undangan. Anda dapat menyetujui, menolak, atau menghapus ucapan yang tidak pantas.
+          </p>
+
+          <!-- Info Status Sinkronisasi Server & Database -->
+          <div style="background: rgba(223, 177, 91, 0.1); border: 1px solid rgba(223, 177, 91, 0.35); border-radius: 8px; padding: 0.85rem 1rem; margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 10px;">
+            <i class="fas fa-database" style="color: var(--admin-gold); font-size: 1.1rem; margin-top: 2px;"></i>
+            <div style="font-size: 0.84rem; color: var(--admin-text); line-height: 1.5;">
+              <strong>Informasi Penyimpanan &amp; Sinkronisasi:</strong><br>
+              Seluruh ucapan doa restu tersimpan permanen di database server (<code style="background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px;">backend/data/wishes.json</code>). Pada mode offline (tanpa server), ucapan dicadangkan sementara di browser (<code style="background: rgba(0,0,0,0.06); padding: 2px 5px; border-radius: 4px;">localStorage</code>) dan otomatis tersinkronisasi saat server aktif.
+            </div>
+          </div>
+
+          <div id="wishes-moderation-container">
+            <!-- Kartu ucapan dirender oleh admin.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- TAB 5: BROADCAST WHATSAPP                                  -->
+      <!-- ========================================================== -->
+      <section id="tab-wa" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fab fa-whatsapp" style="color: #25D366;"></i> Generator Undangan WhatsApp Cepat</h3>
+          </div>
+          <p style="font-size: 0.9rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">
+            Pilih tamu dari database atau ketik nama tamu dan nomor WhatsApp secara langsung untuk menghasilkan undangan resmi personal siap kirim via WhatsApp.
+          </p>
+
+          <!-- Dropdown Pilih Tamu Langsung dari Database -->
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
+            <label for="admin-wa-guest-select" class="form-label" style="font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 8px;">
+              <i class="fas fa-users-cog" style="color: var(--admin-gold);"></i> Pilih Tamu dari Database (Otomatis Isi Data):
+            </label>
+            <select id="admin-wa-guest-select" class="form-control" style="font-weight: 600; background: #fff;">
+              <option value="">-- Pilih Tamu Terdaftar di Database Server --</option>
+            </select>
+            <span style="font-size: 0.78rem; color: var(--admin-text-muted); margin-top: 4px; display: block;">
+              Saat Anda memilih nama tamu di atas, kolom nama dan nomor telepon akan otomatis terisi dan link personal langsung siap dibagikan.
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label for="admin-wa-name" class="form-label">Nama Tamu *</label>
+              <input type="text" id="admin-wa-name" class="form-control" placeholder="Contoh: Bpk. H. Hendra & Ibu">
+            </div>
+            <div class="form-group">
+              <label for="admin-wa-phone" class="form-label">Nomor WhatsApp (Opsional)</label>
+              <input type="tel" id="admin-wa-phone" class="form-control" placeholder="081234567890">
+            </div>
+            <div class="form-group">
+              <label for="admin-wa-style" class="form-label">Gaya Bahasa</label>
+              <select id="admin-wa-style" class="form-control">
+                <option value="formal">Formal / Sopan (Keluarga & Kolega)</option>
+                <option value="santai">Santai & Akrab (Teman / Sahabat)</option>
+                <option value="islami">Islami & Penuh Doa</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="admin-wa-preview" class="form-label">Pratinjau Pesan yang Siap Dikirim:</label>
+            <textarea id="admin-wa-preview" class="form-control" rows="7" readonly style="font-family: inherit; font-size: 0.88rem; line-height: 1.5; background: #fafafa;"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="admin-wa-link" class="form-label">Tautan Personal:</label>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="admin-wa-link" class="form-control" readonly style="background: #fafafa; font-size: 0.88rem;">
+              <button type="button" class="btn-sm btn-export" id="btn-admin-copy-wa-link">
+                <i class="far fa-copy"></i> Salin Link
+              </button>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <button type="button" class="btn-primary" id="btn-admin-copy-wa-msg" style="background: var(--admin-gold);">
+              <i class="far fa-copy"></i> Salin Seluruh Pesan WhatsApp
+            </button>
+            <a href="#" id="btn-admin-open-wa" target="_blank" rel="noopener noreferrer" class="btn-sm" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: 600;">
+              <i class="fab fa-whatsapp" style="font-size: 1.1rem;"></i> Buka di WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <!-- Tabel Broadcast Cepat Seluruh Tamu Undangan -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h4 class="panel-title" style="font-size: 1.1rem;">
+              <i class="fab fa-whatsapp" style="color: #25D366;"></i> Daftar Tamu Siap Kirim WhatsApp (1-Klik)
+            </h4>
+            <span style="font-size: 0.8rem; background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+              <i class="fas fa-check-circle"></i> Sinkron Database Tamu
+            </span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1rem;">
+            Klik tombol hijau <strong>"Kirim WA"</strong> untuk langsung membuka chat WhatsApp dengan pesan undangan personal yang siap dikirimkan kepada masing-masing tamu.
+          </p>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th style="width: 45px;">No</th>
+                  <th>Nama Tamu</th>
+                  <th>No. WhatsApp</th>
+                  <th>Status RSVP</th>
+                  <th style="width: 220px;">Aksi Kirim Undangan WA</th>
+                </tr>
+              </thead>
+              <tbody id="admin-broadcast-table-body">
+                <!-- Dirender dinamis oleh admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Pembuat QR Code Fisik Undangan -->
+        <div class="panel-card" style="margin-top: 1.5rem;">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-qrcode" style="color: var(--admin-gold);"></i> Pembuat QR Code Fisik Undangan</h3>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">
+            Cetak QR Code ini pada kartu undangan fisik atau souvenir agar tamu dapat langsung memindai melalui kamera HP untuk membuka website undangan online.
+          </p>
+
+          <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
+            <input type="text" id="admin-qr-url-input" class="form-control" style="flex: 1; min-width: 260px;" placeholder="https://domain-undangan-anda.com">
+            <button type="button" class="btn-primary" id="btn-admin-generate-qr" style="width: auto; white-space: nowrap; padding: 0.75rem 1.5rem;">
+              <i class="fas fa-qrcode"></i> Generate QR Code
+            </button>
+          </div>
+          <div id="admin-qr-note" style="font-size: 0.85rem; margin-bottom: 1rem;"></div>
+          <div id="admin-qr-display" style="text-align: center; margin-top: 1rem;"></div>
+        </div>
+      </section>
+
+      <!-- ========================================================== -->
+      <!-- TAB 6: KUSTOMISASI UNDANGAN (SETTINGS EDITOR)               -->
+      <!-- ========================================================== -->
+      <section id="tab-settings" class="tab-pane">
+        <div class="panel-card">
+          <div class="panel-header">
+            <h3 class="panel-title"><i class="fas fa-sliders-h" style="color: var(--admin-gold);"></i> Edit & Kustomisasi Data Undangan</h3>
+            <button type="button" class="btn-primary" id="btn-save-settings">
+              <i class="fas fa-save"></i> Simpan Seluruh Perubahan
+            </button>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--admin-text-muted); margin-bottom: 1.5rem;">
+            Ubah nama kedua mempelai, tanggal acara, lokasi, rekening, dan kutipan di bawah ini. Perubahan langsung tersimpan ke server dan otomatis ter-update di website undangan!
+          </p>
+
+          <form id="settings-form">
+            <!-- 1. DATA MEMPELAI -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <h4 style="font-size: 1.1rem; color: var(--admin-text); margin-bottom: 1rem;"><i class="fas fa-heart" style="color: var(--admin-gold);"></i> Data Mempelai</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                
+                <!-- Groom -->
+                <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                  <h5 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--admin-gold);">Mempelai Pria (Groom)</h5>
+                  
+                  <!-- Foto Lingkaran Mempelai Pria -->
+                  <div class="form-group" style="background: #ffffff; padding: 0.85rem; border-radius: 8px; border: 1px solid var(--admin-border); margin-bottom: 1rem;">
+                    <label class="form-label" style="font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fas fa-camera" style="color: var(--admin-gold);"></i> Foto Lingkaran Mempelai Pria</span>
+                      <span style="font-size: 0.72rem; color: #64748b;">JPG / PNG / Web</span>
+                    </label>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+                      <!-- Circular Preview Frame -->
+                      <div style="width: 72px; height: 72px; border-radius: 50%; border: 3px solid #dfb15b; padding: 2px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img id="preview-groom-photo" src="assets/images/couple-1.jpg" alt="Preview Foto Pria" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='assets/images/couple-1.jpg'">
+                      </div>
+                      <div style="flex-grow: 1;">
+                        <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                          <input type="text" id="cfg-groom-photo" class="form-control" placeholder="assets/images/couple-1.jpg atau URL Pinterest / Web" style="font-size: 0.85rem;">
+                          <button type="button" class="btn-sm" id="btn-upload-groom-photo" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Upload foto dari komputer / HP">
+                            <i class="fas fa-upload"></i> Upload
+                          </button>
+                          <input type="file" id="file-groom-photo" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                        </div>
+                        <span style="font-size: 0.73rem; color: #64748b; display: block;">
+                          Bisa salin link Pinterest/Web atau klik <strong>Upload</strong> untuk memilih foto dari galeri HP/laptop.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="form-label">Nama Panggilan</label>
+                    <input type="text" id="cfg-groom-call" class="form-control" placeholder="Dimas">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Lengkap & Gelar</label>
+                    <input type="text" id="cfg-groom-full" class="form-control" placeholder="Dimas Pratama, S.Kom.">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Ayah</label>
+                    <input type="text" id="cfg-groom-father" class="form-control" placeholder="Bpk. Bambang Sutrisno">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Ibu</label>
+                    <input type="text" id="cfg-groom-mother" class="form-control" placeholder="Ibu Siti Rahmawati">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Keterangan Anak</label>
+                    <input type="text" id="cfg-groom-order" class="form-control" placeholder="Putra pertama dari">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Link Instagram</label>
+                    <input type="url" id="cfg-groom-ig" class="form-control" placeholder="https://instagram.com/username">
+                  </div>
+                </div>
+
+                <!-- Bride -->
+                <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                  <h5 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--admin-gold);">Mempelai Wanita (Bride)</h5>
+                  
+                  <!-- Foto Lingkaran Mempelai Wanita -->
+                  <div class="form-group" style="background: #ffffff; padding: 0.85rem; border-radius: 8px; border: 1px solid var(--admin-border); margin-bottom: 1rem;">
+                    <label class="form-label" style="font-weight: 700; display: flex; align-items: center; justify-content: space-between;">
+                      <span><i class="fas fa-camera" style="color: var(--admin-gold);"></i> Foto Lingkaran Mempelai Wanita</span>
+                      <span style="font-size: 0.72rem; color: #64748b;">JPG / PNG / Web</span>
+                    </label>
+                    <div style="display: flex; gap: 12px; align-items: center; margin-top: 6px;">
+                      <!-- Circular Preview Frame -->
+                      <div style="width: 72px; height: 72px; border-radius: 50%; border: 3px solid #dfb15b; padding: 2px; background: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img id="preview-bride-photo" src="assets/images/couple-2.jpg" alt="Preview Foto Wanita" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='assets/images/couple-2.jpg'">
+                      </div>
+                      <div style="flex-grow: 1;">
+                        <div style="display: flex; gap: 6px; margin-bottom: 6px;">
+                          <input type="text" id="cfg-bride-photo" class="form-control" placeholder="assets/images/couple-2.jpg atau URL Pinterest / Web" style="font-size: 0.85rem;">
+                          <button type="button" class="btn-sm" id="btn-upload-bride-photo" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Upload foto dari komputer / HP">
+                            <i class="fas fa-upload"></i> Upload
+                          </button>
+                          <input type="file" id="file-bride-photo" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                        </div>
+                        <span style="font-size: 0.73rem; color: #64748b; display: block;">
+                          Bisa salin link Pinterest/Web atau klik <strong>Upload</strong> untuk memilih foto dari galeri HP/laptop.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Panggilan</label>
+                    <input type="text" id="cfg-bride-call" class="form-control" placeholder="Anindya">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Lengkap & Gelar</label>
+                    <input type="text" id="cfg-bride-full" class="form-control" placeholder="Anindya Putri, S.E.">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Ayah</label>
+                    <input type="text" id="cfg-bride-father" class="form-control" placeholder="Bpk. H. Hendra Wijaya">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Ibu</label>
+                    <input type="text" id="cfg-bride-mother" class="form-control" placeholder="Ibu Hj. Nurul Hasanah">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Keterangan Anak</label>
+                    <input type="text" id="cfg-bride-order" class="form-control" placeholder="Putri kedua dari">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Link Instagram</label>
+                    <input type="url" id="cfg-bride-ig" class="form-control" placeholder="https://instagram.com/username">
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 2. JADWAL ACARA -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <h4 style="font-size: 1.1rem; color: var(--admin-text); margin-bottom: 1rem;"><i class="fas fa-calendar-alt" style="color: var(--admin-gold);"></i> Jadwal & Lokasi Acara</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                
+                <!-- Akad -->
+                <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                  <h5 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--admin-gold);">Akad Nikah</h5>
+                  <div class="form-group">
+                    <label class="form-label">Hari & Tanggal</label>
+                    <input type="text" id="cfg-akad-date" class="form-control" placeholder="Sabtu, 19 Desember 2026">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Waktu / Jam</label>
+                    <input type="text" id="cfg-akad-time" class="form-control" placeholder="08.00 - 10.00 WIB">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Tempat / Masjid</label>
+                    <input type="text" id="cfg-akad-venue" class="form-control" placeholder="Masjid Agung Al-Barkah">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Alamat Lengkap</label>
+                    <textarea id="cfg-akad-address" class="form-control" rows="2" placeholder="Jl. Veteran No. 45..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Link Google Maps</label>
+                    <input type="url" id="cfg-akad-maps" class="form-control" placeholder="https://maps.google.com/...">
+                  </div>
+                </div>
+
+                <!-- Resepsi -->
+                <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                  <h5 style="font-weight: 600; margin-bottom: 0.75rem; color: var(--admin-gold);">Resepsi Pernikahan</h5>
+                  <div class="form-group">
+                    <label class="form-label">Hari & Tanggal</label>
+                    <input type="text" id="cfg-resepsi-date" class="form-control" placeholder="Sabtu, 19 Desember 2026">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Waktu / Jam</label>
+                    <input type="text" id="cfg-resepsi-time" class="form-control" placeholder="11.00 - 14.00 WIB">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Gedung / Hotel</label>
+                    <input type="text" id="cfg-resepsi-venue" class="form-control" placeholder="Grand Ballroom Hotel Horison">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Alamat Lengkap</label>
+                    <textarea id="cfg-resepsi-address" class="form-control" rows="2" placeholder="Jl. KH. Noer Ali..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Link Google Maps</label>
+                    <input type="url" id="cfg-resepsi-maps" class="form-control" placeholder="https://maps.google.com/...">
+                  </div>
+                </div>
+
+                <!-- Unduh Mantu -->
+                <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                    <h5 style="font-weight: 600; margin: 0; color: var(--admin-gold);">Unduh Mantu (Ngunduh Mantu)</h5>
+                    <label style="font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 5px; font-weight: 600;" title="Centang untuk menampilkan di undangan">
+                      <input type="checkbox" id="cfg-unduh-enable" checked> Aktif
+                    </label>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Judul Acara</label>
+                    <input type="text" id="cfg-unduh-title" class="form-control" placeholder="Acara Unduh Mantu">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Hari & Tanggal</label>
+                    <input type="text" id="cfg-unduh-date" class="form-control" placeholder="Minggu, 20 Desember 2026">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Waktu / Jam</label>
+                    <input type="text" id="cfg-unduh-time" class="form-control" placeholder="10.00 - 14.00 WIB">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Tempat / Kediaman</label>
+                    <input type="text" id="cfg-unduh-venue" class="form-control" placeholder="Kediaman Keluarga Mempelai Pria">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Alamat Lengkap</label>
+                    <textarea id="cfg-unduh-address" class="form-control" rows="2" placeholder="Jl. Kemang Pratama Raya No. 12..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Link Google Maps</label>
+                    <input type="url" id="cfg-unduh-maps" class="form-control" placeholder="https://maps.google.com/...">
+                  </div>
+                </div>
+
+                <!-- 2b. SINKRONISASI WAKTU HITUNG MUNDUR (COUNTDOWN) -->
+                <div style="grid-column: 1 / -1; background: #fffdf5; padding: 1.25rem; border-radius: 8px; border: 1.5px solid #ecd89f; margin-top: 0.5rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 0.75rem;">
+                    <h5 style="font-weight: 600; margin: 0; color: #8c6310; display: flex; align-items: center; gap: 8px;">
+                      <i class="fas fa-hourglass-half" style="color: var(--admin-gold);"></i> Target Waktu Hitung Mundur (Countdown)
+                    </h5>
+                    <span id="cfg-countdown-badge" style="font-size: 0.78rem; background: #fef3d6; color: #795548; padding: 4px 10px; border-radius: 12px; font-weight: 600; border: 1px solid #ebd39c;">
+                      <i class="fas fa-sync-alt fa-spin"></i> Auto-sync dari Tanggal Akad
+                    </span>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                      <label class="form-label" style="font-weight: 600;">Tanggal & Jam Target Countdown</label>
+                      <input type="datetime-local" id="cfg-countdown-target" class="form-control" style="font-weight: 600; background: #fff;">
+                      <span style="font-size: 0.76rem; color: var(--admin-text-muted);">
+                        Otomatis tersinkron saat mengubah Hari & Tanggal Akad Nikah, atau bisa diatur manual di sini.
+                      </span>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                      <label class="form-label" style="font-weight: 600;">Pesan Saat Acara Telah Selesai / Berlalu</label>
+                      <input type="text" id="cfg-countdown-passed-msg" class="form-control" style="background: #fff;" placeholder="Alhamdulillah, rangkaian acara pernikahan telah selesai...">
+                      <span style="font-size: 0.76rem; color: var(--admin-text-muted);">
+                        Pesan yang tampil menggantikan kotak angka setelah waktu acara terlewati.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 2b. PENGATURAN WHATSAPP KONFIRMASI KEHADIRAN (RSVP) -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
+                <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0;">
+                  <i class="fab fa-whatsapp" style="color: #25D366;"></i> Pengaturan WhatsApp Konfirmasi Kehadiran (RSVP)
+                </h4>
+                <span style="font-size: 0.75rem; background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+                  <i class="fas fa-link"></i> Terhubung ke Form RSVP Tamu
+                </span>
+              </div>
+              <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1rem;">
+                Tentukan nomor WhatsApp yang akan menerima kiriman konfirmasi kehadiran dari para tamu saat mereka mengisi formulir RSVP di halaman undangan.
+              </p>
+
+              <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                  
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" style="font-weight: 600;">
+                      Nomor WhatsApp Penerima RSVP *
+                    </label>
+                    <div style="display: flex; gap: 6px;">
+                      <input type="text" id="cfg-rsvp-wa-number" class="form-control" placeholder="Contoh: 081234567890 atau 6281234567890" style="font-size: 0.95rem; font-weight: 600;">
+                      <a id="btn-test-rsvp-wa" href="#" target="_blank" class="btn-sm" style="white-space: nowrap; background: #25D366; color: white; border: none; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 5px; text-decoration: none; border-radius: 6px; padding: 0 12px;" title="Uji buka chat WhatsApp">
+                        <i class="fab fa-whatsapp"></i> Uji Chat
+                      </a>
+                    </div>
+                    <span style="font-size: 0.76rem; color: var(--admin-text-muted); margin-top: 4px; display: block;">
+                      Bisa ditulis <code>08...</code> atau <code>628...</code>. Sistem otomatis menyesuaikan format internasional WhatsApp.
+                    </span>
+                  </div>
+
+                  <div class="form-group" style="margin-bottom: 0;">
+                    <label class="form-label" style="font-weight: 600;">
+                      Nama Kontak / Label Penerima (Opsional)
+                    </label>
+                    <input type="text" id="cfg-rsvp-wa-name" class="form-control" placeholder="Contoh: Panitia RSVP / Mempelai Pria">
+                    <span style="font-size: 0.76rem; color: var(--admin-text-muted); margin-top: 4px; display: block;">
+                      Nama yang ditampilkan kepada tamu saat konfirmasi dikirimkan.
+                    </span>
+                  </div>
+
+                </div>
+
+                <div style="margin-top: 1rem; padding-top: 0.85rem; border-top: 1px dashed var(--admin-border); display: flex; flex-direction: column; gap: 0.75rem;">
+                  <label style="font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="cfg-rsvp-auto-wa" checked>
+                    <span><strong>Otomatis buka WhatsApp:</strong> Setelah tamu klik Simpan Konfirmasi, layar langsung mengarahkan ke chat WhatsApp dengan pesan tersusun rapi.</span>
+                  </label>
+
+                  <!-- Preview Pesan RSVP WhatsApp -->
+                  <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 0.85rem; margin-top: 0.25rem;">
+                    <span style="font-size: 0.78rem; font-weight: 600; color: #475569; display: block; margin-bottom: 0.4rem;">
+                      <i class="fab fa-whatsapp" style="color: #25D366;"></i> Format Pesan RSVP yang Diterima di WhatsApp Anda:
+                    </span>
+                    <pre style="background: #f8fafc; border-radius: 4px; padding: 8px 10px; font-size: 0.76rem; color: #334155; margin: 0; white-space: pre-wrap; font-family: inherit; line-height: 1.45;" id="rsvp-wa-sample-preview">
+*KONFIRMASI KEHADIRAN UNDANGAN PERNIKAHAN*
+Kepada: Mempelai
+-------------------------------------------
+*Nama:* Budi Santoso
+*Status:* Akan Hadir
+*Jumlah Tamu:* 2 orang
+*Pesan / Doa:* "Selamat menempuh hidup baru, semoga sakinah mawaddah warahmah!"
+-------------------------------------------
+Tersimpan di Sistem Server Undangan Digital</pre>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 3. KADO DIGITAL & REKENING BANK -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-gift" style="color: var(--admin-gold);"></i> Rekening Bank Kado Digital
+                  </h4>
+                  <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">
+                    Atur rekening bank untuk menerima tanda kasih digital dari para tamu. Tersedia preset Bank BCA, BRI, BSI, dan opsi menambah rekening baru tanpa batas.
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  <button type="button" class="btn-sm" id="btn-add-bank-account" style="background: #2563eb; color: white; display: inline-flex; align-items: center; gap: 6px; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                    <i class="fas fa-plus-circle"></i> Tambah Rekening Bank
+                  </button>
+                  <button type="button" class="btn-sm btn-export" id="btn-reset-bank-accounts" title="Reset ke 3 Rekening: BCA, BRI, BSI">
+                    <i class="fas fa-undo"></i> Reset Rekening (BCA, BRI, BSI)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Container Kartu-Kartu Rekening Bank Dinamis -->
+              <div id="admin-bank-accounts-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                <!-- Dirender dinamis oleh admin.js -->
+              </div>
+            </div>
+
+            <!-- 4. PENGATURAN MUSIK PENGIRING (MULTI-SUMBER: YOUTUBE, OFFLINE, & ONLINE) -->
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="font-size: 1.1rem; color: var(--admin-text); margin-bottom: 0.5rem;"><i class="fas fa-music" style="color: var(--admin-gold);"></i> Pengaturan Musik Pengiring (YouTube, Offline, & Online)</h4>
+              <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1rem;">
+                Mendukung lagu dari <strong>Link Share YouTube</strong>, file lokal <strong>MP3 offline</strong> di folder project, maupun link audio online dari Google Drive/CDN.
+              </p>
+
+              <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                
+                <!-- Pilihan Jenis Sumber Musik -->
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label class="form-label" style="font-weight: 600;">Jenis Sumber Musik</label>
+                  <select id="cfg-music-source-type" class="form-control" style="font-weight: 500;">
+                    <option value="youtube">🎥 YouTube (Gunakan Link Share / Video YouTube)</option>
+                    <option value="local" selected>📁 File Audio Lokal Offline (.mp3 di folder assets/music/)</option>
+                    <option value="online">🌐 URL Audio Online (Direct MP3, CDN, Dropbox, Google Drive)</option>
+                  </select>
+                </div>
+
+                <!-- Input Khusus YouTube -->
+                <div id="group-music-youtube" style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid #ffd1d1; margin-bottom: 1rem;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                    <label class="form-label" style="font-weight: 600; color: #cc0000; margin: 0;">
+                      <i class="fab fa-youtube"></i> Masukkan Link Share YouTube
+                    </label>
+                    <span id="cfg-yt-badge" style="font-size: 0.75rem; background: #e8f5e9; color: #2e7d32; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: none;">
+                      ✓ Video ID Terdeteksi
+                    </span>
+                  </div>
+                  <input type="text" id="cfg-music-youtube-url" class="form-control" placeholder="Contoh: https://youtu.be/... atau https://www.youtube.com/watch?v=..." style="margin-bottom: 0.5rem;">
+                  <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin: 0 0 8px 0;">
+                    💡 <strong>Cara Ambil Link:</strong> Buka video lagu pilihan Anda di YouTube &rarr; Klik tombol <strong>"Bagikan" (Share)</strong> &rarr; Pilih <strong>"Salin Link"</strong>, lalu tempelkan ke kolom di atas.
+                  </p>
+                  <div style="background: #fff8e1; border-left: 4px solid #ffb300; padding: 8px 12px; border-radius: 4px; font-size: 0.8rem; color: #795548; line-height: 1.4;">
+                    <strong><i class="fas fa-exclamation-triangle" style="color: #f57c00;"></i> Catatan Penting YouTube:</strong>
+                    Video musik resmi dari label besar (seperti VEVO / Sony / Warner) melarang pemutaran di situs lain (Error 150/101). Jika video tidak berputar, disarankan menggunakan versi <em>Cover Akustik, Lirik Video, atau Audio Instrumental</em>, atau gunakan fitur <strong>Unggah File MP3 Sendiri</strong> di bawah agar 100% lancar tanpa kendala hak cipta!
+                  </div>
+                </div>
+
+                <!-- Input File Lokal / Direct MP3 Online -->
+                <div id="group-music-file" style="margin-bottom: 1rem;">
+                  <!-- Kotak Unggah Lagu MP3 Sendiri -->
+                  <div style="background: #eef7ff; padding: 1.1rem; border-radius: 8px; border: 1.5px dashed #7bb4eb; margin-bottom: 1.25rem;">
+                    <label class="form-label" style="font-weight: 600; color: #1565c0; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px;">
+                      <i class="fas fa-cloud-upload-alt" style="font-size: 1.1rem;"></i> Unggah File Lagu Sendiri (MP3 / M4A / WAV dari Komputer / HP)
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                      <input type="file" id="cfg-music-upload-input" accept="audio/*" style="font-size: 0.85rem; padding: 6px; background: #fff; border-radius: 6px; border: 1px solid #c3d9ef;">
+                      <button type="button" id="btn-upload-music-file" class="btn-sm" style="background: #1976d2; color: #fff; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-upload"></i> Unggah Lagu MP3
+                      </button>
+                      <span id="music-upload-status" style="font-size: 0.82rem; color: #1565c0; font-weight: 600;"></span>
+                    </div>
+                    <p style="font-size: 0.78rem; color: #555; margin: 0.5rem 0 0 0;">
+                      💡 <em>File MP3 yang diunggah akan otomatis tersimpan di server dan diputar saat undangan dibuka (bebas blokir YouTube & bisa offline).</em>
+                    </p>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group">
+                      <label class="form-label">Pilih dari Koleksi Musik Preset</label>
+                      <select id="cfg-music-preset" class="form-control">
+                        <option value="" disabled selected>-- Pilih Preset Musik --</option>
+                        <option value="assets/music/lagu-undangan.mp3" data-title="Gending Jawa Instrumental - Lir Ilir Romantis" data-artist="Gamelan Jawa Modern">Gending Jawa - Lir Ilir Romantis (Default Offline)</option>
+                        <option value="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=traditional-asian-melody-112282.mp3" data-title="Kidung Kasih Pengantin Jawa" data-artist="Gamelan Akustik Syahdu">Kidung Kasih Pengantin Jawa (Akustik Gamelan)</option>
+                        <option value="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c6a7dc15.mp3?filename=acoustic-wedding-10985.mp3" data-title="Romantic Acoustic - Beautiful in White" data-artist="Acoustic Instrumental">Romantic Acoustic - Beautiful in White</option>
+                        <option value="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=serenity-11110.mp3" data-title="Serenity - Alunan Damai & Syahdu" data-artist="Peaceful Melody">Serenity - Alunan Damai & Syahdu</option>
+                        <option value="custom" data-title="" data-artist="">-- Masukkan Link / File MP3 Kustom --</option>
+                      </select>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="form-label">URL / File Path MP3</label>
+                      <input type="text" id="cfg-music-url" class="form-control" placeholder="assets/music/lagu-undangan.mp3 atau https://.../lagu.mp3">
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.25rem;">
+                  <div class="form-group">
+                    <label class="form-label">Judul Lagu</label>
+                    <input type="text" id="cfg-music-title" class="form-control" placeholder="Contoh: Gending Jawa Lir Ilir">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Nama Artis / Keterangan</label>
+                    <input type="text" id="cfg-music-artist" class="form-control" placeholder="Contoh: Gamelan Jawa Modern">
+                  </div>
+                </div>
+
+                <!-- Tombol Uji Putar Audio -->
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                  <button type="button" class="btn-sm" id="btn-test-music-play" style="background: #25D366; color: white; display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 6px; font-weight: 600;">
+                    <i class="fas fa-play" id="test-music-icon"></i> <span id="test-music-text">Uji Putar Musik</span>
+                  </button>
+                  <span style="font-size: 0.8rem; color: var(--admin-text-muted);">
+                    <i class="fas fa-info-circle"></i> Klik untuk mendengarkan lagu sebelum menyimpan (mendukung preview YouTube & file offline).
+                  </span>
+                </div>
+                
+                <!-- Hidden Preview Frame untuk YouTube di Admin -->
+                <div id="admin-yt-preview-container" style="display: none; margin-top: 10px;">
+                  <div id="admin-yt-player-frame"></div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 5. PENGATURAN GAMBAR TEMA, KAYON GUNUNGAN, & SILUET WAYANG (BERBAGAI SUMBER) -->
+            <div style="margin-bottom: 2rem;">
+              <h4 style="font-size: 1.1rem; color: var(--admin-text); margin-bottom: 0.5rem;">
+                <i class="fas fa-palette" style="color: var(--admin-gold);"></i> Pengaturan Gambar Tema, Kayon Gunungan, & Wayang
+              </h4>
+              <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 0.85rem;">
+                Kustomisasi gambar tirai Kayon Gunungan (bisa 2 gambar berbeda untuk sisi kiri & kanan), siluet wayang, dan ornamen keraton. Mendukung gambar dari Pinterest, Google Drive, link web, maupun file offline.
+              </p>
+
+              <!-- Panduan Praktis Mengambil Gambar -->
+              <div style="background: #fff8e6; border: 1px solid #ffd57a; padding: 0.85rem 1rem; border-radius: 6px; margin-bottom: 1.25rem; font-size: 0.82rem; color: #5a4005; line-height: 1.5;">
+                <strong><i class="fas fa-lightbulb" style="color: #d48b00;"></i> Tips Mengambil Gambar dari Berbagai Sumber:</strong>
+                <ul style="margin: 0.4rem 0 0 1.25rem; padding: 0;">
+                  <li><strong>Pinterest:</strong> Buka gambar di Pinterest &rarr; Klik Kanan pada gambar &rarr; Pilih <strong>"Salin Alamat Gambar" (Copy Image Address)</strong> yang berawalan <code>https://i.pinimg.com/...</code>.</li>
+                  <li><strong>Google Drive:</strong> Anda dapat langsung memasukkan link share Google Drive (<code>https://drive.google.com/file/d/.../view</code>). Sistem akan otomatis mengonversinya.</li>
+                  <li><strong>File Offline:</strong> Taruh file gambar di folder <code>assets/images/</code> dan masukkan nama filenya.</li>
+                </ul>
+              </div>
+
+              <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border); margin-bottom: 1rem;">
+                
+                <!-- Preset Cepat Tema Visual -->
+                <div class="form-group" style="margin-bottom: 1.25rem;">
+                  <label class="form-label">Pilihan Preset Ornamen Visual</label>
+                  <select id="cfg-theme-preset" class="form-control">
+                    <option value="" disabled selected>-- Pilih Preset Tampilan --</option>
+                    <option value="wayang-gold">Adat Jawa Wayang Emas (Default: Gunungan Kayon & Siluet Kamajaya-Kamaratih)</option>
+                    <option value="minimalist">Modern Minimalis (Sembunyikan Tirai Gunungan & Siluet Wayang)</option>
+                    <option value="custom">-- Kustom Gambar Sendiri (Bebas Input URL Pinterest/Web/Lokal) --</option>
+                  </select>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- A. KUSTOMISASI GAMBAR HALAMAN SAMPUL & KOTAK BUKA UNDANGAN    -->
+                <!-- ============================================================== -->
+                <div style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 2px solid #dfb15b; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(223, 177, 91, 0.1);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.65rem;">
+                    <div>
+                      <strong style="font-size: 1rem; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-envelope-open-text" style="color: #dfb15b;"></i> Kustomisasi Gambar Halaman Sampul &amp; Kotak Buka Undangan
+                      </strong>
+                      <p style="font-size: 0.8rem; color: #64748b; margin: 3px 0 0 0;">
+                        Kustomisasi seluruh gambar yang tampil di layar pertama pembuka website &amp; di dalam kotak kartu buka undangan.
+                      </p>
+                    </div>
+                    <span style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+                      <i class="fas fa-sparkles"></i> Layar Pembuka Utama
+                    </span>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    
+                    <!-- 1. Foto Background Layar Sampul Utama -->
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+                      <strong style="font-size: 0.9rem; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+                        <i class="fas fa-image" style="color: #dfb15b;"></i> Foto Background Sampul Pembuka
+                      </strong>
+                      <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.6rem;">
+                        Foto latar belakang sinematik layar pembuka saat tamu pertama kali membuka website undangan.
+                      </p>
+                      <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                        <input type="text" id="cfg-cover-photo" class="form-control" placeholder="assets/images/cover.jpg atau URL Pinterest / Web" style="font-size: 0.85rem;">
+                        <button type="button" class="btn-sm" id="btn-upload-cover-photo" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Upload dari laptop / HP">
+                          <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <input type="file" id="file-cover-photo" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                      </div>
+                      <div style="text-align: center; height: 90px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px; overflow: hidden; border: 1px solid #333;">
+                        <img id="preview-cover-photo" src="assets/images/cover.jpg" alt="Preview Foto Sampul" style="max-height: 82px; width: 100%; object-fit: cover; border-radius: 4px;" onerror="this.src='assets/images/cover.jpg'">
+                      </div>
+                    </div>
+
+                    <!-- 2. Lambang / Gambar Puncak Kotak Buka Undangan -->
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <strong style="font-size: 0.9rem; color: #1e293b;">
+                          <i class="fas fa-gem" style="color: #dfb15b;"></i> Lambang Puncak Kotak Buka Undangan
+                        </strong>
+                        <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                          <input type="checkbox" id="cfg-show-gunungan-center" checked> Aktif
+                        </label>
+                      </div>
+                      <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.6rem;">
+                        Gambar lambang di bagian paling atas dalam kotak buka undangan (Gunungan Kayon / Logo / Monogram).
+                      </p>
+                      <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                        <input type="text" id="cfg-gunungan-center-img" class="form-control" placeholder="assets/images/gunungan-gold.svg atau URL" style="font-size: 0.85rem;">
+                        <button type="button" class="btn-sm" id="btn-upload-gunungan-center" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Upload dari laptop / HP">
+                          <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <input type="file" id="file-gunungan-center" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                      </div>
+                      <div style="text-align: center; height: 90px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px; border: 1px solid #333;">
+                        <img id="preview-gunungan-center-img" src="assets/images/gunungan-gold.svg" alt="Preview Lambang Puncak" style="max-height: 80px; width: auto; object-fit: contain;" onerror="this.src='assets/images/gunungan-gold.svg'">
+                      </div>
+                    </div>
+
+                    <!-- 3. Figur Pasangan di Dalam Kotak Buka Undangan -->
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; grid-column: 1 / -1;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <strong style="font-size: 0.9rem; color: #1e293b;">
+                          <i class="fas fa-user-friends" style="color: #dfb15b;"></i> Figur / Ikon Pasangan di Kotak Buka Undangan (Mini Wayang)
+                        </strong>
+                        <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                          <input type="checkbox" id="cfg-show-cover-wayang" checked> Tampilkan di Kotak Sampul
+                        </label>
+                      </div>
+                      <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.75rem;">
+                        Dua gambar miniatur pengantin pria &amp; wanita di dalam kotak kartu sampul di atas nama kedua mempelai.
+                      </p>
+                      
+                      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1rem;">
+                        <!-- Figur Pria -->
+                        <div style="background: #fff; padding: 0.75rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                          <strong style="font-size: 0.83rem; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            <i class="fas fa-male" style="color: #dfb15b;"></i> Figur Pria di Kotak Sampul
+                          </strong>
+                          <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                            <input type="text" id="cfg-cover-wayang-groom-img" class="form-control" placeholder="assets/images/wayang-kamajaya.svg atau URL" style="font-size: 0.82rem;">
+                            <button type="button" class="btn-sm" id="btn-upload-cover-wayang-groom" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                              <i class="fas fa-upload"></i>
+                            </button>
+                            <input type="file" id="file-cover-wayang-groom" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                          </div>
+                          <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                            <img id="preview-cover-wayang-groom-img" src="assets/images/wayang-kamajaya.svg" alt="Preview Figur Pria" style="max-height: 52px; width: auto; object-fit: contain;" onerror="this.src='assets/images/wayang-kamajaya.svg'">
+                          </div>
+                        </div>
+
+                        <!-- Figur Wanita -->
+                        <div style="background: #fff; padding: 0.75rem; border-radius: 6px; border: 1px solid #e2e8f0;">
+                          <strong style="font-size: 0.83rem; color: #334155; display: block; margin-bottom: 0.35rem;">
+                            <i class="fas fa-female" style="color: #dfb15b;"></i> Figur Wanita di Kotak Sampul
+                          </strong>
+                          <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                            <input type="text" id="cfg-cover-wayang-bride-img" class="form-control" placeholder="assets/images/wayang-kamaratih.svg atau URL" style="font-size: 0.82rem;">
+                            <button type="button" class="btn-sm" id="btn-upload-cover-wayang-bride" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.78rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                              <i class="fas fa-upload"></i>
+                            </button>
+                            <input type="file" id="file-cover-wayang-bride" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                          </div>
+                          <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                            <img id="preview-cover-wayang-bride-img" src="assets/images/wayang-kamaratih.svg" alt="Preview Figur Wanita" style="max-height: 52px; width: auto; object-fit: contain;" onerror="this.src='assets/images/wayang-kamaratih.svg'">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 4. Foto Pasangan di Dalam Kotak Buka Undangan (Opsional) -->
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; grid-column: 1 / -1;">
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                        <strong style="font-size: 0.9rem; color: #1e293b;">
+                          <i class="fas fa-camera-retro" style="color: #dfb15b;"></i> Foto Profil Pasangan di Dalam Kotak Buka Undangan (Opsional)
+                        </strong>
+                        <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                          <input type="checkbox" id="cfg-show-cover-couple-photo"> Tampilkan Foto di Kotak Sampul
+                        </label>
+                      </div>
+                      <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.6rem;">
+                        Aktifkan opsi ini jika ingin menampilkan foto profil lingkaran kedua mempelai tepat di dalam kotak kartu buka undangan sebelum tombol Buka Undangan ditekan.
+                      </p>
+                      
+                      <div style="display: flex; gap: 14px; align-items: center;">
+                        <div style="width: 72px; height: 72px; border-radius: 50%; border: 3px solid #dfb15b; padding: 2px; background: #1a1511; box-shadow: 0 4px 10px rgba(0,0,0,0.15); flex-shrink: 0; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                          <img id="preview-cover-couple-photo" src="assets/images/cover.jpg" alt="Preview Foto Pasangan Kotak" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" onerror="this.src='assets/images/cover.jpg'">
+                        </div>
+                        <div style="flex-grow: 1;">
+                          <div style="display: flex; gap: 6px; margin-bottom: 4px;">
+                            <input type="text" id="cfg-cover-couple-photo" class="form-control" placeholder="assets/images/cover.jpg atau URL Pinterest / Web" style="font-size: 0.85rem;">
+                            <button type="button" class="btn-sm" id="btn-upload-cover-couple-photo" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Upload dari laptop / HP">
+                              <i class="fas fa-upload"></i> Upload
+                            </button>
+                            <input type="file" id="file-cover-couple-photo" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                          </div>
+                          <span style="font-size: 0.73rem; color: #64748b;">Mendukung format JPG, PNG, atau paste link Pinterest.</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- B. TIRAI GUNUNGAN WAYANG & SILUET PROFIL MEMPELAI              -->
+                <!-- ============================================================== -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                  
+                  <!-- 1. Kayon Gunungan KIRI -->
+                  <div style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                      <strong style="font-size: 0.9rem; color: var(--admin-text);"><i class="fas fa-torii-gate" style="color: var(--admin-gold);"></i> Kayon Gunungan KIRI</strong>
+                      <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="checkbox" id="cfg-show-gunungan" checked> Aktif
+                      </label>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin-bottom: 0.6rem;">Gambar tirai belah sisi kiri pembuka layar sampul</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                      <input type="text" id="cfg-gunungan-left-img" class="form-control" placeholder="assets/images/gunungan-gold.svg atau URL Pinterest/Drive" style="font-size: 0.85rem;">
+                      <button type="button" class="btn-sm" id="btn-upload-gunungan-left" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                        <i class="fas fa-upload"></i>
+                      </button>
+                      <input type="file" id="file-gunungan-left" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                    </div>
+                    <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                      <img id="preview-gunungan-left-img" src="assets/images/gunungan-gold.svg" alt="Preview Kayon Kiri" style="max-height: 52px; width: auto; object-fit: contain;">
+                    </div>
+                  </div>
+
+                  <!-- 2. Kayon Gunungan KANAN -->
+                  <div style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                      <strong style="font-size: 0.9rem; color: var(--admin-text);"><i class="fas fa-torii-gate" style="color: var(--admin-gold);"></i> Kayon Gunungan KANAN</strong>
+                      <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;" title="Centang jika gambar kanan dibalik secara simetris">
+                        <input type="checkbox" id="cfg-gunungan-right-mirror" checked> Mirror
+                      </label>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin-bottom: 0.6rem;">Gambar tirai kanan (kosongkan jika sama dengan kiri)</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                      <input type="text" id="cfg-gunungan-right-img" class="form-control" placeholder="Kosongkan untuk otomatis pakai gambar kiri" style="font-size: 0.85rem;">
+                      <button type="button" class="btn-sm" id="btn-upload-gunungan-right" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                        <i class="fas fa-upload"></i>
+                      </button>
+                      <input type="file" id="file-gunungan-right" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                    </div>
+                    <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                      <img id="preview-gunungan-right-img" src="assets/images/gunungan-gold.svg" alt="Preview Kayon Kanan" style="max-height: 52px; width: auto; object-fit: contain;">
+                    </div>
+                  </div>
+
+                  <!-- 3. Siluet Wayang Mempelai Pria -->
+                  <div style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                      <strong style="font-size: 0.9rem; color: var(--admin-text);"><i class="fas fa-male" style="color: var(--admin-gold);"></i> Siluet Wayang Pria (Kartu Profil)</strong>
+                      <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="checkbox" id="cfg-show-wayang-groom" checked> Aktif
+                      </label>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin-bottom: 0.6rem;">Gambar siluet di kartu profil mempelai pria</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                      <input type="text" id="cfg-wayang-groom-img" class="form-control" placeholder="assets/images/wayang-kamajaya.svg atau URL" style="font-size: 0.85rem;">
+                      <button type="button" class="btn-sm" id="btn-upload-wayang-groom" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                        <i class="fas fa-upload"></i>
+                      </button>
+                      <input type="file" id="file-wayang-groom" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                    </div>
+                    <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                      <img id="preview-wayang-groom-img" src="assets/images/wayang-kamajaya.svg" alt="Preview Wayang Pria" style="max-height: 52px; width: auto; object-fit: contain;">
+                    </div>
+                  </div>
+
+                  <!-- 4. Siluet Wayang Mempelai Wanita -->
+                  <div style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                      <strong style="font-size: 0.9rem; color: var(--admin-text);"><i class="fas fa-female" style="color: var(--admin-gold);"></i> Siluet Wayang Wanita (Kartu Profil)</strong>
+                      <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="checkbox" id="cfg-show-wayang-bride" checked> Aktif
+                      </label>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin-bottom: 0.6rem;">Gambar siluet di kartu profil mempelai wanita</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                      <input type="text" id="cfg-wayang-bride-img" class="form-control" placeholder="assets/images/wayang-kamaratih.svg atau URL" style="font-size: 0.85rem;">
+                      <button type="button" class="btn-sm" id="btn-upload-wayang-bride" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                        <i class="fas fa-upload"></i>
+                      </button>
+                      <input type="file" id="file-wayang-bride" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                    </div>
+                    <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                      <img id="preview-wayang-bride-img" src="assets/images/wayang-kamaratih.svg" alt="Preview Wayang Wanita" style="max-height: 52px; width: auto; object-fit: contain;">
+                    </div>
+                  </div>
+
+                  <!-- 5. Ornamen Sudut Keraton -->
+                  <div style="background: #ffffff; padding: 1rem; border-radius: 8px; border: 1px solid var(--admin-border);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                      <strong style="font-size: 0.9rem; color: var(--admin-text);"><i class="fas fa-certificate" style="color: var(--admin-gold);"></i> Ornamen Sudut Keraton</strong>
+                      <label style="font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                        <input type="checkbox" id="cfg-show-corners" checked> Aktif
+                      </label>
+                    </div>
+                    <p style="font-size: 0.78rem; color: var(--admin-text-muted); margin-bottom: 0.6rem;">Ornamen ukir di 4 sudut layar sampul depan</p>
+                    <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                      <input type="text" id="cfg-corner-img" class="form-control" placeholder="assets/images/javanese-corner.svg atau URL" style="font-size: 0.85rem;">
+                      <button type="button" class="btn-sm" id="btn-upload-corner" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Upload">
+                        <i class="fas fa-upload"></i>
+                      </button>
+                      <input type="file" id="file-corner" accept="image/png,image/jpeg,image/webp,image/svg+xml" style="display: none;">
+                    </div>
+                    <div style="text-align: center; height: 60px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px;">
+                      <img id="preview-corner-img" src="assets/images/javanese-corner.svg" alt="Preview Ornamen Sudut" style="max-height: 48px; width: auto; object-fit: contain;">
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Ikon Tab Browser (Favicon Chrome / Web Atas & Layar HP) -->
+                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px dashed var(--admin-border);">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 0.5rem;">
+                    <div>
+                      <strong style="font-size: 0.98rem; color: var(--admin-gold); display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-window-maximize"></i> Ikon Tab Browser &amp; Layar HP (Favicon Chrome &amp; Web Atas)
+                      </strong>
+                      <p style="font-size: 0.82rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">
+                        Ganti ikon yang tampil di tab browser Google Chrome desktop maupun pintasan layar ponsel tamu. Mendukung format <strong>.PNG</strong>, <strong>.JPG</strong>, atau salin langsung link dari internet (Pinterest, Imgur, dsb).
+                      </p>
+                    </div>
+                    <span style="font-size: 0.74rem; background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-weight: 600;">
+                      <i class="fas fa-check-circle"></i> Kompatibel Desktop &amp; HP
+                    </span>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; margin-top: 0.75rem;">
+                    
+                    <!-- 1. Favicon Undangan Tamu -->
+                    <div style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid var(--admin-border); box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label for="cfg-favicon-invitation" class="form-label" style="font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; margin: 0;">
+                          <i class="fas fa-envelope-open-text" style="color: var(--admin-gold);"></i> Ikon Tab Halaman Undangan
+                        </label>
+                        <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">PNG / JPG / URL</span>
+                      </div>
+                      
+                      <!-- Input & File Upload Button -->
+                      <div style="display: flex; gap: 6px; margin-bottom: 0.6rem;">
+                        <input type="text" id="cfg-favicon-invitation" class="form-control" placeholder="assets/images/favicon.png atau link Pinterest / Web" style="font-size: 0.85rem;" title="Salin link gambar Pinterest / Web ke sini">
+                        <button type="button" class="btn-sm" id="btn-upload-fav-invitation" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Pilih file gambar (.png, .jpg) dari perangkat">
+                          <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <input type="file" id="file-fav-invitation" accept="image/png,image/jpeg,image/webp,image/x-icon,image/svg+xml" style="display: none;">
+                      </div>
+
+                      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.73rem; color: #64748b;">
+                          <i class="fab fa-pinterest" style="color: #e60023;"></i> Tips: Bisa salin link Pinterest (otomatis diekstrak jadi gambar).
+                        </span>
+                      </div>
+
+                      <!-- Realistis Dual Preview: Chrome Tab + Mobile Icon -->
+                      <div style="background: #181410; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(223, 177, 91, 0.25);">
+                        <div style="font-size: 0.72rem; color: #dfb15b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+                          <i class="fas fa-eye"></i> Pratinjau Tampilan Tab &amp; HP:
+                        </div>
+                        
+                        <!-- Chrome Desktop Tab Mockup -->
+                        <div style="background: #292a2d; border-radius: 6px 6px 0 0; padding: 6px 10px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #3c4043; max-width: 250px;">
+                          <img id="preview-favicon-invitation" src="assets/images/favicon.png" alt="Favicon Undangan" style="width: 18px; height: 18px; object-fit: contain; border-radius: 3px;" onerror="this.src='assets/images/favicon.png'">
+                          <span style="font-size: 0.75rem; color: #e8eaed; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1;">The Wedding of Dimas &amp; Anindya</span>
+                          <i class="fas fa-times" style="font-size: 10px; color: #9aa0a6;"></i>
+                        </div>
+                        
+                        <!-- Mobile / Home Screen Icon Mockup -->
+                        <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                          <div style="width: 38px; height: 38px; background: #201a14; border: 1px solid #dfb15b; border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+                            <img id="preview-favicon-invitation-mobile" src="assets/images/favicon.png" alt="Mobile Favicon" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.src='assets/images/favicon.png'">
+                          </div>
+                          <div>
+                            <div style="font-size: 0.76rem; color: #fff; font-weight: 600;">Ikon Layar Ponsel (Mobile)</div>
+                            <div style="font-size: 0.7rem; color: #a8a096;">Otomatis menyesuaikan ukuran di Android &amp; iPhone</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- 2. Favicon Dasbor Admin -->
+                    <div style="background: #ffffff; padding: 1rem; border-radius: 10px; border: 1px solid var(--admin-border); box-shadow: 0 1px 4px rgba(0,0,0,0.03);">
+                      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <label for="cfg-favicon-admin" class="form-label" style="font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; margin: 0;">
+                          <i class="fas fa-shield-alt" style="color: var(--admin-gold);"></i> Ikon Tab Dasbor Admin
+                        </label>
+                        <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">PNG / JPG / URL</span>
+                      </div>
+                      
+                      <!-- Input & File Upload Button -->
+                      <div style="display: flex; gap: 6px; margin-bottom: 0.6rem;">
+                        <input type="text" id="cfg-favicon-admin" class="form-control" placeholder="assets/images/favicon-admin.png atau link Pinterest / Web" style="font-size: 0.85rem;" title="Salin link gambar Pinterest / Web ke sini">
+                        <button type="button" class="btn-sm" id="btn-upload-fav-admin" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Pilih file gambar (.png, .jpg) dari perangkat">
+                          <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <input type="file" id="file-fav-admin" accept="image/png,image/jpeg,image/webp,image/x-icon,image/svg+xml" style="display: none;">
+                      </div>
+
+                      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.75rem;">
+                        <span style="font-size: 0.73rem; color: #64748b;">
+                          <i class="fas fa-magic" style="color: var(--admin-gold);"></i> Ikon tab admin berubah secara langsung saat disimpan.
+                        </span>
+                      </div>
+
+                      <!-- Realistis Dual Preview: Chrome Tab + Mobile Icon -->
+                      <div style="background: #181410; padding: 10px 12px; border-radius: 8px; border: 1px solid rgba(223, 177, 91, 0.25);">
+                        <div style="font-size: 0.72rem; color: #dfb15b; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; align-items: center; gap: 5px;">
+                          <i class="fas fa-eye"></i> Pratinjau Tampilan Tab &amp; HP:
+                        </div>
+                        
+                        <!-- Chrome Desktop Tab Mockup -->
+                        <div style="background: #292a2d; border-radius: 6px 6px 0 0; padding: 6px 10px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #3c4043; max-width: 250px;">
+                          <img id="preview-favicon-admin" src="assets/images/favicon-admin.png" alt="Favicon Admin" style="width: 18px; height: 18px; object-fit: contain; border-radius: 3px;" onerror="this.src='assets/images/favicon-admin.png'">
+                          <span style="font-size: 0.75rem; color: #e8eaed; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1;">Panel Admin - Dasbor Kelola</span>
+                          <i class="fas fa-times" style="font-size: 10px; color: #9aa0a6;"></i>
+                        </div>
+                        
+                        <!-- Mobile / Home Screen Icon Mockup -->
+                        <div style="margin-top: 8px; display: flex; align-items: center; gap: 10px; padding-top: 6px; border-top: 1px dashed rgba(255,255,255,0.1);">
+                          <div style="width: 38px; height: 38px; background: #201a14; border: 1px solid #dfb15b; border-radius: 9px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.5);">
+                            <img id="preview-favicon-admin-mobile" src="assets/images/favicon-admin.png" alt="Mobile Favicon Admin" style="width: 28px; height: 28px; object-fit: contain;" onerror="this.src='assets/images/favicon-admin.png'">
+                          </div>
+                          <div>
+                            <div style="font-size: 0.76rem; color: #fff; font-weight: 600;">Ikon Layar Ponsel (Mobile)</div>
+                            <div style="font-size: 0.7rem; color: #a8a096;">Kompatibel layar sentuh &amp; bookmark</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 6. PERJALANAN CINTA (LOVE STORY TIMELINE) -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0;">
+                    <i class="fas fa-heart" style="color: var(--admin-gold);"></i> Perjalanan Cinta (Love Story Timeline)
+                  </h4>
+                  <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 4px;">
+                    Rangkai jejak langkah dan momen berharga Anda berdua menuju pelaminan. Dapat ditambah, diubah, diurutkan, atau dihapus.
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn-sm btn-add" id="btn-add-story-item">
+                    <i class="fas fa-plus"></i> Tambah Momen Kisah
+                  </button>
+                  <button type="button" class="btn-sm" id="btn-reset-story-default" style="background: #f1ece4; color: #4a453f;" title="Kembalikan 4 kisah contoh bawaan">
+                    <i class="fas fa-undo"></i> Contoh Kisah
+                  </button>
+                </div>
+              </div>
+
+              <!-- List Container Momen Perjalanan Cinta -->
+              <div id="admin-story-list" style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Dirender secara dinamis oleh admin.js -->
+              </div>
+            </div>
+
+            <!-- 7. GALERI FOTO PERNIKAHAN -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0;">
+                    <i class="fas fa-images" style="color: var(--admin-gold);"></i> Galeri Foto Pernikahan
+                  </h4>
+                  <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 4px;">
+                    Kelola foto-foto prewedding dan momen bahagia. Mendukung file lokal (<code>assets/images/...</code>), tautan langsung web, Pinterest, dan Google Drive.
+                  </p>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button type="button" class="btn-sm btn-add" id="btn-add-gallery-item">
+                    <i class="fas fa-plus"></i> Tambah Foto Galeri
+                  </button>
+                  <button type="button" class="btn-sm" id="btn-reset-gallery-default" style="background: #f1ece4; color: #4a453f;" title="Kembalikan 4 foto prewedding bawaan">
+                    <i class="fas fa-undo"></i> Contoh Foto
+                  </button>
+                </div>
+              </div>
+
+              <!-- List Container Galeri Foto -->
+              <div id="admin-gallery-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+                <!-- Dirender secara dinamis oleh admin.js -->
+              </div>
+            </div>
+
+            <!-- 8. BAGIAN PENUTUP & FOOTER (BAWAH POL UNDANGAN) -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <h4 style="font-size: 1.1rem; color: var(--admin-text); margin-bottom: 0.5rem;">
+                <i class="fas fa-feather-alt" style="color: var(--admin-gold);"></i> 8. Bagian Penutup &amp; Footer (Bawah Pol Undangan)
+              </h4>
+              <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">
+                Kustomisasi teks nama mempelai penutup, doa/kalimat salam kehormatan, dan teks hak cipta (copyright) di bagian paling bawah halaman undangan.
+              </p>
+
+              <div class="form-group">
+                <label for="cfg-footer-couple-names" class="form-label" style="font-weight: 600;">
+                  Nama Panggilan Mempelai Penutup
+                </label>
+                <input type="text" id="cfg-footer-couple-names" class="form-control" placeholder="Contoh: agus &amp; agis (Kosongkan jika otomatis dari nama mempelai)">
+                <span style="font-size: 0.78rem; color: var(--admin-text-muted);">Nama yang ditampilkan dalam ukuran besar di atas kalimat penutup.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-footer-closing-greeting" class="form-label" style="font-weight: 600;">
+                  Kalimat Salam Penutup &amp; Doa Restu
+                </label>
+                <textarea id="cfg-footer-closing-greeting" class="form-control" rows="3" placeholder="Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai."></textarea>
+                <span style="font-size: 0.78rem; color: var(--admin-text-muted);">Teks ucapan terima kasih dan permohonan doa restu kepada para tamu.</span>
+              </div>
+
+              <div class="form-group">
+                <label for="cfg-footer-copyright" class="form-label" style="font-weight: 600;">
+                  Teks Hak Cipta / Copyright Paling Bawah (Bawah Pol)
+                </label>
+                <input type="text" id="cfg-footer-copyright" class="form-control" placeholder="&copy; 2026 agus &amp; agis Wedding Invitation. Dibuat dengan penuh cinta.">
+                <span style="font-size: 0.78rem; color: var(--admin-text-muted);">Baris teks hak cipta / watermark yang berada di bagian paling bawah halaman undangan.</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1.05rem;">
+              <i class="fas fa-save"></i> Simpan Seluruh Kustomisasi Undangan
+            </button>
+          </form>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL TAMBAH / EDIT TAMU                                       -->
+  <!-- ============================================================== -->
+  <div id="guest-modal" class="modal-admin-backdrop">
+    <div class="modal-admin-card">
+      <button type="button" class="modal-close-icon" id="btn-close-guest-modal">&times;</button>
+      <h3 class="modal-admin-title" id="guest-modal-title">Tambah Tamu Undangan</h3>
+
+      <form id="guest-form">
+        <div class="form-group">
+          <label for="guest-name-input" class="form-label">Nama Lengkap Tamu *</label>
+          <input type="text" id="guest-name-input" class="form-control" placeholder="Contoh: Bpk. Hendra & Keluarga" required>
+        </div>
+
+        <div class="form-group">
+          <label for="guest-phone-input" class="form-label">Nomor WhatsApp Tamu (Opsional)</label>
+          <input type="tel" id="guest-phone-input" class="form-control" placeholder="Contoh: 081234567890 (Untuk kirim WA otomatis)">
+        </div>
+
+        <div class="form-group">
+          <label for="guest-code-input" class="form-label">Kode Undangan Khusus (Opsional)</label>
+          <input type="text" id="guest-code-input" class="form-control" placeholder="Contoh: WDG-001 (Kosongkan untuk otomatis)">
+        </div>
+
+        <div class="form-group">
+          <label for="guest-category-input" class="form-label">Kategori Tamu</label>
+          <select id="guest-category-input" class="form-control">
+            <option value="Keluarga">Keluarga Besar</option>
+            <option value="Sahabat">Sahabat / Teman Dekat</option>
+            <option value="VIP">Tamu VIP</option>
+            <option value="Rekan Kerja">Rekan Kerja / Bisnis</option>
+            <option value="Umum" selected>Umum</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="guest-pax-input" class="form-label">Kuota Tamu (Orang)</label>
+          <input type="number" id="guest-pax-input" class="form-control" value="2" min="1" max="10">
+        </div>
+
+        <div class="form-group">
+          <label for="guest-notes-input" class="form-label">Catatan Tambahan (Opsional)</label>
+          <input type="text" id="guest-notes-input" class="form-control" placeholder="Contoh: Meja VIP 2">
+        </div>
+
+        <button type="submit" class="btn-primary" style="margin-top: 1rem;">
+          <i class="fas fa-save"></i> Simpan Data Tamu
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL GANTI AKUN & PASSWORD ADMIN -->
+  <div id="account-modal" class="modal-admin-backdrop">
+    <div class="modal-admin-card" style="max-width: 480px;">
+      <button type="button" class="modal-close-icon" id="btn-close-account-modal">&times;</button>
+      <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 0.5rem;">
+        <i class="fas fa-user-shield" style="color: var(--admin-gold); font-size: 1.4rem;"></i>
+        <h3 class="modal-admin-title" style="margin: 0;">Pengaturan Akun &amp; Password</h3>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">
+        Perbarui email login dan kata sandi akses dasbor admin. Perubahan tersimpan secara aman di sistem.
+      </p>
+
+      <div id="account-modal-alert" class="login-alert" style="display: none; margin-bottom: 1rem;"></div>
+
+      <form id="admin-account-form">
+        <div class="form-group">
+          <label for="acc-admin-email" class="form-label">Email Admin Baru</label>
+          <input type="email" id="acc-admin-email" class="form-control" required autocomplete="email">
+          <span style="font-size: 0.75rem; color: var(--admin-text-muted);">Email ini akan digunakan untuk login berikutnya.</span>
+        </div>
+
+        <div class="form-group">
+          <label for="acc-admin-password" class="form-label">Password Baru</label>
+          <input type="password" id="acc-admin-password" class="form-control" placeholder="Minimal 6 karakter" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <div class="form-group">
+          <label for="acc-admin-password-confirm" class="form-label">Konfirmasi Password Baru</label>
+          <input type="password" id="acc-admin-password-confirm" class="form-control" placeholder="Ulangi password baru" minlength="6" required autocomplete="new-password">
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 1.5rem;">
+          <button type="button" class="btn-sm btn-outline" id="btn-cancel-account-modal" style="flex: 1; padding: 0.6rem; justify-content: center;">
+            Batal
+          </button>
+          <button type="submit" class="btn-primary" id="btn-submit-account-change" style="flex: 2; margin-top: 0; padding: 0.6rem; justify-content: center;">
+            <i class="fas fa-save"></i> Simpan Perubahan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notifikasi Admin -->
+  <div id="admin-toast" class="admin-toast">Pesan berhasil disimpan.</div>
+
+  <!-- Skrip JavaScript Admin -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/wa-generator.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "gst-001",
+    "name": "Bapak Budi Santoso & Keluarga",
+    "slug": "bapak-budi-santoso-keluarga",
+    "code": "WDG-001",
+    "category": "Keluarga",
+    "pax": 2,
+    "notes": "Meja Keluarga 01",
+    "createdAt": "2026-11-19T15:03:14.505Z"
+  },
+  {
+    "id": "gst-002",
+    "name": "Ibu Ratna Dewi & Suami",
+    "slug": "ibu-ratna-dewi-suami",
+    "code": "WDG-002",
+    "category": "VIP",
+    "pax": 2,
+    "notes": "Meja VIP A",
+    "createdAt": "2026-11-19T15:03:14.512Z"
+  },
+  {
+    "id": "gst-003",
+    "name": "Rian Hidayat (Sahabat Kampus)",
+    "slug": "rian-hidayat",
+    "code": "WDG-003",
+    "category": "Sahabat",
+    "pax": 1,
+    "notes": "Alumni Teknik Informatika",
+    "createdAt": "2026-11-19T15:03:14.512Z"
+  }
+]

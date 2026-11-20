@@ -1,0 +1,204 @@
+{
+  "weddingTitle": "The Wedding of Dimas & Anindya - Undangan Pernikahan Digital",
+  "couple": {
+    "groom": {
+      "callName": "Prabowo",
+      "fullName": "prabiwi subiinti",
+      "fatherName": "bambang",
+      "motherName": "Ibu Siti Rahmawati",
+      "childOrder": "Putra pertama dari",
+      "instagram": "https://instagram.com/",
+      "photo": "assets/images/couple-1.jpg",
+      "bio": "Seorang insan yang bertekad menjaga komitmen suci, membimbing dalam kasih sayang, dan membangun bahtera rumah tangga yang sakinah, mawaddah, warahmah."
+    },
+    "bride": {
+      "callName": "Teddy",
+      "fullName": "mayor tidi",
+      "fatherName": "michael",
+      "motherName": "Ibu Hj. Nurul Hasanah",
+      "childOrder": "Putri kedua dari",
+      "instagram": "https://instagram.com/",
+      "photo": "assets/images/couple-2.jpg",
+      "bio": "Sosok wanita penyayang yang siap menyempurnakan separuh agama, melangkah bersama dalam suka dan duka menggapai ridho Allah SWT."
+    },
+    "coverPhoto": "assets/images/cover.jpg",
+    "backgroundPhoto": "assets/images/background.jpg"
+  },
+  "quotes": {
+    "title": "QS. Ar-Rum Ayat 21",
+    "verse": "\"Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya, dan Dia menjadikan di antaramu rasa kasih dan sayang. Sungguh, pada yang demikian itu benar-benar terdapat tanda-tanda (kebesaran Allah) bagi kaum yang berpikir.\" (QS. Ar-Rum: 21)",
+    "closingGreeting": "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai."
+  },
+  "events": {
+    "akad": {
+      "title": "Akad Nikah",
+      "dayName": "Sabtu",
+      "dateFormatted": "21 November 2026",
+      "timeFormatted": "08.00 - 10.00 WIB",
+      "venueName": "Masjid Agung Al-Barkah",
+      "venueAddress": "Jl. Veteran No. 45, Margajaya, Bekasi Selatan, Kota Bekasi, Jawa Barat",
+      "googleMapsUrl": "https://maps.google.com/?q=Masjid+Agung+Al-Barkah+Bekasi",
+      "iconClass": "fa-ring"
+    },
+    "resepsi": {
+      "title": "Resepsi Pernikahan",
+      "dayName": "Sabtu",
+      "dateFormatted": "21 November 2026",
+      "timeFormatted": "11.00 - 14.00 WIB",
+      "venueName": "Grand Ballroom Hotel Horison",
+      "venueAddress": "Jl. KH. Noer Ali, Pekayon Jaya, Bekasi Selatan, Kota Bekasi, Jawa Barat",
+      "googleMapsUrl": "https://maps.google.com/?q=Hotel+Horison+Bekasi",
+      "iconClass": "fa-glass-cheers"
+    },
+    "unduhMantu": {
+      "enable": true,
+      "title": "Acara Unduh Mantu",
+      "dateFormatted": "20 Desember 2026",
+      "timeFormatted": "10.00 - 14.00 WIB",
+      "venueName": "Kediaman Keluarga Mempelai Pria",
+      "venueAddress": "Jl. Kemang Pratama Raya No. 12, Kel. Bojong Rawalumbu, Kec. Rawalumbu, Kota Bekasi, Jawa Barat",
+      "googleMapsUrl": "https://maps.google.com/?q=Bekasi",
+      "iconClass": "fa-home-user"
+    }
+  },
+  "countdown": {
+    "targetDate": "2026-11-21T08:00:00",
+    "eventPassedMessage": "Alhamdulillah, rangkaian acara pernikahan telah selesai diselenggarakan dengan penuh kebahagiaan. Terima kasih banyak atas kehadiran dan doa restu Anda!"
+  },
+  "loveStory": [
+    {
+      "year": "2021",
+      "title": "Pertemuan Pertama",
+      "description": "Pertemuan kami berawal dari sebuah kegiatan sosial di kampus. Senyuman sederhana menjadi awal mula obrolan panjang yang tak pernah disangka akan bermuara hingga sejauh ini.",
+      "image": "assets/images/gallery-1.jpg"
+    },
+    {
+      "year": "2023",
+      "title": "Menjalin Komitmen",
+      "description": "Dua tahun saling mengenal, memahami karakter dan visi hidup satu sama lain. Kami bersepakat untuk saling menjaga hati dan berkomitmen menuju jenjang pernikahan yang diridhoi.",
+      "image": "assets/images/gallery-2.jpg"
+    },
+    {
+      "year": "2025",
+      "title": "Momen Lamaran (Khitbah)",
+      "description": "Dengan memohon restu dari kedua orang tua dan keluarga besar, kami mengikrarkan janji pertunangan sebagai wujud keseriusan untuk melangkah bersama ke pelaminan.",
+      "image": "assets/images/gallery-3.jpg"
+    },
+    {
+      "year": "2026",
+      "title": "Menuju Hari Bahagia",
+      "description": "Hari yang dinantikan akhirnya tiba. Dengan rasa syukur dan bismillah, kami siap menyatukan dua keluarga dalam ikatan suci pernikahan.",
+      "image": "assets/images/gallery-4.jpg"
+    }
+  ],
+  "gallery": [
+    {
+      "src": "assets/images/gallery-1.jpg",
+      "caption": "Momen manis saat prewedding di suasana alam terbuka."
+    },
+    {
+      "src": "assets/images/gallery-2.jpg",
+      "caption": "Saling menatap masa depan dengan penuh rasa syukur dan optimisme."
+    },
+    {
+      "src": "assets/images/gallery-1.jpg",
+      "caption": "Momen Bahagia Mempelai"
+    },
+    {
+      "src": "assets/images/gallery-3.jpg",
+      "caption": "Potret bahagia menyongsong lembaran hidup baru."
+    },
+    {
+      "src": "assets/images/gallery-1.jpg",
+      "caption": "Momen Bahagia Mempelai"
+    },
+    {
+      "src": "https://pin.it/1DgF8XTSN",
+      "caption": "Bergandengan tangan dalam ikatan kasih yang tulus."
+    }
+  ],
+  "music": {
+    "sourceType": "youtube",
+    "youtubeUrl": "https://youtu.be/ouxzBgJO7sc?si=zjQOdALNhBhtuB5j",
+    "youtubeId": "ouxzBgJO7sc",
+    "filePath": "assets/music/lagu-undangan.mp3",
+    "title": "2001X",
+    "artist": "ADRIAN KHALIF",
+    "autoplayAfterOpen": true
+  },
+  "themeAssets": {
+    "showGunungan": true,
+    "gununganImage": "https://pin.it/1DgF8XTSN",
+    "gununganLeftImage": "https://pin.it/1DgF8XTSN",
+    "gununganRightImage": "https://pin.it/1DgF8XTSN",
+    "gununganRightMirror": true,
+    "gununganCenterImage": "assets/images/gunungan-gold.svg",
+    "wayangGroomImage": "assets/images/wayang-kamajaya.svg",
+    "showWayangGroom": true,
+    "wayangBrideImage": "assets/images/wayang-kamaratih.svg",
+    "showWayangBride": true,
+    "cornerOrnamentImage": "assets/images/javanese-corner.svg",
+    "showCorners": true,
+    "showCoverWayang": true,
+    "favicon": "assets/images/gunungan-gold.svg",
+    "adminFavicon": "assets/images/gunungan-gold.svg",
+    "showGununganCenter": true,
+    "coverWayangGroomImage": "assets/images/wayang-kamajaya.svg",
+    "coverWayangBrideImage": "assets/images/wayang-kamaratih.svg",
+    "showCoverCouplePhoto": false,
+    "coverCouplePhoto": "assets/images/cover.jpg"
+  },
+  "gift": {
+    "description": "Doa restu Anda merupakan karunia terindah bagi kami. Namun jika Anda bermaksud memberikan tanda kasih, Anda dapat menyalurkannya melalui rekening berikut:",
+    "bankAccounts": [
+      {
+        "bankName": "Bank Central Asia (BCA)",
+        "accountNumber": "8830123456",
+        "accountHolder": "Dimas Pratama",
+        "badge": "BCA"
+      },
+      {
+        "bankName": "Bank Rakyat Indonesia (BRI)",
+        "accountNumber": "012301001234567",
+        "accountHolder": "Anindya Putri",
+        "badge": "BRI"
+      },
+      {
+        "bankName": "Bank Syariah Indonesia (BSI)",
+        "accountNumber": "7123456789",
+        "accountHolder": "Dimas Pratama",
+        "badge": "BSI"
+      }
+    ],
+    "qris": {
+      "imagePath": "assets/images/qrcode.png",
+      "title": "QRIS Kado Digital",
+      "note": "Dapat dipindai menggunakan seluruh aplikasi m-Banking dan e-Wallet (BCA, Mandiri, BRI, BNI, GoPay, OVO, Dana, ShopeePay)."
+    },
+    "physicalGift": {
+      "enable": true,
+      "recipientName": "Dimas & Anindya",
+      "phoneNumber": "+62 812-3456-7890",
+      "fullAddress": "Jl. Kemang Pratama Raya No. 12, Kel. Bojong Rawalumbu, Kec. Rawalumbu, Kota Bekasi, Jawa Barat 17116"
+    }
+  },
+  "rsvp": {
+    "whatsappNumber": "6281234567890",
+    "contactPersonName": "Dimas & Anindya",
+    "autoOpenWhatsApp": true
+  },
+  "guest": {
+    "defaultName": "Tamu Undangan",
+    "prefixGreeting": "Kepada Yth. Bapak/Ibu/Saudara/i:"
+  },
+  "whatsappTemplates": {
+    "formal": "Kepada Yth.\nBapak/Ibu/Saudara/i: *{guest_name}*\n\nAssalamu’alaikum Warahmatullahi Wabarakatuh,\n\nDengan memohon rahmat dan ridho Allah SWT, perkenankan kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami:\n\n💍 *{groom_name} & {bride_name}* 💍\n\n📅 {event_date}\n📍 {venue_name}\n\nUndangan digital dapat diakses melalui tautan di bawah ini:\n👉 {invite_link}\n\nMerupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kami berdua.\n\nTerima kasih banyak,\nWassalamu’alaikum Warahmatullahi Wabarakatuh\n*{groom_name} & {bride_name}*",
+    "casual": "Halo *{guest_name}*! 👋✨\n\nKabar bahagia! Kami ingin mengajak kamu ikut merayakan hari pernikahan kami:\n\n💍 *{groom_name} & {bride_name}* 💍\n\n📅 {event_date}\n📍 {venue_name}\n\nInfo lengkap & konfirmasi kehadiran bisa kamu cek langsung di link undangan ini ya:\n👉 {invite_link}\n\nKehadiran dan doa restumu sangat berarti bagi kami berdua. Sampai jumpa di hari bahagia nanti! 🎉✨\n\nSalam hangat,\n*{groom_name} & {bride_name}*",
+    "islami": "Assalamu’alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth. Bapak/Ibu/Saudara/i: *{guest_name}*\n\nMaha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Anda dalam ikatan suci pernikahan:\n\n💍 *{groom_name} & {bride_name}* 💍\n\n📅 {event_date}\n📍 {venue_name}\n\nTautan Undangan Digital:\n👉 {invite_link}\n\nSemoga senantiasa dilimpahkan keberkahan, kesehatan, dan kebahagiaan. Aamiin Yaa Rabbal 'Aalamiin.\n\nWassalamu’alaikum Wr. Wb.\nKeluarga Besar *{groom_name} & {bride_name}*"
+  },
+  "footer": {
+    "coupleNames": "prabowo & teddy",
+    "closingGreeting": "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.",
+    "copyright": "© 2026 prabowo & teddy Wedding Invitation. Dibuat dengan penuh cinta."
+  }
+}

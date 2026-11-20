@@ -1,0 +1,309 @@
+/**
+ * ==============================================================================
+ * RESPONSIVE CSS (responsive.css)
+ * ==============================================================================
+ * Optimasi tata letak dan pengalaman pengguna untuk:
+ * - Layar Desktop & Laptop (>= 992px)
+ * - Tablet (768px - 991px)
+ * - Smartphone (<= 767px)
+ * - Small Mobile & iPhone SE (<= 380px)
+ * ==============================================================================
+ */
+
+/* --- TABLET (MAKSIMAL 991px) --- */
+@media screen and (max-width: 991px) {
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.8rem;
+  }
+
+  .couple-grid {
+    gap: 1.5rem;
+  }
+
+  .couple-card {
+    padding: 1.8rem 1.4rem;
+  }
+
+  .couple-photo-wrapper {
+    width: 140px;
+    height: 140px;
+  }
+
+  .event-grid {
+    gap: 1.5rem;
+  }
+}
+
+/* --- SMARTPHONE / MOBILE (MAKSIMAL 767px) --- */
+@media screen and (max-width: 767px) {
+  /* Tipografi & Ruang */
+  .section-header {
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-size: 1.75rem;
+  }
+
+  .section-subtitle {
+    font-size: 1.6rem;
+  }
+
+  /* Cover Opening */
+  .cover-content {
+    padding: 2rem 1.4rem;
+    width: 92%;
+  }
+
+  .cover-names {
+    font-size: 2.7rem;
+  }
+
+  .cover-guest-name {
+    font-size: 1.3rem;
+  }
+
+  /* Gunungan Wayang & Ornamen di Layar Mobile */
+  .gunungan-curtain {
+    height: 65vh;
+    max-height: 520px;
+  }
+
+  .gunungan-left {
+    left: -15px;
+    transform: translateX(0);
+  }
+
+  .gunungan-right {
+    right: -15px;
+    transform: scaleX(-1) translateX(0);
+  }
+
+  .gunungan-right.unmirrored {
+    right: -15px;
+    transform: translateX(0);
+  }
+
+  .javanese-corner-ornament {
+    width: 45px;
+    height: 45px;
+  }
+
+  .corner-top-left { top: 10px; left: 10px; }
+  .corner-top-right { top: 10px; right: 10px; }
+  .corner-bottom-left { bottom: 10px; left: 10px; }
+  .corner-bottom-right { bottom: 10px; right: 10px; }
+
+  .cover-gunungan-center {
+    width: 58px;
+    height: 74px;
+  }
+
+  .wayang-card-watermark {
+    width: 160px;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding: 4rem 1rem 3rem;
+  }
+
+  .hero-card {
+    padding: 2rem 1.25rem;
+  }
+
+  .hero-title {
+    font-size: 2.3rem;
+  }
+
+  .countdown-grid {
+    gap: 8px;
+  }
+
+  .countdown-item {
+    padding: 0.65rem 0.35rem;
+  }
+
+  .countdown-number {
+    font-size: 1.4rem;
+  }
+
+  .countdown-label {
+    font-size: 0.65rem;
+  }
+
+  /* Mempelai (Couple) - Stack Vertikal */
+  .couple-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .couple-ampersand {
+    font-size: 2.8rem;
+    margin: -1rem 0;
+  }
+
+  .couple-card {
+    max-width: 360px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Timeline - Bergeser ke Sisi Kiri */
+  .timeline::after {
+    left: 20px;
+  }
+
+  .timeline-item {
+    width: 100%;
+    padding-left: 50px;
+    padding-right: 0;
+    text-align: left !important;
+  }
+
+  .timeline-item.right {
+    left: 0;
+  }
+
+  .timeline-dot {
+    left: 4px !important;
+    right: auto !important;
+  }
+
+  /* Acara (Events) - Stack Vertikal */
+  .event-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .event-card {
+    max-width: 420px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Galeri - 1 Kolom atau 2 Kolom Rapat */
+  .gallery-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    max-width: 420px;
+  }
+
+  /* RSVP & Buku Tamu */
+  .rsvp-wrapper,
+  .guestbook-form-card {
+    padding: 1.75rem 1.25rem;
+  }
+
+  /* Navigasi Bawah Mengambang */
+  .bottom-nav {
+    padding: 4px 6px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: 95%;
+    justify-content: space-around;
+  }
+
+  .nav-link {
+    padding: 6px 8px;
+    font-size: 0.62rem;
+  }
+
+  .nav-link i {
+    font-size: 0.9rem;
+  }
+
+  /* Tombol Musik & Kembali ke Atas */
+  .music-toggle-btn {
+    bottom: 75px;
+    left: 14px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .music-toggle-btn i {
+    font-size: 1rem;
+  }
+
+  .back-to-top {
+    bottom: 75px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Lightbox Mobile Nav */
+  .lightbox-prev {
+    left: 10px;
+  }
+
+  .lightbox-next {
+    right: 10px;
+  }
+
+  .lightbox-nav-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
+  /* Aesthetic Music Widget Mobile */
+  .aesthetic-music-widget {
+    bottom: 78px;
+    left: 16px;
+  }
+
+  /* Sticker & Quick Emoji Mobile Responsive */
+  .sticker-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-height: 220px;
+  }
+  .sticker-grid-item img {
+    width: 44px;
+    height: 44px;
+  }
+  .form-label-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .quick-emojis {
+    width: 100%;
+  }
+}
+
+/* --- SMALL MOBILE (MAKSIMAL 380px) --- */
+@media screen and (max-width: 380px) {
+  .aesthetic-music-widget {
+    bottom: 74px;
+    left: 14px;
+  }
+  .vinyl-disc-wrapper {
+    width: 44px;
+    height: 44px;
+  }
+  .cover-names {
+    font-size: 2.2rem;
+  }
+
+  .hero-title {
+    font-size: 1.95rem;
+  }
+
+  .nav-link span {
+    display: none; /* Sembunyikan label teks, tampilkan ikon saja di layar sangat sempit */
+  }
+
+  .nav-link {
+    padding: 8px 10px;
+  }
+
+  .nav-link i {
+    font-size: 1.1rem;
+  }
+}

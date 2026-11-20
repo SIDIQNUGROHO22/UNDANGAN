@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fae19c"/>
+      <stop offset="25%" stop-color="#dfb15b"/>
+      <stop offset="50%" stop-color="#c59239"/>
+      <stop offset="75%" stop-color="#e8c872"/>
+      <stop offset="100%" stop-color="#9d7122"/>
+    </linearGradient>
+    <linearGradient id="goldGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fff5d0" stop-opacity="0.9"/>
+      <stop offset="50%" stop-color="#d4a340" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#805615" stop-opacity="0.8"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Silhouette Gunungan Outer Shape -->
+  <path d="M 250,25 
+           C 270,90 310,140 350,195 
+           C 390,250 435,310 450,385 
+           C 465,460 455,530 440,600 
+           C 425,665 400,710 370,740 
+           L 275,740 L 275,785 L 225,785 L 225,740 L 130,740 
+           C 100,710 75,665 60,600 
+           C 45,530 35,460 50,385 
+           C 65,310 110,250 150,195 
+           C 190,140 230,90 250,25 Z" 
+        fill="none" stroke="url(#goldGrad)" stroke-width="6" filter="url(#glow)"/>
+
+  <!-- Inner Border Line -->
+  <path d="M 250,45 
+           C 268,105 305,150 340,202 
+           C 378,255 420,312 432,382 
+           C 445,452 438,518 424,585 
+           C 410,648 388,690 360,720 
+           L 140,720 
+           C 112,690 90,648 76,585 
+           C 62,518 55,452 68,382 
+           C 80,312 122,255 160,202 
+           C 195,150 232,105 250,45 Z" 
+        fill="rgba(24, 20, 16, 0.75)" stroke="url(#goldGrad)" stroke-width="2.5"/>
+
+  <!-- Batang Pohon Hayat (Tree of Life Central Trunk) -->
+  <path d="M 244,720 L 244,380 C 244,340 235,320 220,300 C 205,280 180,260 160,250 M 256,720 L 256,380 C 256,340 265,320 280,300 C 295,280 320,260 340,250" 
+        fill="none" stroke="url(#goldGrad)" stroke-width="4"/>
+
+  <!-- Dahan-Dahan Pohon Hayat & Daun Ukir Jawa -->
+  <g stroke="url(#goldGrad)" stroke-width="2.5" fill="none">
+    <!-- Cabang Kiri -->
+    <path d="M 244,450 C 210,430 170,435 130,460 C 110,475 95,505 100,530 C 105,550 130,555 150,540 C 175,520 200,490 244,490"/>
+    <path d="M 244,520 C 200,520 160,540 135,575 C 120,598 125,625 145,635 C 168,642 195,625 215,600 C 230,580 240,565 244,555"/>
+    <path d="M 244,360 C 200,340 165,320 145,280 C 135,260 145,235 168,235 C 190,235 215,260 235,290"/>
+    
+    <!-- Cabang Kanan -->
+    <path d="M 256,450 C 290,430 330,435 370,460 C 390,475 405,505 400,530 C 395,550 370,555 350,540 C 325,520 300,490 256,490"/>
+    <path d="M 256,520 C 300,520 340,540 365,575 C 380,598 375,625 355,635 C 332,642 305,625 285,600 C 270,580 260,565 256,555"/>
+    <path d="M 256,360 C 300,340 335,320 355,280 C 365,260 355,235 332,235 C 310,235 285,260 265,290"/>
+
+    <!-- Puncak Gunungan (Mustaka / Meru) -->
+    <path d="M 250,50 L 250,180"/>
+    <circle cx="250" cy="55" r="7" fill="url(#goldGrad)"/>
+    <circle cx="250" cy="95" r="10" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+    <circle cx="250" cy="140" r="14" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+    <path d="M 240,110 Q 250,95 260,110 Q 250,125 240,110 Z" fill="url(#goldGrad)"/>
+  </g>
+
+  <!-- Pintu Gerbang Kamadalu / Gapura Keraton di Kaki Gunungan -->
+  <g fill="none" stroke="url(#goldGrad)" stroke-width="3">
+    <!-- Atap Gapura Paduraksa -->
+    <path d="M 190,720 L 190,620 L 220,590 L 250,570 L 280,590 L 310,620 L 310,720 Z" fill="rgba(35, 27, 20, 0.85)"/>
+    <path d="M 205,720 L 205,635 L 250,600 L 295,635 L 295,720 Z" stroke-width="1.8"/>
+    <!-- Daun Pintu Kembar -->
+    <line x1="250" y1="600" x2="250" y2="720" stroke-width="2"/>
+    <circle cx="235" cy="660" r="4" fill="url(#goldGrad)"/>
+    <circle cx="265" cy="660" r="4" fill="url(#goldGrad)"/>
+  </g>
+
+  <!-- Ornamen Burung Merak / Garuda di Atas Gerbang -->
+  <g fill="url(#goldGrad)" opacity="0.9">
+    <circle cx="250" cy="350" r="18" fill="none" stroke="url(#goldGrad)" stroke-width="2"/>
+    <circle cx="250" cy="350" r="6"/>
+    <!-- Sayap Kiri & Kanan -->
+    <path d="M 240,345 C 220,320 185,325 170,350 C 190,355 220,352 238,355 Z"/>
+    <path d="M 260,345 C 280,320 315,325 330,350 C 310,355 280,352 262,355 Z"/>
+  </g>
+</svg>
+

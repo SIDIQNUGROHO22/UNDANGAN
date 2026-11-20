@@ -1,0 +1,57 @@
+[
+  {
+    "id": "rsvp-924f7a95",
+    "name": "Ibu Ratna Dewi & Suami",
+    "code": "WDG-002",
+    "status": "hadir",
+    "pax": 2,
+    "message": "Insya Allah kami hadir tepat waktu, mohon doanya juga!",
+    "sticker": "assets/stickers/wedding-flowers.gif",
+    "createdAt": "2026-11-20T15:49:29.436995"
+  },
+  {
+    "id": "rsvp-cac86877",
+    "name": "Budi Penguji RSVP",
+    "code": "WDG-001",
+    "status": "hadir",
+    "pax": 2,
+    "message": "Selamat bahagia!",
+    "createdAt": "2026-11-20T15:29:07.134582"
+  },
+  {
+    "id": "rsvp-39625963",
+    "name": "Budi Santoso",
+    "code": "WDG-088",
+    "status": "hadir",
+    "pax": 1,
+    "message": "Sugeng lumampah ing gesang enggal, mugi tansah pinaringan kabagyan lan berkah saking Gusti Allah.",
+    "createdAt": "2026-11-19T15:49:02.274Z"
+  },
+  {
+    "id": "rsvp-5c63db37",
+    "name": "Bapak Dr. H. Faisal & Istri",
+    "code": "WDG-VIP",
+    "status": "hadir",
+    "pax": 2,
+    "message": "Selamat dan berkah selalu untuk kedua mempelai!",
+    "createdAt": "2026-11-19T15:10:21.340Z"
+  },
+  {
+    "id": "rsvp-001",
+    "name": "Bapak Budi Santoso",
+    "code": "WDG-001",
+    "status": "hadir",
+    "pax": 2,
+    "message": "Selamat menempuh hidup baru Dimas & Anindya, semoga samawa selamanya!",
+    "createdAt": "2026-11-19T10:03:14.513Z"
+  },
+  {
+    "id": "rsvp-002",
+    "name": "Ibu Ratna Dewi",
+    "code": "WDG-002",
+    "status": "hadir",
+    "pax": 2,
+    "message": "Insya Allah kami hadir. Bahagia selalu untuk kedua mempelai.",
+    "createdAt": "2026-11-19T13:03:14.513Z"
+  }
+]

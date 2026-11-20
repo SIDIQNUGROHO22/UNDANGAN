@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 500" width="100%" height="100%">
+  <defs>
+    <linearGradient id="goldWayang" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fae19c"/>
+      <stop offset="50%" stop-color="#d4a340"/>
+      <stop offset="100%" stop-color="#805615"/>
+    </linearGradient>
+    <filter id="goldShine">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Siluet Wayang Kulit Raden Kamajaya (Tokoh Ksatria Emas) -->
+  <g fill="none" stroke="url(#goldWayang)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" filter="url(#goldShine)">
+    <!-- Mahkota Gelung Supit Urang / Jamang Ksatria -->
+    <path d="M 150,70 C 130,55 120,35 135,15 C 145,2 170,10 165,30 C 180,20 195,30 190,50 C 185,65 170,75 150,70 Z" fill="rgba(218, 165, 32, 0.25)"/>
+    <path d="M 135,15 C 110,25 95,50 115,75 L 140,85"/>
+    <circle cx="150" cy="35" r="4" fill="url(#goldWayang)"/>
+
+    <!-- Wajah Luruh Halus (Satria Panengah) -->
+    <path d="M 140,85 C 130,95 125,108 128,118 C 132,125 142,128 152,125 L 160,118 L 165,95 Z" fill="rgba(218, 165, 32, 0.2)"/>
+    <!-- Mata Liyepan & Hidung Lancip Khas Ksatria -->
+    <path d="M 126,105 Q 120,110 115,112"/>
+    <path d="M 128,102 Q 134,100 138,104"/>
+
+    <!-- Kalung Ulur & Badhong Dada -->
+    <path d="M 145,130 C 130,140 120,165 125,190 C 135,210 165,210 175,190 C 180,165 170,140 155,130 Z" fill="rgba(218, 165, 32, 0.15)"/>
+    <circle cx="150" cy="170" r="8" fill="url(#goldWayang)"/>
+
+    <!-- Bahu & Tangan Wayang Ksatria (Pose Sembahan / Gandrung) -->
+    <path d="M 130,150 C 105,160 85,185 80,220 C 78,245 95,260 115,250 C 130,240 135,210 130,190"/>
+    <path d="M 170,150 C 195,160 215,185 220,220 C 222,245 205,260 185,250 C 170,240 165,210 170,190"/>
+    <path d="M 115,250 L 135,275 L 150,265 L 165,275 L 185,250"/>
+
+    <!-- Kelat Bahu (Naga Memangsa) -->
+    <circle cx="95" cy="180" r="7" fill="url(#goldWayang)"/>
+    <circle cx="205" cy="180" r="7" fill="url(#goldWayang)"/>
+
+    <!-- Kain Jarik Dodot / Kampuh Ukir Parang -->
+    <path d="M 130,220 L 110,340 C 105,370 120,410 145,430 L 155,430 C 180,410 195,370 190,340 L 170,220 Z" fill="rgba(218, 165, 32, 0.25)"/>
+    <path d="M 135,250 L 165,250 M 125,280 L 175,280 M 120,320 L 180,320 M 130,360 L 170,360"/>
+    <path d="M 150,220 L 150,420" stroke-width="1.8"/>
+
+    <!-- Celana Cinde & Binggel Kaki Wayang -->
+    <path d="M 135,430 L 130,470 L 110,475 M 165,430 L 170,470 L 190,475"/>
+    <circle cx="130" cy="465" r="4" fill="url(#goldWayang)"/>
+    <circle cx="170" cy="465" r="4" fill="url(#goldWayang)"/>
+  </g>
+</svg>
+

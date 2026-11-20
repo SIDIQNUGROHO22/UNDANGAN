@@ -1,0 +1,700 @@
+/**
+ * ==============================================================================
+ * ADMIN DASHBOARD CSS (admin.css)
+ * ==============================================================================
+ * Tampilan Dasbor Admin Undangan Pernikahan Digital.
+ * Desain mewah, modern, bersih, dan profesional dengan palet Ivory & Gold.
+ * ==============================================================================
+ */
+
+:root {
+  --admin-gold: #c5a059;
+  --admin-gold-hover: #b38728;
+  --admin-bg: #f8f6f2;
+  --admin-card-bg: #ffffff;
+  --admin-sidebar-bg: #1e1b18;
+  --admin-text-dark: #2a2725;
+  --admin-text-muted: #736d66;
+  --admin-border: #e6dfd5;
+  --admin-radius: 12px;
+  --admin-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background-color: var(--admin-bg);
+  color: var(--admin-text-dark);
+  line-height: 1.6;
+}
+
+/* --- 1. HALAMAN LOGIN --- */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: radial-gradient(circle at center, #2e2925 0%, #171513 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.98);
+  padding: 2.5rem 2rem;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  border: 1px solid rgba(197, 160, 89, 0.35);
+}
+
+.login-header {
+  margin-bottom: 2rem;
+}
+
+.login-logo {
+  font-family: 'Great Vibes', cursive;
+  font-size: 3rem;
+  color: var(--admin-gold);
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+
+.login-title {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--admin-text-dark);
+}
+
+.login-subtitle {
+  font-size: 0.85rem;
+  color: var(--admin-text-muted);
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  text-align: left;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: var(--admin-text-dark);
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  background: #faf8f5;
+  transition: all 0.25s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--admin-gold);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(197, 160, 89, 0.2);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, #d4af37 0%, #c5a059 100%);
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(197, 160, 89, 0.35);
+  transition: all 0.25s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(197, 160, 89, 0.5);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-alert {
+  display: none;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.demo-credentials-note {
+  margin-top: 1.5rem;
+  padding: 0.8rem;
+  background: #fdfaf3;
+  border: 1px dashed var(--admin-border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  color: var(--admin-text-muted);
+  text-align: left;
+}
+
+/* --- 2. LAYOUT DASHBOARD --- */
+.dashboard-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Dashboard */
+.admin-navbar {
+  background: var(--admin-sidebar-bg);
+  color: #ffffff;
+  padding: 0.85rem 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.25);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-logo {
+  font-family: 'Great Vibes', cursive;
+  font-size: 2.2rem;
+  color: var(--admin-gold);
+  line-height: 1;
+}
+
+/* Konsep Logo Estetik Brand Navbar & Login */
+.navbar-brand-aesthetic {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-gunungan-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(212, 163, 89, 0.12);
+  border: 1px solid rgba(212, 163, 89, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-shadow: 0 0 14px rgba(212, 163, 89, 0.15);
+  flex-shrink: 0;
+}
+
+.navbar-gunungan-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+}
+
+.navbar-brand-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar-brand-name {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--admin-gold);
+  letter-spacing: 2px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.navbar-brand-sub {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.72rem;
+  color: #d1c8be;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Login Brand Aesthetic */
+.login-brand-aesthetic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.login-gunungan-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 4px 12px rgba(212, 163, 89, 0.3));
+}
+
+.login-brand-text {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--admin-gold);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Tombol Ganti Akun & Keamanan */
+.btn-account-security {
+  padding: 0.4rem 0.85rem;
+  background: rgba(212, 163, 89, 0.12);
+  color: var(--admin-gold);
+  border: 1px solid rgba(212, 163, 89, 0.35);
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-account-security:hover {
+  background: var(--admin-gold);
+  color: #1e1b18;
+  transform: translateY(-1px);
+}
+
+/* Tombol Khusus Export Excel */
+.btn-export-excel {
+  padding: 0.45rem 0.95rem;
+  background: #107c41;
+  color: #ffffff !important;
+  border: 1px solid #0e6c38;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(16, 124, 65, 0.25);
+}
+
+.btn-export-excel:hover {
+  background: #0b5c30;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(16, 124, 65, 0.35);
+}
+
+.navbar-title {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.navbar-user-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.user-badge {
+  font-size: 0.82rem;
+  color: #d1c8be;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-view-site {
+  padding: 0.4rem 0.9rem;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-view-site:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-logout {
+  padding: 0.4rem 0.9rem;
+  background: #ef4444;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.btn-logout:hover {
+  background: #dc2626;
+}
+
+/* Navigasi Tab Menu */
+.admin-tab-nav {
+  background: #ffffff;
+  border-bottom: 1px solid var(--admin-border);
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.tab-link {
+  padding: 1rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--admin-text-muted);
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.tab-link:hover {
+  color: var(--admin-gold);
+}
+
+.tab-link.active {
+  color: var(--admin-gold);
+  border-bottom-color: var(--admin-gold);
+}
+
+.badge-count {
+  padding: 2px 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+/* Konten Utama Dasbor */
+.dashboard-main {
+  flex-grow: 1;
+  padding: 2rem 1.5rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* --- 3. METRIK RINGKASAN (OVERVIEW) --- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--admin-card-bg);
+  padding: 1.5rem;
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.metric-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+
+.metric-icon.gold { background: #fdf6e9; color: var(--admin-gold); }
+.metric-icon.green { background: #dcfce7; color: #15803d; }
+.metric-icon.red { background: #fee2e2; color: #b91c1c; }
+.metric-icon.yellow { background: #fef3c7; color: #b45309; }
+.metric-icon.blue { background: #e0f2fe; color: #0369a1; }
+
+.metric-number {
+  font-size: 1.85rem;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--admin-text-dark);
+}
+
+.metric-label {
+  font-size: 0.82rem;
+  color: var(--admin-text-muted);
+}
+
+/* Panel Card */
+.panel-card {
+  background: var(--admin-card-bg);
+  border-radius: var(--admin-radius);
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-shadow);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.panel-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--admin-text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.panel-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Tabel Data */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+  text-align: left;
+}
+
+.data-table th {
+  padding: 0.75rem 1rem;
+  background: #faf8f5;
+  color: var(--admin-text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--admin-border);
+}
+
+.data-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid #f0eae1;
+  vertical-align: middle;
+}
+
+.data-table tr:hover {
+  background: #fdfcf9;
+}
+
+/* Badges */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-hadir, .badge-approved { background: #dcfce7; color: #15803d; }
+.badge-tidak-hadir, .badge-rejected { background: #fee2e2; color: #b91c1c; }
+.badge-ragu, .badge-pending { background: #fef3c7; color: #b45309; }
+
+/* Tombol Aksi */
+.btn-sm {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-add {
+  background: var(--admin-gold);
+  color: #ffffff;
+}
+
+.btn-add:hover { background: var(--admin-gold-hover); }
+
+.btn-export {
+  background: #15803d;
+  color: #ffffff;
+}
+
+.btn-export:hover { background: #166534; }
+
+.btn-action-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: 1px solid var(--admin-border);
+  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--admin-text-muted);
+  transition: all 0.2s ease;
+}
+
+.btn-action-icon:hover {
+  border-color: var(--admin-gold);
+  color: var(--admin-gold);
+}
+
+.btn-action-icon.delete:hover {
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+.btn-action-icon.approve:hover {
+  border-color: #15803d;
+  color: #15803d;
+}
+
+/* Search Box */
+.search-input {
+  padding: 0.5rem 0.9rem;
+  border: 1px solid var(--admin-border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  width: 220px;
+}
+
+/* Modal */
+.modal-admin-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  padding: 1rem;
+}
+
+.modal-admin-backdrop.active {
+  display: flex;
+}
+
+.modal-admin-card {
+  background: #ffffff;
+  border-radius: var(--admin-radius);
+  max-width: 500px;
+  width: 100%;
+  padding: 2rem;
+  position: relative;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-admin-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+}
+
+.modal-close-icon {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--admin-text-muted);
+}
+
+/* Toast */
+.admin-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #1e1b18;
+  color: #ffffff;
+  padding: 0.85rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  z-index: 100000;
+  display: none;
+}
+
+.admin-toast.show {
+  display: block;
+}
+
+@media screen and (max-width: 768px) {
+  .admin-navbar {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .navbar-user-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .search-input {
+    width: 100%;
+  }
+}

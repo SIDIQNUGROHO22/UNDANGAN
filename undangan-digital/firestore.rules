@@ -1,0 +1,243 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===============================================================
+    // Assumed Data Model
+    // ===============================================================
+    //
+    // This security rules file assumes the following data structures:
+    //
+    // 1. Collection: rsvps
+    //    Document ID: auto-generated or guest-specific string
+    //    Fields:
+    //      - guestName: string (required, 1..100 chars) - Name of the guest/family submitting RSVP
+    //      - status: string (required, in ['hadir', 'tidak-hadir', 'ragu']) - Attendance confirmation
+    //      - guestsCount: number (required, integer 1..10) - Number of people attending
+    //      - message: string (required, 0..500 chars) - Congratulatory or confirmation note
+    //      - createdAt: timestamp (required, <= request.time, immutable) - Submission timestamp
+    //
+    // 2. Collection: guestbook
+    //    Document ID: auto-generated string
+    //    Fields:
+    //      - name: string (required, 1..100 chars) - Well-wisher's name
+    //      - message: string (required, 1..1000 chars) - Prayer / congratulatory message
+    //      - status: string (required, in ['PENDING', 'APPROVED', 'REJECTED']) - Moderation status
+    //      - createdAt: timestamp (required, <= request.time, immutable) - Submission timestamp
+    //
+    // 3. Collection: guests
+    //    Document ID: guest ID or unique invitation code string
+    //    Fields:
+    //      - name: string (required, 1..100 chars) - Full name / family name of invited guest
+    //      - code: string (optional, 1..50 chars) - Invitation code
+    //      - phoneNumber: string (optional, 1..30 chars) - Contact phone number
+    //      - pax: number (optional, integer 1..20) - Allocated seat quota
+    //      - table: string (optional, 1..50 chars) - Table / seating arrangement
+    //      - notes: string (optional, 0..500 chars) - Internal remarks / dietary requirements
+    //      - createdAt: timestamp (optional, <= request.time, immutable)
+    //      - updatedAt: timestamp (optional, <= request.time)
+    //
+    // 4. Collection: events
+    //    Document ID: event slug or ID (e.g., 'akad', 'resepsi')
+    //    Fields:
+    //      - title: string (required, 1..100 chars) - Event title (e.g. 'Akad Nikah')
+    //      - dayName: string (required, 1..50 chars) - Day name (e.g. 'Sabtu')
+    //      - dateFormatted: string (required, 1..100 chars) - Display date string
+    //      - timeFormatted: string (required, 1..100 chars) - Display time range string
+    //      - venueName: string (required, 1..150 chars) - Name of venue / location
+    //      - venueAddress: string (required, 1..300 chars) - Physical address
+    //      - googleMapsUrl: string (required, 10..500 chars, valid URL) - Google Maps navigation link
+    //      - iconClass: string (optional, 0..50 chars) - FontAwesome or custom icon class
+    //      - order: number (optional, integer 1..100) - Sorting sequence
+    //      - createdAt: timestamp (optional, <= request.time, immutable)
+    //      - updatedAt: timestamp (optional, <= request.time)
+    //
+    // ===============================================================
+
+    // ===============================================================
+    // Helper Functions
+    // ===============================================================
+
+    // Check if the request is authenticated via Firebase Authentication
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // In this project, any authenticated user acts as the administrator / host
+    function isAdmin() {
+      return isAuthenticated();
+    }
+
+    // Validate that the document contains all required fields
+    function hasRequiredFields(fields) {
+      return request.resource.data.keys().hasAll(fields);
+    }
+
+    // Validate that the document contains ONLY explicitly allowed fields (prevents schema pollution)
+    function hasOnlyAllowedFields(fields) {
+      return request.resource.data.keys().hasOnly(fields);
+    }
+
+    // Validate optional string: if present, must be string and within character bounds
+    function isValidOptionalString(field, minLen, maxLen) {
+      return !(field in request.resource.data) ||
+             (request.resource.data[field] is string &&
+              request.resource.data[field].size() >= minLen &&
+              request.resource.data[field].size() <= maxLen);
+    }
+
+    // Validate URL format (http or https) and bound length to prevent DoS
+    function isValidUrl(url) {
+      return url is string &&
+             url.size() >= 10 && url.size() <= 500 &&
+             (url.matches("^https://.*") || url.matches("^http://.*"));
+    }
+
+    // Protect immutable fields from being altered on updates
+    function areImmutableFieldsUnchanged(fields) {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
+
+    // ===============================================================
+    // Domain Validators
+    // ===============================================================
+
+    // Domain validator for RSVP documents
+    function isValidRsvp(data) {
+      return hasOnlyAllowedFields(['guestName', 'status', 'guestsCount', 'message', 'createdAt']) &&
+             hasRequiredFields(['guestName', 'status', 'guestsCount', 'message', 'createdAt']) &&
+             data.guestName is string &&
+             data.guestName.size() >= 1 &&
+             data.guestName.size() <= 100 &&
+             data.status is string &&
+             data.status in ['hadir', 'tidak-hadir', 'ragu'] &&
+             data.guestsCount is number &&
+             data.guestsCount >= 1 &&
+             data.guestsCount <= 10 &&
+             data.guestsCount == int(data.guestsCount) &&
+             data.message is string &&
+             data.message.size() >= 0 &&
+             data.message.size() <= 500 &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time;
+    }
+
+    // Domain validator for Guestbook / Ucapan entries
+    function isValidGuestbookEntry(data) {
+      return hasOnlyAllowedFields(['name', 'message', 'status', 'createdAt']) &&
+             hasRequiredFields(['name', 'message', 'status', 'createdAt']) &&
+             data.name is string &&
+             data.name.size() >= 1 &&
+             data.name.size() <= 100 &&
+             data.message is string &&
+             data.message.size() >= 1 &&
+             data.message.size() <= 1000 &&
+             data.status is string &&
+             data.status in ['PENDING', 'APPROVED', 'REJECTED'] &&
+             data.createdAt is timestamp &&
+             data.createdAt <= request.time;
+    }
+
+    // Domain validator for Guest records
+    function isValidGuest(data) {
+      return hasOnlyAllowedFields(['name', 'code', 'phoneNumber', 'pax', 'table', 'notes', 'createdAt', 'updatedAt']) &&
+             hasRequiredFields(['name']) &&
+             data.name is string &&
+             data.name.size() >= 1 &&
+             data.name.size() <= 100 &&
+             isValidOptionalString('code', 1, 50) &&
+             isValidOptionalString('phoneNumber', 1, 30) &&
+             (!('pax' in data) || (data.pax is number && data.pax >= 1 && data.pax <= 20 && data.pax == int(data.pax))) &&
+             isValidOptionalString('table', 1, 50) &&
+             isValidOptionalString('notes', 0, 500) &&
+             (!('createdAt' in data) || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    // Domain validator for Event schedules
+    function isValidEvent(data) {
+      return hasOnlyAllowedFields([
+               'title', 'dayName', 'dateFormatted', 'timeFormatted',
+               'venueName', 'venueAddress', 'googleMapsUrl',
+               'iconClass', 'order', 'createdAt', 'updatedAt'
+             ]) &&
+             hasRequiredFields([
+               'title', 'dayName', 'dateFormatted', 'timeFormatted',
+               'venueName', 'venueAddress', 'googleMapsUrl'
+             ]) &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
+             data.dayName is string && data.dayName.size() >= 1 && data.dayName.size() <= 50 &&
+             data.dateFormatted is string && data.dateFormatted.size() >= 1 && data.dateFormatted.size() <= 100 &&
+             data.timeFormatted is string && data.timeFormatted.size() >= 1 && data.timeFormatted.size() <= 100 &&
+             data.venueName is string && data.venueName.size() >= 1 && data.venueName.size() <= 150 &&
+             data.venueAddress is string && data.venueAddress.size() >= 1 && data.venueAddress.size() <= 300 &&
+             isValidUrl(data.googleMapsUrl) &&
+             isValidOptionalString('iconClass', 0, 50) &&
+             (!('order' in data) || (data.order is number && data.order >= 1 && data.order <= 100 && data.order == int(data.order))) &&
+             (!('createdAt' in data) || (data.createdAt is timestamp && data.createdAt <= request.time)) &&
+             (!('updatedAt' in data) || (data.updatedAt is timestamp && data.updatedAt <= request.time));
+    }
+
+    // ===============================================================
+    // Collection Rules
+    // ===============================================================
+
+    // 1. RSVPs Collection
+    // - Public: Write-only (create new RSVP). Public listing/reading is completely blocked to protect guest privacy.
+    // - Admin: Full access (list, read, update, delete).
+    match /rsvps/{rsvpId} {
+      allow read: if isAdmin();
+      allow create: if isValidRsvp(request.resource.data);
+      allow update: if isAdmin() &&
+                       isValidRsvp(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['createdAt']);
+      allow delete: if isAdmin();
+    }
+
+    // 2. Guestbook Collection
+    // - Public: Can create new wish with mandatory 'PENDING' status.
+    // - Public: Can only read/list wishes where status == 'APPROVED'.
+    // - Admin: Full access to read, list, delete, and moderate status ('PENDING', 'APPROVED', 'REJECTED').
+    match /guestbook/{wishId} {
+      allow read: if isAdmin() || resource.data.status == 'APPROVED';
+      allow create: if isValidGuestbookEntry(request.resource.data) &&
+                       (isAdmin() || request.resource.data.status == 'PENDING');
+      allow update: if isAdmin() &&
+                       isValidGuestbookEntry(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['createdAt']);
+      allow delete: if isAdmin();
+    }
+
+    // 3. Guests Collection
+    // - Public: Read-only access for invitation code verification and lookup.
+    // - Admin: Full CRUD management (create, read, update, delete, list).
+    match /guests/{guestId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidGuest(request.resource.data);
+      allow update: if isAdmin() &&
+                       isValidGuest(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['createdAt']);
+      allow delete: if isAdmin();
+    }
+
+    // 4. Events Collection
+    // - Public: Read-only access to view wedding schedule and map links.
+    // - Admin: Full write access with schema validation.
+    match /events/{eventId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidEvent(request.resource.data);
+      allow update: if isAdmin() &&
+                       isValidEvent(request.resource.data) &&
+                       areImmutableFieldsUnchanged(['createdAt']);
+      allow delete: if isAdmin();
+    }
+
+    // ===============================================================
+    // Default Deny Rule
+    // ===============================================================
+    // Deny all reads and writes to any unspecified documents or subcollections
+    match /{document=**} {
+      allow read, write: false;
+    }
+  }
+}

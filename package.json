@@ -1,0 +1,13 @@
+{
+  "name": "undangan-pernikahan-digital",
+  "version": "1.0.0",
+  "description": "Website Undangan Digital Modern dengan Backend & Frontend Terpisah",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js"
+  },
+  "keywords": ["undangan-digital", "wedding-invitation", "nodejs", "express"],
+  "author": "Antigravity",
+  "license": "ISC"
+}
+

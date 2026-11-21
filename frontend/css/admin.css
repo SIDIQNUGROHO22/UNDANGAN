@@ -312,6 +312,29 @@ div[style*="display:flex"] > input.form-control {
   flex-shrink: 0;
 }
 
+/* Tombol Impor Foto Momen Cerita */
+.btn-upload-story-item {
+  white-space: nowrap;
+  background: var(--admin-gold);
+  color: #1a1511;
+  font-weight: 600;
+  border: 1px solid #c99e46;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-upload-story-item:hover {
+  background: #c99e46;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
 /* Tombol Ganti Akun & Keamanan */
 .btn-account-security {
   padding: 0.4rem 0.85rem;

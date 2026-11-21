@@ -2699,16 +2699,36 @@ const AdminApp = (function () {
             <textarea class="form-control story-input-desc" data-index="${idx}" rows="2" placeholder="Tuliskan kisah indah pada momen ini...">${escapeHtml(story.description || '')}</textarea>
           </div>
 
-          <div style="display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; background: #faf8f5; padding: 0.75rem 1rem; border-radius: 8px; border: 1px dashed var(--admin-border);">
-            <div class="form-group" style="margin: 0;">
-              <label class="form-label" style="font-size: 0.8rem; margin-bottom: 2px;">
-                <i class="fas fa-image" style="color: var(--admin-gold);"></i> Foto Momen (Opsional: assets/images/... atau URL Pinterest / Drive)
-              </label>
-              <input type="text" class="form-control story-input-image" data-index="${idx}" value="${escapeHtml(story.image || '')}" placeholder="Kosongkan jika tidak ada foto momen ini" style="font-size: 0.85rem;">
-            </div>
-            <div style="width: 52px; height: 52px; border-radius: 6px; overflow: hidden; background: #eee; border: 1px solid var(--admin-border); flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
-              <img src="${cleanImg || 'assets/images/background.jpg'}" alt="Preview" class="story-preview-img-${idx}" style="width: 100%; height: 100%; object-fit: cover; display: ${cleanImg ? 'block' : 'none'};" onerror="this.style.display='none'">
-              <i class="far fa-image story-preview-placeholder-${idx}" style="color: #bbb; display: ${cleanImg ? 'none' : 'block'};"></i>
+          <div style="background: #faf8f5; padding: 0.85rem 1rem; border-radius: 8px; border: 1px dashed var(--admin-border); margin-top: 0.5rem;">
+            <label class="form-label" style="font-size: 0.82rem; font-weight: 700; display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">
+              <span><i class="fas fa-image" style="color: var(--admin-gold);"></i> Foto Momen Cerita (Opsional)</span>
+              <span style="font-size: 0.72rem; color: #64748b;">File Manager HP/Laptop atau URL</span>
+            </label>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <!-- Thumbnail Pratinjau -->
+              <div style="width: 58px; height: 58px; border-radius: 8px; overflow: hidden; background: #1a1511; border: 1px solid rgba(223, 177, 91, 0.35); flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.12);">
+                <img src="${cleanImg || 'assets/images/background.jpg'}" alt="Preview" class="story-preview-img-${idx}" style="width: 100%; height: 100%; object-fit: cover; display: ${cleanImg ? 'block' : 'none'};" onerror="this.style.display='none'">
+                <i class="far fa-image story-preview-placeholder-${idx}" style="color: #64748b; font-size: 1.25rem; display: ${cleanImg ? 'none' : 'block'};"></i>
+              </div>
+
+              <!-- Input URL & Tombol Upload/Impor File -->
+              <div style="flex: 1 1 200px; min-width: 0;">
+                <div style="display: flex; gap: 6px; align-items: center;">
+                  <input type="text" class="form-control story-input-image" data-index="${idx}" value="${escapeHtml(story.image || '')}" placeholder="Pilih dari HP/laptop atau URL gambar" style="font-size: 0.85rem; flex: 1 1 auto; min-width: 0;">
+                  <button type="button" class="btn-sm btn-upload-story-item" data-index="${idx}" style="white-space: nowrap; background: #dfb15b; color: #1a1511; font-weight: 600; border: 1px solid #c99e46; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;" title="Impor foto dari file manager / galeri HP / laptop">
+                    <i class="fas fa-folder-open"></i> Impor Foto
+                  </button>
+                  <input type="file" class="story-file-input-${idx}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display: none;">
+                  ${story.image ? `
+                  <button type="button" class="btn-sm btn-clear-story-img" data-index="${idx}" style="white-space: nowrap; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-size: 0.8rem; padding: 6px 9px; border-radius: 6px; cursor: pointer;" title="Hapus foto momen ini">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  ` : ''}
+                </div>
+                <div style="font-size: 0.73rem; color: #64748b; margin-top: 4px;">
+                  Klik <strong>"Impor Foto"</strong> untuk memilih file gambar dari file manager HP / Laptop Anda.
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -2751,6 +2771,82 @@ const AdminApp = (function () {
             img.style.display = "none";
             ph.style.display = "block";
           }
+        }
+      });
+      input.addEventListener("change", () => handleUrlPasteOrInput(input));
+      input.addEventListener("paste", () => setTimeout(() => handleUrlPasteOrInput(input), 100));
+    });
+
+    // Listener Tombol Buka File Manager (Impor Foto)
+    container.querySelectorAll(".btn-upload-story-item").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const idx = parseInt(this.getAttribute("data-index"), 10);
+        const fileInput = container.querySelector(`.story-file-input-${idx}`);
+        if (fileInput) {
+          fileInput.value = "";
+          fileInput.click();
+        }
+      });
+    });
+
+    // Listener File Picker saat file dipilih dari File Manager
+    container.querySelectorAll("input[type='file'][class^='story-file-input-']").forEach(fileInput => {
+      fileInput.addEventListener("change", async function () {
+        const className = this.className;
+        const match = className.match(/story-file-input-(\d+)/);
+        if (!match) return;
+        const idx = parseInt(match[1], 10);
+        const file = this.files && this.files[0];
+        if (!file || !currentLoveStories[idx]) return;
+
+        showToast(`Memproses foto momen #${idx + 1}...`);
+        const optimizedData = await optimizeImage(file);
+        if (!optimizedData) {
+          showToast("Gagal membaca file gambar!");
+          return;
+        }
+
+        currentLoveStories[idx].image = optimizedData;
+        const srcInput = container.querySelector(`.story-input-image[data-index="${idx}"]`);
+        if (srcInput) srcInput.value = optimizedData;
+        const img = container.querySelector(`.story-preview-img-${idx}`);
+        const ph = container.querySelector(`.story-preview-placeholder-${idx}`);
+        if (img && ph) {
+          img.src = optimizedData;
+          img.style.display = "block";
+          ph.style.display = "none";
+        }
+
+        // Coba upload ke server jika backend terhubung
+        try {
+          const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+          const res = await window.API.uploadImage({
+            filename: `story-${idx + 1}-${Date.now()}.${ext}`,
+            fileData: optimizedData
+          });
+          if (res && res.success && res.filePath) {
+            currentLoveStories[idx].image = res.filePath;
+            if (srcInput) srcInput.value = res.filePath;
+            if (img) img.src = res.filePath;
+            showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
+            renderAdminLoveStories();
+            return;
+          }
+        } catch (_) {}
+
+        showToast(`✨ Foto momen #${idx + 1} berhasil diimpor! Klik "Simpan Seluruh Perubahan" di atas.`);
+        renderAdminLoveStories();
+      });
+    });
+
+    // Listener Tombol Hapus Foto Momen
+    container.querySelectorAll(".btn-clear-story-img").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const idx = parseInt(this.getAttribute("data-index"), 10);
+        if (currentLoveStories[idx]) {
+          currentLoveStories[idx].image = "";
+          renderAdminLoveStories();
+          showToast("Foto momen berhasil dihapus.");
         }
       });
     });

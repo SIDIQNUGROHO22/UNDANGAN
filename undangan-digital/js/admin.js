@@ -15,6 +15,7 @@ const AdminApp = (function () {
   let currentLoveStories = [];
   let currentGalleryItems = [];
   let currentBankAccounts = [];
+  const INVITATION_PUBLIC_URL = "https://sidiqnugroho22.github.io/UNDANGAN/";
 
   const DEFAULT_BANK_ACCOUNTS = [
     {
@@ -399,12 +400,11 @@ const AdminApp = (function () {
       return;
     }
 
-    const isHttp = (window.location.protocol === 'http:' || window.location.protocol === 'https:');
-    const origin = isHttp ? window.location.origin : "http://localhost:3000";
+    const baseInviteUrl = INVITATION_PUBLIC_URL;
 
     tbody.innerHTML = guests.map((g, index) => {
-      const shareUrl = `${origin}/?to=${encodeURIComponent(g.name)}`;
-      const inviteUrl = isHttp ? `${window.location.origin}/?to=${encodeURIComponent(g.name)}` : `index.html?to=${encodeURIComponent(g.name)}`;
+      const shareUrl = `${baseInviteUrl}?to=${encodeURIComponent(g.name)}`;
+      const inviteUrl = shareUrl;
 
       // Cek apakah tamu ini sudah konfirmasi RSVP
       const rsvpMatch = cachedRsvps.find(r => 
@@ -769,8 +769,7 @@ const AdminApp = (function () {
   function exportToExcel(type) {
     if (type === "guests") {
       const data = cachedGuests || [];
-      const isHttp = (window.location.protocol === "http:" || window.location.protocol === "https:");
-      const origin = isHttp ? window.location.origin : "http://localhost:3000";
+      const baseInviteUrl = INVITATION_PUBLIC_URL;
 
       let tableHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="UTF-8"><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>Daftar Tamu</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
@@ -796,7 +795,7 @@ const AdminApp = (function () {
   <tbody>`;
 
       data.forEach((g, idx) => {
-        const link = `${origin}/?to=${encodeURIComponent(g.name)}`;
+        const link = `${baseInviteUrl}?to=${encodeURIComponent(g.name)}`;
         tableHtml += `<tr>
           <td class="center">${idx + 1}</td>
           <td><b>${escapeHtml(g.name)}</b></td>
@@ -1037,6 +1036,7 @@ const AdminApp = (function () {
           name,
           phone,
           style,
+          baseUrl: INVITATION_PUBLIC_URL,
           groomName: currentSettings?.couple?.groom?.callName,
           brideName: currentSettings?.couple?.bride?.callName,
           eventDate: currentSettings?.events?.akad?.dateFormatted,
@@ -1077,11 +1077,10 @@ const AdminApp = (function () {
       if (cachedGuests.length === 0) {
         broadcastTbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--admin-text-muted); padding: 1.5rem;">Belum ada tamu terdaftar untuk broadcast. Tambahkan tamu di tab "Daftar Tamu".</td></tr>`;
       } else {
-        const isHttp = (window.location.protocol === 'http:' || window.location.protocol === 'https:');
-        const origin = isHttp ? window.location.origin : "http://localhost:3000";
+        const baseInviteUrl = INVITATION_PUBLIC_URL;
 
         broadcastTbody.innerHTML = cachedGuests.map((g, idx) => {
-          const shareUrl = `${origin}/?to=${encodeURIComponent(g.name)}`;
+          const shareUrl = `${baseInviteUrl}?to=${encodeURIComponent(g.name)}`;
           const groomName = currentSettings?.couple?.groom?.callName || "Dimas";
           const brideName = currentSettings?.couple?.bride?.callName || "Anindya";
           const eventDate = currentSettings?.events?.akad?.dateFormatted || "Sabtu, 19 Desember 2026";
@@ -3021,14 +3020,12 @@ const AdminApp = (function () {
 
     if (!generateBtn || !urlInput || !qrDisplay) return;
 
-    if (window.location.protocol.startsWith("http")) {
-      urlInput.placeholder = window.location.origin;
-    }
+    urlInput.placeholder = INVITATION_PUBLIC_URL;
 
     generateBtn.addEventListener("click", function () {
       let targetUrl = urlInput.value.trim();
       if (!targetUrl) {
-        targetUrl = window.location.origin;
+        targetUrl = INVITATION_PUBLIC_URL;
       }
 
       const isLocal = targetUrl.includes("localhost") || targetUrl.includes("127.0.0.1") || targetUrl.startsWith("file:");
@@ -3076,6 +3073,12 @@ const AdminApp = (function () {
     initAdminWaBroadcast();
     initAdminQrGenerator();
     initSettingsForm();
+
+    // Pastikan tombol Buka Undangan selalu mengarah ke GitHub Pages publik resmi
+    const viewSiteBtn = document.querySelector(".btn-view-site") || document.getElementById("btn-view-site");
+    if (viewSiteBtn) {
+      viewSiteBtn.href = INVITATION_PUBLIC_URL;
+    }
 
     // Handler Tombol Refresh Data Real-Time di Ringkasan
     const refreshBtn = document.getElementById("btn-refresh-all-data");

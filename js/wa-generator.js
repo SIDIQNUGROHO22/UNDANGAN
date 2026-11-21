@@ -66,12 +66,12 @@ const WaGenerator = {
     const guestName = (options.name || "Tamu Undangan").trim();
     const style = options.style || "formal";
     const phone = this.formatPhone(options.phone || "");
-    const origin = (window.location.protocol === 'http:' || window.location.protocol === 'https:')
-      ? window.location.origin
-      : 'http://localhost:3000';
+    const defaultPublicUrl = "https://sidiqnugroho22.github.io/UNDANGAN/";
+    const baseUrl = options.baseUrl || (window.location.hostname.includes("github.io") ? `${window.location.origin}/UNDANGAN/` : defaultPublicUrl);
+    const cleanBaseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
 
     // Tautan personal dengan query string ?to=...
-    const inviteLink = `${origin}/?to=${encodeURIComponent(guestName)}`;
+    const inviteLink = `${cleanBaseUrl}?to=${encodeURIComponent(guestName)}`;
 
     // Ambil data dari konfigurasi aktif
     const groomName = options.groomName || (window.CURRENT_CONFIG?.couple?.groom?.callName) || "Dimas";

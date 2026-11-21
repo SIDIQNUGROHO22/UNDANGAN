@@ -2065,40 +2065,103 @@ const AdminApp = (function () {
       }
     });
 
-    // Helper Universal Upload Gambar via API
+    // Kompresi & optimasi gambar otomatis di sisi browser (kamera HP/laptop)
+    function optimizeImage(file, maxDim = 1200, quality = 0.82) {
+      return new Promise((resolve) => {
+        if (!file) return resolve(null);
+        if (file.type === "image/svg+xml" || file.name.endsWith(".svg") || file.size < 120 * 1024) {
+          const r = new FileReader();
+          r.onload = (e) => resolve(e.target.result);
+          r.onerror = () => resolve(null);
+          r.readAsDataURL(file);
+          return;
+        }
+        const r = new FileReader();
+        r.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let w = img.width;
+            let h = img.height;
+            if (w > maxDim || h > maxDim) {
+              if (w > h) {
+                h = Math.round((h * maxDim) / w);
+                w = maxDim;
+              } else {
+                w = Math.round((w * maxDim) / h);
+                h = maxDim;
+              }
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            const dataUrl = canvas.toDataURL("image/jpeg", quality);
+            resolve(dataUrl);
+          };
+          img.onerror = () => resolve(e.target.result);
+          img.src = e.target.result;
+        };
+        r.onerror = () => resolve(null);
+        r.readAsDataURL(file);
+      });
+    }
+
+    // Helper Universal Upload Gambar via API dengan Fallback Otomatis
     function setupFileUpload(btnId, fileInputId, textInputId, defaultPrefix, toastLabel) {
       const btn = document.getElementById(btnId);
       const fileInput = document.getElementById(fileInputId);
       if (btn && fileInput) {
-        btn.addEventListener("click", () => fileInput.click());
-        fileInput.addEventListener("change", function () {
-          const file = this.files[0];
+        btn.addEventListener("click", () => {
+          fileInput.value = "";
+          fileInput.click();
+        });
+        fileInput.addEventListener("change", async function () {
+          const file = this.files && this.files[0];
           if (!file) return;
-          const reader = new FileReader();
-          reader.onload = async function (ev) {
-            try {
-              showToast(`Mengunggah ${toastLabel}...`);
-              const ext = file.name.split(".").pop() || "png";
-              const filename = `${defaultPrefix}-${Date.now()}.${ext}`;
-              const res = await window.API.uploadImage({
-                filename: filename,
-                fileData: ev.target.result
-              });
-              if (res && res.success && res.filePath) {
-                const inputEl = document.getElementById(textInputId);
-                if (inputEl) inputEl.value = res.filePath;
-                updateThemePreviews();
-                updateCouplePreviews();
-                if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
-                showToast(`${toastLabel} berhasil diunggah!`);
-              } else {
-                showToast("Gagal mengunggah gambar: " + (res.message || ""));
+
+          showToast(`Memproses ${toastLabel || "foto"}...`);
+          const optimizedData = await optimizeImage(file);
+          if (!optimizedData) {
+            showToast("Gagal membaca file gambar!");
+            return;
+          }
+
+          const inputEl = document.getElementById(textInputId);
+          if (inputEl) {
+            inputEl.value = optimizedData;
+            inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+            inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          updateThemePreviews();
+          updateCouplePreviews();
+          if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(optimizedData);
+
+          // Coba simpan ke server backend jika backend online (misal localhost)
+          try {
+            const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+            const filename = `${defaultPrefix}-${Date.now()}.${ext}`;
+            const res = await window.API.uploadImage({
+              filename: filename,
+              fileData: optimizedData
+            });
+            if (res && res.success && res.filePath) {
+              if (inputEl) {
+                inputEl.value = res.filePath;
+                inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+                inputEl.dispatchEvent(new Event("change", { bubbles: true }));
               }
-            } catch (uploadErr) {
-              showToast("Error saat mengunggah: " + uploadErr.message);
+              updateThemePreviews();
+              updateCouplePreviews();
+              if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
+              showToast(`✅ ${toastLabel || "Foto"} tersimpan ke server!`);
+              return;
             }
-          };
-          reader.readAsDataURL(file);
+          } catch (uploadErr) {
+            console.warn("[Upload] Backend offline, menggunakan mode penyimpanan lokal DataURL:", uploadErr.message);
+          }
+
+          showToast(`✨ ${toastLabel || "Foto"} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
         });
       }
     }
@@ -2574,7 +2637,13 @@ const AdminApp = (function () {
           <div style="padding: 1rem; display: flex; flex-direction: column; gap: 0.75rem; flex-grow: 1; justify-content: space-between;">
             <div class="form-group" style="margin: 0;">
               <label class="form-label" style="font-size: 0.8rem; margin-bottom: 2px;">URL / File Path Foto *</label>
-              <input type="text" class="form-control gallery-input-src" data-index="${idx}" value="${escapeHtml(item.src || '')}" placeholder="assets/images/gallery-1.jpg atau URL Drive/Pinterest" style="font-size: 0.84rem;">
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <input type="text" class="form-control gallery-input-src" data-index="${idx}" value="${escapeHtml(item.src || '')}" placeholder="assets/images/gallery-1.jpg atau URL Drive/Pinterest" style="font-size: 0.84rem; flex-grow: 1;">
+                <button type="button" class="btn-sm btn-export btn-upload-gallery-item" data-index="${idx}" style="white-space: nowrap; padding: 7px 10px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Pilih Foto dari Galeri HP/Laptop">
+                  <i class="fas fa-camera"></i> Unggah
+                </button>
+                <input type="file" class="gallery-file-input-${idx}" accept="image/png,image/jpeg,image/webp" style="display: none;">
+              </div>
             </div>
 
             <div class="form-group" style="margin: 0;">
@@ -2599,6 +2668,58 @@ const AdminApp = (function () {
         if (currentGalleryItems[idx]) {
           currentGalleryItems[idx].caption = this.value;
         }
+      });
+    });
+
+    container.querySelectorAll(".btn-upload-gallery-item").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const idx = parseInt(this.getAttribute("data-index"), 10);
+        const fileInput = container.querySelector(`.gallery-file-input-${idx}`);
+        if (fileInput) {
+          fileInput.value = "";
+          fileInput.click();
+        }
+      });
+    });
+
+    container.querySelectorAll("input[type='file'][class^='gallery-file-input-']").forEach(fileInput => {
+      fileInput.addEventListener("change", async function () {
+        const className = this.className;
+        const match = className.match(/gallery-file-input-(\d+)/);
+        if (!match) return;
+        const idx = parseInt(match[1], 10);
+        const file = this.files && this.files[0];
+        if (!file || !currentGalleryItems[idx]) return;
+
+        showToast(`Memproses foto galeri #${idx + 1}...`);
+        const optimizedData = await optimizeImage(file);
+        if (!optimizedData) {
+          showToast("Gagal membaca file gambar!");
+          return;
+        }
+
+        currentGalleryItems[idx].src = optimizedData;
+        const srcInput = container.querySelector(`.gallery-input-src[data-index="${idx}"]`);
+        if (srcInput) srcInput.value = optimizedData;
+        const img = container.querySelector(`.gallery-preview-img-${idx}`);
+        if (img) img.src = optimizedData;
+
+        try {
+          const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+          const res = await window.API.uploadImage({
+            filename: `gallery-${idx + 1}-${Date.now()}.${ext}`,
+            fileData: optimizedData
+          });
+          if (res && res.success && res.filePath) {
+            currentGalleryItems[idx].src = res.filePath;
+            if (srcInput) srcInput.value = res.filePath;
+            if (img) img.src = res.filePath;
+            showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
+            return;
+          }
+        } catch (_) {}
+
+        showToast(`✨ Foto galeri #${idx + 1} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
       });
     });
 

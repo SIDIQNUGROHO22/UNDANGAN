@@ -21,9 +21,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- CSS Stylesheets Terpisah -->
-  <link rel="stylesheet" href="css/style.css?v=2.2">
-  <link rel="stylesheet" href="css/responsive.css?v=2.2">
-  <link rel="stylesheet" href="css/animation.css?v=2.2">
+  <link rel="stylesheet" href="css/style.css?v=2.4">
+  <link rel="stylesheet" href="css/responsive.css?v=2.4">
+  <link rel="stylesheet" href="css/animation.css?v=2.4">
 </head>
 <body class="scroll-locked">
 
@@ -465,53 +465,7 @@
   </section>
 
   <!-- ============================================================== -->
-  <!-- 8. KADO DIGITAL / ANGPAO SECTION                               -->
-  <!-- ============================================================== -->
-  <section id="gift" class="gift-section">
-    <div class="container">
-      <div class="section-header animate-on-scroll">
-        <span class="section-subtitle">Tanda Kasih</span>
-        <h2 class="section-title">Kado Digital</h2>
-        <p class="section-desc">Doa restu Anda merupakan karunia terindah bagi kami. Namun jika Anda bermaksud memberikan tanda kasih, Anda dapat menyalurkannya melalui:</p>
-      </div>
-
-      <!-- Kartu Rekening Bank -->
-      <div class="bank-cards-grid" id="bank-accounts-container">
-        <!-- Render dinamis dari config.js -->
-      </div>
-
-      <!-- QRIS Kado Digital -->
-      <div class="qris-card animate-on-scroll">
-        <h4 style="font-family: var(--font-serif); font-size: 1.3rem; margin-bottom: 0.25rem;">QRIS Tanda Kasih</h4>
-        <p style="font-size: 0.88rem; color: var(--text-muted);">Klik gambar di bawah untuk memperbesar QR Code:</p>
-        <div class="qris-img-container" id="qris-preview-trigger" title="Klik untuk memperbesar QR Code">
-          <img src="assets/images/qrcode.png" alt="QRIS Kado Digital" class="qris-img" id="qris-image">
-        </div>
-        <p class="qris-note">Mendukung BCA, Mandiri, BRI, BNI, GoPay, OVO, Dana, ShopeePay, dan seluruh m-Banking berlogo QRIS.</p>
-      </div>
-
-      <!-- Alamat Pengiriman Kado Fisik -->
-      <div class="physical-gift-box animate-on-scroll">
-        <p class="physical-gift-title">
-          <i class="fas fa-box-open" style="color: var(--primary-gold);"></i>
-          <span>Kirim Kado Fisik / Parsel</span>
-        </p>
-        <p style="font-size: 0.9rem; margin-bottom: 0.4rem;">
-          Penerima: <strong class="gift-recipient-name">Dimas & Anindya</strong> (<span class="gift-recipient-phone">+62 812-3456-7890</span>)
-        </p>
-        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.8rem;" class="gift-recipient-address">
-          Jl. Kemang Pratama Raya No. 12, Kel. Bojong Rawalumbu, Kec. Rawalumbu, Kota Bekasi, Jawa Barat 17116
-        </p>
-        <button type="button" class="btn-copy" onclick="MainApp.copyToClipboard(document.querySelector('.gift-recipient-address').textContent.trim(), 'Alamat pengiriman berhasil disalin!');">
-          <i class="far fa-copy"></i> Salin Alamat Kado
-        </button>
-      </div>
-
-    </div>
-  </section>
-
-  <!-- ============================================================== -->
-  <!-- 9. BUKU TAMU & DOA RESTU (Guestbook)                           -->
+  <!-- 8. BUKU TAMU & DOA RESTU (Guestbook)                           -->
   <!-- ============================================================== -->
   <section id="guestbook" class="guestbook-section">
     <div class="container">
@@ -718,10 +672,6 @@
       <i class="fas fa-envelope"></i>
       <span>RSVP</span>
     </a>
-    <a href="#gift" class="nav-link">
-      <i class="fas fa-gift"></i>
-      <span>Kado</span>
-    </a>
     <a href="#guestbook" class="nav-link">
       <i class="fas fa-comments"></i>
       <span>Ucapan</span>
@@ -746,36 +696,19 @@
     </button>
   </div>
 
-  <!-- 5. Modal QRIS Kado Digital -->
-  <div id="qris-modal" class="modal-backdrop" role="dialog" aria-modal="true">
-    <div class="modal-container">
-      <button type="button" id="qris-modal-close" class="modal-close-btn" aria-label="Tutup Modal QRIS">
-        <i class="fas fa-times"></i>
-      </button>
-      <h3 style="font-family: var(--font-serif); font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--text-dark);">QRIS Kado Digital</h3>
-      <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">Pindai kode QRIS di bawah ini melalui aplikasi m-Banking atau dompet digital Anda:</p>
-      <div style="max-width: 300px; margin: 0 auto; padding: 10px; background: #ffffff; border-radius: var(--radius-md); border: 1px solid var(--border-card);">
-        <img src="assets/images/qrcode.png" alt="QRIS Kado Digital Besar" style="width: 100%; height: auto; display: block;">
-      </div>
-      <p style="font-size: 0.82rem; color: var(--text-muted); margin-top: 1rem;">
-        a.n. Dimas Pratama / Anindya Putri
-      </p>
-    </div>
-  </div>
-
-  <!-- 6. Toast Notifikasi Mengambang -->
+  <!-- 5. Toast Notifikasi Mengambang -->
   <div id="global-toast" class="global-toast">Teks disalin ke clipboard!</div>
 
   <!-- ============================================================== -->
   <!-- SKRIP JAVASCRIPT (Sesuai Urutan Ketergantungan Modul)           -->
   <!-- ============================================================== -->
-  <script src="js/config.js?v=2.2"></script>
-  <script src="js/api.js?v=2.2"></script>
-  <script src="js/guest.js?v=2.2"></script>
-  <script src="js/countdown.js?v=2.2"></script>
-  <script src="js/music.js?v=2.2"></script>
-  <script src="js/rsvp.js?v=2.2"></script>
-  <script src="js/qrcode.js?v=2.2"></script>
-  <script src="js/main.js?v=2.2"></script>
+  <script src="js/config.js?v=2.4"></script>
+  <script src="js/api.js?v=2.4"></script>
+  <script src="js/guest.js?v=2.4"></script>
+  <script src="js/countdown.js?v=2.4"></script>
+  <script src="js/music.js?v=2.4"></script>
+  <script src="js/rsvp.js?v=2.4"></script>
+  <script src="js/qrcode.js?v=2.4"></script>
+  <script src="js/main.js?v=2.4"></script>
 </body>
 </html>

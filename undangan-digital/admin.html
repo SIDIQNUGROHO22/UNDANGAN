@@ -17,7 +17,7 @@
   <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon-admin.png">
 
   <!-- Admin Stylesheet -->
-  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/admin.css?v=2.5">
 </head>
 <body>
 
@@ -89,10 +89,10 @@
           <i class="fas fa-key"></i> <span>Ganti Akun &amp; Password</span>
         </button>
         <a href="index.html" target="_blank" class="btn-view-site">
-          <i class="fas fa-external-link-alt"></i> Buka Undangan
+          <i class="fas fa-external-link-alt"></i> <span class="btn-lbl">Buka Undangan</span>
         </a>
         <button type="button" class="btn-logout" id="btn-logout">
-          <i class="fas fa-sign-out-alt"></i> Keluar
+          <i class="fas fa-sign-out-alt"></i> <span>Keluar</span>
         </button>
       </div>
     </header>
@@ -210,7 +210,7 @@
         </div>
 
         <!-- Live Activity Section: 5 RSVP Terbaru & 5 Ucapan & Stiker Terbaru -->
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 1.25rem; margin-top: 1.25rem;">
+        <div class="overview-tables-grid">
           
           <!-- Box 1: 5 RSVP Terbaru -->
           <div class="panel-card" style="margin-bottom: 0;">
@@ -487,8 +487,8 @@
           </p>
 
           <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1rem;">
-            <input type="text" id="admin-qr-url-input" class="form-control" style="flex: 1; min-width: 260px;" placeholder="https://domain-undangan-anda.com">
-            <button type="button" class="btn-primary" id="btn-admin-generate-qr" style="width: auto; white-space: nowrap; padding: 0.75rem 1.5rem;">
+            <input type="text" id="admin-qr-url-input" class="form-control" style="flex: 1 1 200px; min-width: 0;" placeholder="https://domain-undangan-anda.com">
+            <button type="button" class="btn-primary" id="btn-admin-generate-qr" style="width: auto; white-space: nowrap; padding: 0.75rem 1.5rem; flex: 1 1 auto; justify-content: center;">
               <i class="fas fa-qrcode"></i> Generate QR Code
             </button>
           </div>
@@ -1396,7 +1396,7 @@ Tersimpan di Sistem Server Undangan Digital</pre>
               </div>
 
               <!-- Kontrol & Pilihan Efek Animasi -->
-              <div id="animation-controls-wrapper" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+              <div id="animation-controls-wrapper" class="anim-controls-grid" style="margin-top: 1rem;">
                 
                 <!-- Kolom Kiri: Pilihan Efek, Kepadatan, dan Kecepatan -->
                 <div>
@@ -1416,7 +1416,7 @@ Tersimpan di Sistem Server Undangan Digital</pre>
                     </select>
 
                     <!-- Kartu Preset Klik Cepat -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+                    <div class="anim-presets-grid">
                       <button type="button" class="btn-preset-anim active" data-effect="sakura" style="padding: 8px 10px; border-radius: 8px; border: 1px solid #dfb15b; background: #fffdfa; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; font-weight: 600;">
                         <span>🌸</span> <span>Sakura Pink</span>
                       </button>
@@ -1442,7 +1442,7 @@ Tersimpan di Sistem Server Undangan Digital</pre>
                   </div>
 
                   <!-- Baris Kepadatan & Kecepatan -->
-                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                  <div class="anim-options-grid" style="margin-top: 12px;">
                     <div class="form-group">
                       <label for="cfg-animation-intensity" class="form-label" style="font-weight: 700; font-size: 0.85rem;">
                         <i class="fas fa-layer-group" style="color: var(--admin-gold);"></i> Kepadatan Partikel

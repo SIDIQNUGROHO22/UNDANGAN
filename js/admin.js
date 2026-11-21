@@ -1282,6 +1282,17 @@ const AdminApp = (function () {
     // Update browser tab favicon for admin page (desktop & mobile)
     updateAdminTabFavicon(ta.adminFavicon || "assets/images/favicon-admin.png");
 
+    // Logo / Gambar Panel Admin di Samping Tulisan PANEL ADMIN
+    const adminLogo = ta.adminLogo || c.adminLogo || localStorage.getItem("wedding_admin_logo") || "assets/images/gunungan-gold.svg";
+    const adminTitle = ta.adminTitle || c.adminTitle || localStorage.getItem("wedding_admin_title") || "PANEL ADMIN";
+    setValue("cfg-admin-logo-img", adminLogo);
+    setValue("cfg-admin-brand-title", adminTitle);
+    applyAdminLogo(adminLogo, adminTitle);
+    try {
+      localStorage.setItem("wedding_admin_logo", adminLogo);
+      localStorage.setItem("wedding_admin_title", adminTitle);
+    } catch (_) {}
+
     // 6. Perjalanan Cinta (Love Story)
     if (Array.isArray(c.loveStory) && c.loveStory.length > 0) {
       currentLoveStories = JSON.parse(JSON.stringify(c.loveStory));
@@ -1556,6 +1567,31 @@ const AdminApp = (function () {
     appleEl.href = cleanUrl;
   }
 
+  function applyAdminLogo(logoUrl, titleText) {
+    const finalLogo = (logoUrl && String(logoUrl).trim()) ? String(logoUrl).trim() : "assets/images/gunungan-gold.svg";
+    const cleanUrl = normalizeMediaUrl(finalLogo, "image");
+
+    const setLogoSrc = (imgEl) => {
+      if (!imgEl) return;
+      imgEl.src = cleanUrl;
+      imgEl.onerror = function () {
+        this.src = "assets/images/gunungan-gold.svg";
+      };
+    };
+
+    setLogoSrc(document.getElementById("navbar-brand-img"));
+    setLogoSrc(document.getElementById("login-brand-img"));
+    setLogoSrc(document.getElementById("preview-admin-logo-img"));
+
+    if (titleText !== undefined && titleText !== null && String(titleText).trim()) {
+      const finalTitle = String(titleText).trim();
+      const brandNameEl = document.getElementById("navbar-brand-name");
+      if (brandNameEl) brandNameEl.textContent = finalTitle;
+      const mockupTitleEl = document.getElementById("mockup-navbar-brand-name");
+      if (mockupTitleEl) mockupTitleEl.textContent = finalTitle;
+    }
+  }
+
   function extractYouTubeId(url) {
     if (!url || typeof url !== "string") return "";
     url = url.trim();
@@ -1662,6 +1698,10 @@ const AdminApp = (function () {
     setImg(document.getElementById("cfg-favicon-invitation")?.value, "preview-favicon-invitation-mobile", "assets/images/favicon.png");
     setImg(document.getElementById("cfg-favicon-admin")?.value, "preview-favicon-admin", "assets/images/favicon-admin.png");
     setImg(document.getElementById("cfg-favicon-admin")?.value, "preview-favicon-admin-mobile", "assets/images/favicon-admin.png");
+    const adminLogoVal = document.getElementById("cfg-admin-logo-img")?.value;
+    const adminTitleVal = document.getElementById("cfg-admin-brand-title")?.value;
+    setImg(adminLogoVal, "preview-admin-logo-img", "assets/images/gunungan-gold.svg");
+    applyAdminLogo(adminLogoVal, adminTitleVal);
     updateCouplePreviews();
   }
 
@@ -1819,8 +1859,18 @@ const AdminApp = (function () {
         cornerOrnamentImage: (document.getElementById("cfg-corner-img")?.value || "assets/images/javanese-corner.svg").trim(),
         showCorners: Boolean(document.getElementById("cfg-show-corners")?.checked),
         favicon: (document.getElementById("cfg-favicon-invitation")?.value || "assets/images/favicon.png").trim(),
-        adminFavicon: (document.getElementById("cfg-favicon-admin")?.value || "assets/images/favicon-admin.png").trim()
+        adminFavicon: (document.getElementById("cfg-favicon-admin")?.value || "assets/images/favicon-admin.png").trim(),
+        adminLogo: (document.getElementById("cfg-admin-logo-img")?.value || "assets/images/gunungan-gold.svg").trim(),
+        adminTitle: (document.getElementById("cfg-admin-brand-title")?.value || "PANEL ADMIN").trim()
       };
+      updated.adminLogo = updated.themeAssets.adminLogo;
+      updated.adminTitle = updated.themeAssets.adminTitle;
+
+      try {
+        localStorage.setItem("wedding_admin_logo", updated.adminLogo);
+        localStorage.setItem("wedding_admin_title", updated.adminTitle);
+      } catch (_) {}
+      applyAdminLogo(updated.adminLogo, updated.adminTitle);
 
       // Update Love Story & Gallery
       syncLoveStoryFromInputs();
@@ -2177,6 +2227,8 @@ const AdminApp = (function () {
         }
       } else if (inputEl.id === "cfg-favicon-admin") {
         updateAdminTabFavicon(rawVal);
+      } else if (inputEl.id === "cfg-admin-logo-img") {
+        applyAdminLogo(rawVal, document.getElementById("cfg-admin-brand-title")?.value);
       }
     };
 
@@ -2194,7 +2246,8 @@ const AdminApp = (function () {
       "cfg-wayang-bride-img",
       "cfg-corner-img",
       "cfg-favicon-invitation",
-      "cfg-favicon-admin"
+      "cfg-favicon-admin",
+      "cfg-admin-logo-img"
     ].forEach(inputId => {
       const el = document.getElementById(inputId);
       if (el) {
@@ -2202,6 +2255,7 @@ const AdminApp = (function () {
           updateThemePreviews();
           updateCouplePreviews();
           if (inputId === "cfg-favicon-admin") updateAdminTabFavicon(el.value);
+          if (inputId === "cfg-admin-logo-img") applyAdminLogo(el.value, document.getElementById("cfg-admin-brand-title")?.value);
         });
         el.addEventListener("change", () => handleUrlPasteOrInput(el));
         el.addEventListener("paste", () => setTimeout(() => handleUrlPasteOrInput(el), 100));
@@ -2297,6 +2351,7 @@ const AdminApp = (function () {
               updateThemePreviews();
               updateCouplePreviews();
               if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
+              if (textInputId === "cfg-admin-logo-img") applyAdminLogo(res.filePath, document.getElementById("cfg-admin-brand-title")?.value);
               showToast(`✅ ${toastLabel || "Foto"} tersimpan ke server!`);
               return;
             }
@@ -2330,6 +2385,35 @@ const AdminApp = (function () {
     // Wiring Tombol Upload Favicon Ikon Tab
     setupFileUpload("btn-upload-fav-invitation", "file-fav-invitation", "cfg-favicon-invitation", "favicon", "Ikon tab undangan");
     setupFileUpload("btn-upload-fav-admin", "file-fav-admin", "cfg-favicon-admin", "favicon-admin", "Ikon tab admin");
+
+    // Wiring Tombol Upload Logo Panel Admin (Samping Tulisan PANEL ADMIN)
+    setupFileUpload("btn-upload-admin-logo", "file-admin-logo", "cfg-admin-logo-img", "admin-logo", "Logo Panel Admin");
+
+    // Listener Perubahan Teks Judul Dasbor (Real-time)
+    document.getElementById("cfg-admin-brand-title")?.addEventListener("input", function () {
+      const val = this.value.trim() || "PANEL ADMIN";
+      const brandNameEl = document.getElementById("navbar-brand-name");
+      if (brandNameEl) brandNameEl.textContent = val;
+      const mockupTitleEl = document.getElementById("mockup-navbar-brand-name");
+      if (mockupTitleEl) mockupTitleEl.textContent = val;
+    });
+
+    // Listener Tombol Preset Cepat Logo Panel Admin (1-Klik)
+    document.querySelectorAll(".btn-preset-admin-logo").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const src = this.getAttribute("data-src");
+        if (!src) return;
+        const input = document.getElementById("cfg-admin-logo-img");
+        if (input) {
+          input.value = src;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        document.querySelectorAll(".btn-preset-admin-logo").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        showToast("Preset logo admin diterapkan!");
+      });
+    });
 
     // Listener tombol tambah & reset cerita / galeri / rekening bank
     document.getElementById("btn-add-bank-account")?.addEventListener("click", addBankAccount);
@@ -2973,6 +3057,15 @@ const AdminApp = (function () {
   // INTI INITIALIZATION
   // ==========================================
   function init() {
+    // Terapkan logo & judul admin dari localStorage segera saat DOM siap
+    try {
+      const cachedLogo = localStorage.getItem("wedding_admin_logo");
+      const cachedTitle = localStorage.getItem("wedding_admin_title");
+      if (cachedLogo || cachedTitle) {
+        applyAdminLogo(cachedLogo, cachedTitle);
+      }
+    } catch (_) {}
+
     initAuth();
     initTabs();
     initAccountSecurity();

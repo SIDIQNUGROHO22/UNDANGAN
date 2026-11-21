@@ -273,6 +273,45 @@ div[style*="display:flex"] > input.form-control {
   text-transform: uppercase;
 }
 
+/* Pilihan Preset Logo Panel Admin */
+.btn-preset-admin-logo {
+  font-size: 0.75rem;
+  padding: 5px 9px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #334155;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  line-height: 1.2;
+}
+
+.btn-preset-admin-logo:hover {
+  background: #fef3c7;
+  border-color: #dfb15b;
+  color: #78350f;
+  transform: translateY(-1px);
+}
+
+.btn-preset-admin-logo.active {
+  background: #fef3c7;
+  border-color: #dfb15b;
+  color: #92400e;
+  font-weight: 700;
+  box-shadow: 0 0 0 2px rgba(223, 177, 91, 0.35);
+}
+
+.btn-preset-admin-logo img {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
 /* Tombol Ganti Akun & Keamanan */
 .btn-account-security {
   padding: 0.4rem 0.85rem;

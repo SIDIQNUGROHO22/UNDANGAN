@@ -28,7 +28,7 @@
     <div class="login-card">
       <div class="login-header">
         <div class="login-brand-aesthetic">
-          <img src="assets/images/gunungan-gold.svg" alt="Wayang Gunungan" class="login-gunungan-logo">
+          <img src="assets/images/gunungan-gold.svg" alt="Wayang Gunungan" class="login-gunungan-logo" id="login-brand-img">
           <div class="login-brand-text">WEDDING DASBOR</div>
         </div>
         <h1 class="login-title">Portal Dasbor Undangan</h1>
@@ -73,10 +73,10 @@
       <div class="navbar-brand">
         <div class="navbar-brand-aesthetic">
           <div class="navbar-gunungan-icon">
-            <img src="assets/images/gunungan-gold.svg" alt="Wayang Gunungan" class="navbar-gunungan-img">
+            <img src="assets/images/gunungan-gold.svg" alt="Wayang Gunungan" class="navbar-gunungan-img" id="navbar-brand-img">
           </div>
           <div class="navbar-brand-info">
-            <div class="navbar-brand-name">PANEL ADMIN</div>
+            <div class="navbar-brand-name" id="navbar-brand-name">PANEL ADMIN</div>
           </div>
         </div>
       </div>
@@ -1369,6 +1369,105 @@ Tersimpan di Sistem Server Undangan Digital</pre>
                       </div>
                     </div>
 
+                  </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- D. KUSTOMISASI LOGO / GAMBAR PANEL ADMIN (SAMPING PANEL ADMIN) -->
+                <!-- ============================================================== -->
+                <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px dashed var(--admin-border);">
+                  <div style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 2px solid #dfb15b; box-shadow: 0 4px 15px rgba(223, 177, 91, 0.1);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.65rem; flex-wrap: wrap; gap: 8px;">
+                      <div>
+                        <strong style="font-size: 1rem; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                          <i class="fas fa-crown" style="color: #dfb15b;"></i> Logo / Gambar Panel Admin (Samping Tulisan "PANEL ADMIN")
+                        </strong>
+                        <p style="font-size: 0.8rem; color: #64748b; margin: 3px 0 0 0;">
+                          Kustomisasi gambar lambang di sebelah kiri tulisan <strong>PANEL ADMIN</strong> pada header atas dan layar login dasbor admin.
+                        </p>
+                      </div>
+                      <span style="font-size: 0.75rem; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+                        <i class="fas fa-shield-alt"></i> Identitas Dasbor
+                      </span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                      
+                      <!-- Kolom Input, Upload & Presets -->
+                      <div>
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                          <label for="cfg-admin-logo-img" class="form-label" style="font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; justify-content: space-between;">
+                            <span><i class="fas fa-image" style="color: var(--admin-gold);"></i> Gambar Logo Samping "PANEL ADMIN"</span>
+                            <span style="font-size: 0.72rem; color: #64748b;">SVG / PNG / JPG / URL</span>
+                          </label>
+                          <div style="display: flex; gap: 6px;">
+                            <input type="text" id="cfg-admin-logo-img" class="form-control" placeholder="assets/images/gunungan-gold.svg atau URL gambar" style="font-size: 0.85rem;" title="Link gambar atau path file logo">
+                            <button type="button" class="btn-sm" id="btn-upload-admin-logo" style="white-space: nowrap; background: #dfb15b; color: #1a1511; font-weight: 600; border: 1px solid #c99e46; font-size: 0.82rem; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;" title="Unggah file gambar dari HP atau laptop">
+                              <i class="fas fa-upload"></i> Upload
+                            </button>
+                            <input type="file" id="file-admin-logo" accept="image/png,image/jpeg,image/webp,image/svg+xml,image/gif" style="display: none;">
+                          </div>
+                        </div>
+
+                        <!-- Teks Judul Dasbor (Opsional) -->
+                        <div class="form-group" style="margin-bottom: 0.85rem;">
+                          <label for="cfg-admin-brand-title" class="form-label" style="font-weight: 600; font-size: 0.82rem; color: #475569;">
+                            <i class="fas fa-font" style="color: var(--admin-gold);"></i> Teks Tulisan Dasbor (Default: PANEL ADMIN)
+                          </label>
+                          <input type="text" id="cfg-admin-brand-title" class="form-control" placeholder="PANEL ADMIN" style="font-size: 0.85rem;">
+                        </div>
+
+                        <!-- Pilihan Preset Gambar -->
+                        <div>
+                          <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;">
+                            <i class="fas fa-bolt" style="color: #dfb15b;"></i> Pilihan Cepat (Preset Gambar):
+                          </div>
+                          <div style="display: flex; flex-wrap: wrap; gap: 6px;" id="admin-logo-presets">
+                            <button type="button" class="btn-preset-admin-logo active" data-src="assets/images/gunungan-gold.svg" title="Wayang Gunungan Emas">
+                              <img src="assets/images/gunungan-gold.svg" alt="Gunungan"> Gunungan Emas
+                            </button>
+                            <button type="button" class="btn-preset-admin-logo" data-src="assets/images/favicon-admin.png" title="Favicon Keraton">
+                              <img src="assets/images/favicon-admin.png" alt="Keraton"> Favicon Keraton
+                            </button>
+                            <button type="button" class="btn-preset-admin-logo" data-src="assets/images/wayang-kamajaya.svg" title="Siluet Kamajaya">
+                              <img src="assets/images/wayang-kamajaya.svg" alt="Kamajaya"> Kamajaya
+                            </button>
+                            <button type="button" class="btn-preset-admin-logo" data-src="assets/images/wayang-kamaratih.svg" title="Siluet Kamaratih">
+                              <img src="assets/images/wayang-kamaratih.svg" alt="Kamaratih"> Kamaratih
+                            </button>
+                            <button type="button" class="btn-preset-admin-logo" data-src="assets/images/couple-1.jpg" title="Foto Pria">
+                              <img src="assets/images/couple-1.jpg" alt="Foto Pria" style="border-radius: 50%;"> Foto Pria
+                            </button>
+                            <button type="button" class="btn-preset-admin-logo" data-src="assets/images/couple-2.jpg" title="Foto Wanita">
+                              <img src="assets/images/couple-2.jpg" alt="Foto Wanita" style="border-radius: 50%;"> Foto Wanita
+                            </button>
+                            <button type="button" class="btn-preset-admin-logo" data-src="assets/images/cover.jpg" title="Foto Sampul">
+                              <img src="assets/images/cover.jpg" alt="Foto Sampul" style="border-radius: 3px;"> Sampul
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Kolom Pratinjau Tampilan Header Realistis -->
+                      <div>
+                        <div style="font-weight: 700; font-size: 0.82rem; color: #475569; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 5px;">
+                          <i class="fas fa-eye" style="color: var(--admin-gold);"></i> Pratinjau Bilah Header Panel Admin:
+                        </div>
+                        <div style="background: #110d0a; border: 1px solid rgba(223, 177, 91, 0.4); border-radius: 8px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                          <div class="navbar-gunungan-icon" style="width: 44px; height: 44px; margin: 0; flex-shrink: 0;">
+                            <img id="preview-admin-logo-img" src="assets/images/gunungan-gold.svg" alt="Preview Logo Admin" class="navbar-gunungan-img" style="width: 100%; height: 100%; object-fit: contain;" onerror="this.src='assets/images/gunungan-gold.svg'">
+                          </div>
+                          <div>
+                            <div id="mockup-navbar-brand-name" style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 1.35rem; font-weight: 700; color: #dfb15b; letter-spacing: 2px; line-height: 1; text-transform: uppercase;">PANEL ADMIN</div>
+                            <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.72rem; color: #d1c8be; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; margin-top: 3px;">The Wedding Dashboard</div>
+                          </div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #64748b; margin-top: 8px; line-height: 1.4;">
+                          <i class="fas fa-check-circle" style="color: #10b981;"></i> Gambar di bilah atas (navbar) langsung ter-update secara langsung (live) saat Anda mengganti gambar atau memilih preset.
+                        </div>
+                      </div>
+
+                    </div>
                   </div>
                 </div>
 

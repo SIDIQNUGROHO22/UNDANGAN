@@ -146,8 +146,12 @@
     "coverWayangGroomImage": "assets/images/wayang-kamajaya.svg",
     "coverWayangBrideImage": "assets/images/wayang-kamaratih.svg",
     "showCoverCouplePhoto": false,
-    "coverCouplePhoto": "assets/images/cover.jpg"
+    "coverCouplePhoto": "assets/images/cover.jpg",
+    "adminLogo": "assets/images/gunungan-gold.svg",
+    "adminTitle": "PANEL ADMIN"
   },
+  "adminLogo": "assets/images/gunungan-gold.svg",
+  "adminTitle": "PANEL ADMIN",
   "animation": {
     "enabled": true,
     "effect": "sakura",

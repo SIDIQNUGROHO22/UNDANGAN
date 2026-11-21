@@ -133,8 +133,12 @@
     "cornerOrnamentImage": "assets/images/javanese-corner.svg",
     "showCoverWayang": true,
     "favicon": "assets/images/gunungan-gold.svg",
-    "adminFavicon": "assets/images/gunungan-gold.svg"
+    "adminFavicon": "assets/images/gunungan-gold.svg",
+    "adminLogo": "assets/images/gunungan-gold.svg",
+    "adminTitle": "PANEL ADMIN"
   },
+  "adminLogo": "assets/images/gunungan-gold.svg",
+  "adminTitle": "PANEL ADMIN",
   "animation": {
     "enabled": true,
     "effect": "sakura",

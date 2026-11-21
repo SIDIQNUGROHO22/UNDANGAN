@@ -151,6 +151,12 @@ const WEDDING_CONFIG = {
     "showCoverCouplePhoto": false,
     "coverCouplePhoto": "assets/images/cover.jpg"
   },
+  "animation": {
+    "enabled": true,
+    "effect": "sakura",
+    "intensity": "medium",
+    "speed": "normal"
+  },
   "gift": {
     "description": "Doa restu Anda merupakan karunia terindah bagi kami. Namun jika Anda bermaksud memberikan tanda kasih, Anda dapat menyalurkannya melalui rekening berikut:",
     "bankAccounts": [

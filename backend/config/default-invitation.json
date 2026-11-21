@@ -135,6 +135,12 @@
     "favicon": "assets/images/gunungan-gold.svg",
     "adminFavicon": "assets/images/gunungan-gold.svg"
   },
+  "animation": {
+    "enabled": true,
+    "effect": "sakura",
+    "intensity": "medium",
+    "speed": "normal"
+  },
   "gift": {
     "description": "Doa restu Anda merupakan karunia terindah bagi kami. Namun jika Anda bermaksud memberikan tanda kasih, Anda dapat menyalurkannya melalui rekening berikut:",
     "bankAccounts": [

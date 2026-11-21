@@ -266,6 +266,9 @@ const AdminApp = (function () {
         const targetPane = document.getElementById(targetTabId);
         if (targetPane) {
           targetPane.classList.add("active");
+          if (targetTabId === "tab-settings") {
+            setTimeout(updateAdminAnimationPreview, 120);
+          }
         }
       });
     });
@@ -1306,6 +1309,133 @@ const AdminApp = (function () {
 
     updateThemePreviews();
     updateCouplePreviews();
+
+    // 5b. Animasi Partikel Estetik Latar Belakang (Salju, Sakura, Bintang Emas, Hati, dll)
+    const anim = c.animation || {};
+    const animEnabled = anim.enabled !== false;
+    setCheckbox("cfg-animation-enabled", animEnabled);
+    setValue("cfg-animation-effect", anim.effect || "sakura");
+    setValue("cfg-animation-intensity", anim.intensity || "medium");
+    setValue("cfg-animation-speed", anim.speed || "normal");
+    updateAdminAnimationStatusText(animEnabled);
+    updateActivePresetAnimButton(anim.effect || "sakura");
+    setTimeout(updateAdminAnimationPreview, 120);
+  }
+
+  let adminAnimPreviewInstance = null;
+
+  const ANIM_EFFECT_LABELS = {
+    sakura: "🌸 Sakura Pink",
+    snow: "❄️ Salju Halus",
+    sparkles: "✨ Bintang Emas",
+    hearts: "💖 Hati Cinta",
+    fireflies: "🌟 Kunang-kunang",
+    autumn: "🍂 Daun Autumn",
+    jasmine: "🌼 Melati Suci"
+  };
+
+  function updateAdminAnimationStatusText(enabled) {
+    const textEl = document.getElementById("cfg-animation-status-text");
+    const wrapperEl = document.getElementById("animation-controls-wrapper");
+    if (textEl) {
+      textEl.textContent = enabled ? "AKTIF" : "NONAKTIF";
+      textEl.style.color = enabled ? "#10b981" : "#94a3b8";
+    }
+    if (wrapperEl) {
+      wrapperEl.style.opacity = enabled ? "1" : "0.55";
+    }
+  }
+
+  function updateActivePresetAnimButton(effect) {
+    const buttons = document.querySelectorAll(".btn-preset-anim");
+    buttons.forEach(btn => {
+      const match = btn.getAttribute("data-effect") === effect;
+      if (match) {
+        btn.classList.add("active");
+        btn.style.borderColor = "#dfb15b";
+        btn.style.background = "#fffdfa";
+        btn.style.fontWeight = "700";
+      } else {
+        btn.classList.remove("active");
+        btn.style.borderColor = "var(--admin-border)";
+        btn.style.background = "#ffffff";
+        btn.style.fontWeight = "400";
+      }
+    });
+
+    const labelBadge = document.getElementById("preview-anim-name");
+    if (labelBadge) {
+      labelBadge.textContent = ANIM_EFFECT_LABELS[effect] || effect;
+    }
+  }
+
+  function updateAdminAnimationPreview() {
+    const previewCanvas = document.getElementById("admin-particle-preview-canvas");
+    if (!previewCanvas) return;
+
+    if (adminAnimPreviewInstance) {
+      adminAnimPreviewInstance.stop();
+      adminAnimPreviewInstance = null;
+    }
+
+    const enabled = Boolean(document.getElementById("cfg-animation-enabled")?.checked);
+    if (!enabled) {
+      const pCtx = previewCanvas.getContext("2d");
+      if (pCtx) pCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+      return;
+    }
+
+    const effect = document.getElementById("cfg-animation-effect")?.value || "sakura";
+    const intensity = document.getElementById("cfg-animation-intensity")?.value || "medium";
+    const speed = document.getElementById("cfg-animation-speed")?.value || "normal";
+
+    if (typeof WeddingParticles !== "undefined" && WeddingParticles.createPreview) {
+      adminAnimPreviewInstance = WeddingParticles.createPreview(previewCanvas, effect, intensity, speed);
+    }
+  }
+
+  function setupAnimationControls() {
+    const enableCheckbox = document.getElementById("cfg-animation-enabled");
+    if (enableCheckbox) {
+      enableCheckbox.addEventListener("change", function () {
+        updateAdminAnimationStatusText(this.checked);
+        updateAdminAnimationPreview();
+      });
+    }
+
+    const effectSelect = document.getElementById("cfg-animation-effect");
+    if (effectSelect) {
+      effectSelect.addEventListener("change", function () {
+        updateActivePresetAnimButton(this.value);
+        updateAdminAnimationPreview();
+      });
+    }
+
+    const intensitySelect = document.getElementById("cfg-animation-intensity");
+    if (intensitySelect) {
+      intensitySelect.addEventListener("change", function () {
+        updateAdminAnimationPreview();
+      });
+    }
+
+    const speedSelect = document.getElementById("cfg-animation-speed");
+    if (speedSelect) {
+      speedSelect.addEventListener("change", function () {
+        updateAdminAnimationPreview();
+      });
+    }
+
+    const presetButtons = document.querySelectorAll(".btn-preset-anim");
+    presetButtons.forEach(btn => {
+      btn.addEventListener("click", function () {
+        const eff = this.getAttribute("data-effect");
+        if (eff && effectSelect) {
+          effectSelect.value = eff;
+          updateActivePresetAnimButton(eff);
+          updateAdminAnimationPreview();
+        }
+      });
+    });
   }
 
   function setValue(id, val) {
@@ -1698,6 +1828,14 @@ const AdminApp = (function () {
       updated.loveStory = currentLoveStories;
       updated.gallery = currentGalleryItems;
 
+      // Update Efek Animasi Partikel Latar Belakang (Salju, Sakura, Bintang Emas, Hati, dll)
+      updated.animation = {
+        enabled: Boolean(document.getElementById("cfg-animation-enabled")?.checked),
+        effect: document.getElementById("cfg-animation-effect")?.value || "sakura",
+        intensity: document.getElementById("cfg-animation-intensity")?.value || "medium",
+        speed: document.getElementById("cfg-animation-speed")?.value || "normal"
+      };
+
       // Update Footer (Bawah Pol)
       const groomCallVal = document.getElementById("cfg-groom-call")?.value.trim() || "agus";
       const brideCallVal = document.getElementById("cfg-bride-call")?.value.trim() || "agis";
@@ -1730,6 +1868,11 @@ const AdminApp = (function () {
           }
           if (updated.themeAssets?.adminFavicon) {
             updateAdminTabFavicon(updated.themeAssets.adminFavicon);
+          }
+          if (res.data?.animation) {
+            updateAdminAnimationStatusText(res.data.animation.enabled !== false);
+            updateActivePresetAnimButton(res.data.animation.effect || "sakura");
+            updateAdminAnimationPreview();
           }
           showToast("Data kustomisasi undangan berhasil disimpan ke server!");
         } else {
@@ -2195,6 +2338,9 @@ const AdminApp = (function () {
     document.getElementById("btn-reset-story-default")?.addEventListener("click", resetStoryDefault);
     document.getElementById("btn-add-gallery-item")?.addEventListener("click", addGalleryItem);
     document.getElementById("btn-reset-gallery-default")?.addEventListener("click", resetGalleryDefault);
+
+    // Wiring Kontrol Animasi Partikel Estetik (Salju, Sakura, Emas, dll)
+    setupAnimationControls();
   }
 
   // ==========================================

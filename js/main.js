@@ -217,6 +217,11 @@ const MainApp = (function () {
     if (c.countdown && typeof CountdownHandler !== "undefined") {
       CountdownHandler.init();
     }
+
+    // Update efek animasi partikel latar belakang (Salju, Sakura, Bintang Emas, dll)
+    if (typeof WeddingParticles !== "undefined") {
+      WeddingParticles.updateFromConfig(c.animation);
+    }
   }
 
   /**
@@ -1357,5 +1362,11 @@ document.addEventListener("DOMContentLoaded", function () {
   if (typeof CountdownHandler !== "undefined") CountdownHandler.init();
   if (typeof RsvpHandler !== "undefined") RsvpHandler.init();
   if (typeof QrCodeHandler !== "undefined") QrCodeHandler.init();
+  if (typeof WeddingParticles !== "undefined") {
+    const animCfg = (typeof WEDDING_CONFIG !== "undefined" && WEDDING_CONFIG.animation)
+      ? WEDDING_CONFIG.animation
+      : null;
+    WeddingParticles.init(animCfg);
+  }
   if (typeof MainApp !== "undefined") MainApp.init();
 });

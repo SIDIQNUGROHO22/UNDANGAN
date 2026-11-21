@@ -1375,6 +1375,123 @@ Tersimpan di Sistem Server Undangan Digital</pre>
               </div>
             </div>
 
+            <!-- 5b. EFEK ANIMASI PARTIKEL LATAR BELAKANG (SALJU, SAKURA, BINTANG EMAS, HATI, DLL) -->
+            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 10px;">
+                <div>
+                  <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-magic" style="color: var(--admin-gold);"></i> Efek Animasi &amp; Partikel Estetik Latar Belakang
+                  </h4>
+                  <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-top: 4px;">
+                    Hiasi halaman undangan dengan efek partikel melayang yang romantis &amp; sinematik. Bisa dinyalakan atau dimatikan kapan saja.
+                  </p>
+                </div>
+                <!-- Master Toggle Switch -->
+                <div style="display: flex; align-items: center; gap: 8px; background: #fff; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--admin-border); box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                  <label for="cfg-animation-enabled" style="font-size: 0.88rem; font-weight: 600; cursor: pointer; color: var(--admin-text); display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="cfg-animation-enabled" checked style="width: 18px; height: 18px; accent-color: #dfb15b; cursor: pointer;">
+                    <span>Status Animasi: <strong id="cfg-animation-status-text" style="color: #10b981;">AKTIF</strong></span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Kontrol & Pilihan Efek Animasi -->
+              <div id="animation-controls-wrapper" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                
+                <!-- Kolom Kiri: Pilihan Efek, Kepadatan, dan Kecepatan -->
+                <div>
+                  <!-- Pilihan Efek Dropdown & Preset Buttons -->
+                  <div class="form-group" style="margin-bottom: 1rem;">
+                    <label for="cfg-animation-effect" class="form-label" style="font-weight: 700;">
+                      <i class="fas fa-sparkles" style="color: var(--admin-gold);"></i> Pilihan Efek Estetik
+                    </label>
+                    <select id="cfg-animation-effect" class="form-control" style="font-size: 0.92rem; font-weight: 600; padding: 8px 12px; margin-bottom: 10px;">
+                      <option value="sakura">🌸 Kelopak Bunga Sakura / Mawar Pink (Paling Romantis)</option>
+                      <option value="snow">❄️ Salju Musim Dingin Lembut (Soft Snowfall)</option>
+                      <option value="sparkles">✨ Kilau Bintang &amp; Emas Mewah (Luxury Gold Stardust)</option>
+                      <option value="hearts">💖 Butiran Hati Romantis Melayang (Floating Hearts)</option>
+                      <option value="fireflies">🌟 Kunang-Kunang Malam / Cahaya Magis (Enchanted Glow)</option>
+                      <option value="autumn">🍂 Dedaunan Emas &amp; Rontok (Rustic Autumn Leaves)</option>
+                      <option value="jasmine">🌼 Kelopak Bunga Melati Suci (White Jasmine Petals)</option>
+                    </select>
+
+                    <!-- Kartu Preset Klik Cepat -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+                      <button type="button" class="btn-preset-anim active" data-effect="sakura" style="padding: 8px 10px; border-radius: 8px; border: 1px solid #dfb15b; background: #fffdfa; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                        <span>🌸</span> <span>Sakura Pink</span>
+                      </button>
+                      <button type="button" class="btn-preset-anim" data-effect="snow" style="padding: 8px 10px; border-radius: 8px; border: 1px solid var(--admin-border); background: #fff; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <span>❄️</span> <span>Salju Halus</span>
+                      </button>
+                      <button type="button" class="btn-preset-anim" data-effect="sparkles" style="padding: 8px 10px; border-radius: 8px; border: 1px solid var(--admin-border); background: #fff; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <span>✨</span> <span>Bintang Emas</span>
+                      </button>
+                      <button type="button" class="btn-preset-anim" data-effect="hearts" style="padding: 8px 10px; border-radius: 8px; border: 1px solid var(--admin-border); background: #fff; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <span>💖</span> <span>Hati Cinta</span>
+                      </button>
+                      <button type="button" class="btn-preset-anim" data-effect="fireflies" style="padding: 8px 10px; border-radius: 8px; border: 1px solid var(--admin-border); background: #fff; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <span>🌟</span> <span>Kunang-kunang</span>
+                      </button>
+                      <button type="button" class="btn-preset-anim" data-effect="autumn" style="padding: 8px 10px; border-radius: 8px; border: 1px solid var(--admin-border); background: #fff; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <span>🍂</span> <span>Daun Autumn</span>
+                      </button>
+                      <button type="button" class="btn-preset-anim" data-effect="jasmine" style="padding: 8px 10px; border-radius: 8px; border: 1px solid var(--admin-border); background: #fff; cursor: pointer; text-align: left; font-size: 0.8rem; display: flex; align-items: center; gap: 6px;">
+                        <span>🌼</span> <span>Melati Suci</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Baris Kepadatan & Kecepatan -->
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+                    <div class="form-group">
+                      <label for="cfg-animation-intensity" class="form-label" style="font-weight: 700; font-size: 0.85rem;">
+                        <i class="fas fa-layer-group" style="color: var(--admin-gold);"></i> Kepadatan Partikel
+                      </label>
+                      <select id="cfg-animation-intensity" class="form-control" style="font-size: 0.85rem;">
+                        <option value="low">Ringan (Minimalis &amp; Hemat)</option>
+                        <option value="medium" selected>Sedang (Ideal &amp; Seimbang)</option>
+                        <option value="high">Ramai (Penuh &amp; Spektakuler)</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="cfg-animation-speed" class="form-label" style="font-weight: 700; font-size: 0.85rem;">
+                        <i class="fas fa-tachometer-alt" style="color: var(--admin-gold);"></i> Kecepatan Melayang
+                      </label>
+                      <select id="cfg-animation-speed" class="form-control" style="font-size: 0.85rem;">
+                        <option value="slow">Lambat (Sinematik &amp; Tenang)</option>
+                        <option value="normal" selected>Normal (Standar Alami)</option>
+                        <option value="fast">Cepat (Dinamis)</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Kolom Kanan: Kotak Live Preview Interaktif -->
+                <div style="background: #181410; border-radius: 12px; border: 1px solid #dfb15b; padding: 12px; display: flex; flex-direction: column; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #dfb15b; display: flex; align-items: center; gap: 6px;">
+                      <i class="fas fa-eye"></i> Preview Langsung (Real-Time)
+                    </span>
+                    <span id="preview-anim-name" style="font-size: 0.75rem; color: #e2e8f0; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;">
+                      Sakura Pink
+                    </span>
+                  </div>
+                  <!-- Mini Canvas Preview -->
+                  <div style="position: relative; width: 100%; height: 180px; background: linear-gradient(180deg, #1c1611 0%, #2a2017 100%); border-radius: 8px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    <canvas id="admin-particle-preview-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%;"></canvas>
+                    <div style="position: relative; z-index: 2; text-align: center; pointer-events: none; padding: 10px; background: rgba(0,0,0,0.3); border-radius: 8px; backdrop-filter: blur(2px);">
+                      <p style="font-family: serif; color: #dfb15b; font-size: 1.1rem; margin: 0; font-weight: 600;">Dimas &amp; Anindya</p>
+                      <p style="font-size: 0.75rem; color: #cbd5e1; margin: 2px 0 0;">Undangan Pernikahan Digital</p>
+                    </div>
+                  </div>
+                  <p style="font-size: 0.72rem; color: #94a3b8; margin: 8px 0 0; text-align: center;">
+                    <i class="fas fa-info-circle"></i> Gerakan partikel di atas menggambarkan persis tampilannya di website undangan Anda.
+                  </p>
+                </div>
+
+              </div>
+            </div>
+
             <!-- 6. PERJALANAN CINTA (LOVE STORY TIMELINE) -->
             <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 10px;">
@@ -1572,9 +1689,10 @@ Tersimpan di Sistem Server Undangan Digital</pre>
   <div id="admin-toast" class="admin-toast">Pesan berhasil disimpan.</div>
 
   <!-- Skrip JavaScript Admin -->
-  <script src="js/config.js?v=2.3"></script>
-  <script src="js/api.js?v=2.3"></script>
-  <script src="js/wa-generator.js?v=2.3"></script>
-  <script src="js/admin.js?v=2.3"></script>
+  <script src="js/config.js?v=2.5"></script>
+  <script src="js/api.js?v=2.5"></script>
+  <script src="js/particles.js?v=2.5"></script>
+  <script src="js/wa-generator.js?v=2.5"></script>
+  <script src="js/admin.js?v=2.5"></script>
 </body>
 </html>

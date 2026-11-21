@@ -116,6 +116,58 @@
   animation: gentleFloat 4s ease-in-out infinite;
 }
 
+/* --- GENTLE GLOW PULSE (GUNUNGAN PUSAT & ORNAMEN KERATON) --- */
+@keyframes gentleGlowPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 14px rgba(223, 177, 91, 0.55));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 28px rgba(223, 177, 91, 0.9));
+    transform: scale(1.05);
+  }
+}
+
+/* --- GUNUNGAN WAYANG CURTAIN SPLIT ANIMATION --- */
+@keyframes gununganFloatLeft {
+  0%, 100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-1.5deg) translateY(-8px);
+  }
+}
+
+@keyframes gununganFloatRight {
+  0%, 100% {
+    transform: scaleX(-1) rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: scaleX(-1) rotate(-1.5deg) translateY(-8px);
+  }
+}
+
+.gunungan-left {
+  animation: gununganFloatLeft 6s ease-in-out infinite;
+}
+
+.gunungan-right {
+  animation: gununganFloatRight 6s ease-in-out infinite;
+}
+
+/* Saat cover dibuka, batalkan animasi melayang dan jalankan transisi geser keluar yang sangat halus */
+.cover-section.opened .gunungan-left {
+  animation: none;
+  transform: translateX(-150%) rotate(-16deg) !important;
+  opacity: 0 !important;
+}
+
+.cover-section.opened .gunungan-right {
+  animation: none;
+  transform: scaleX(-1) translateX(-150%) rotate(-16deg) !important;
+  opacity: 0 !important;
+}
+
 /* --- EQUALIZER BAR WAVE (DYNAMIC ISLAND) --- */
 @keyframes waveBounce {
   0%, 100% {
@@ -126,8 +178,29 @@
   }
 }
 
+/* --- PARTICLE ANIMATION CANVAS (EFEK SALJU, SAKURA, BINTANG EMAS, DLL) --- */
+.wedding-particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.wedding-particles-canvas.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* --- AKSELSILIBITAS: PREFERS REDUCED MOTION --- */
 @media (prefers-reduced-motion: reduce) {
+  .wedding-particles-canvas {
+    display: none !important;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

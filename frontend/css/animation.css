@@ -178,8 +178,29 @@
   }
 }
 
+/* --- PARTICLE ANIMATION CANVAS (EFEK SALJU, SAKURA, BINTANG EMAS, DLL) --- */
+.wedding-particles-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 15;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+}
+
+.wedding-particles-canvas.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 /* --- AKSELSILIBITAS: PREFERS REDUCED MOTION --- */
 @media (prefers-reduced-motion: reduce) {
+  .wedding-particles-canvas {
+    display: none !important;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

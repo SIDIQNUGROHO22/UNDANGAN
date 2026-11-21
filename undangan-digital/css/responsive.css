@@ -199,40 +199,80 @@
     padding: 1.75rem 1.25rem;
   }
 
-  /* Navigasi Bawah Mengambang */
+  /* Navigasi Bawah Mengambang Mobile (100% Kompatibel HP, Rapi & Bebas Cacat) */
   .bottom-nav {
     padding: 4px 6px;
-    bottom: max(12px, env(safe-area-inset-bottom));
-    width: 95%;
-    justify-content: space-around;
+    bottom: max(10px, env(safe-area-inset-bottom, 10px));
+    width: calc(100% - 16px);
+    max-width: 480px;
+    justify-content: space-between;
+    gap: 2px;
+    border-radius: 32px;
+    box-sizing: border-box;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .bottom-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .nav-link {
-    padding: 6px 8px;
-    font-size: 0.62rem;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 5px 2px;
+    font-size: 0.58rem;
+    gap: 2px;
+    border-radius: 18px;
+    text-align: center;
+    box-sizing: border-box;
   }
 
   .nav-link i {
-    font-size: 0.9rem;
+    font-size: 0.88rem;
   }
 
-  /* Tombol Musik & Kembali ke Atas */
-  .music-toggle-btn {
-    bottom: 75px;
+  .nav-link span {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.54rem;
+    line-height: 1.1;
+    letter-spacing: -0.2px;
+  }
+
+  /* Posisi Tombol Musik & Kembali ke Atas - Mengambang Rapi Tepat di Atas Tab Bawah */
+  .music-toggle-btn,
+  .aesthetic-music-widget {
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 58px);
     left: 14px;
-    width: 42px;
-    height: 42px;
-  }
-
-  .music-toggle-btn i {
-    font-size: 1rem;
+    z-index: 995;
   }
 
   .back-to-top {
-    bottom: 75px;
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 58px);
     right: 14px;
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
+    z-index: 995;
+  }
+
+  /* Bank Cards Grid & Kado Digital Mobile */
+  .bank-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto 2rem;
+  }
+
+  .bank-card {
+    padding: 1.25rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   /* Lightbox Mobile Nav */
@@ -249,12 +289,6 @@
     height: 40px;
     font-size: 1rem;
     background: rgba(0, 0, 0, 0.45);
-  }
-
-  /* Aesthetic Music Widget Mobile */
-  .aesthetic-music-widget {
-    bottom: 78px;
-    left: 16px;
   }
 
   /* Sticker & Quick Emoji Mobile Responsive */
@@ -277,33 +311,46 @@
   }
 }
 
-/* --- SMALL MOBILE (MAKSIMAL 380px) --- */
-@media screen and (max-width: 380px) {
-  .aesthetic-music-widget {
-    bottom: 74px;
-    left: 14px;
-  }
-  .vinyl-disc-wrapper {
-    width: 44px;
-    height: 44px;
-  }
-  .cover-names {
-    font-size: 2.2rem;
-  }
-
-  .hero-title {
-    font-size: 1.95rem;
-  }
-
-  .nav-link span {
-    display: none; /* Sembunyikan label teks, tampilkan ikon saja di layar sangat sempit */
+/* --- SMALL MOBILE (HP LAYAR SANGAT SEMPIT <= 360px) --- */
+@media screen and (max-width: 360px) {
+  .bottom-nav {
+    width: calc(100% - 10px);
+    padding: 3px 4px;
+    justify-content: flex-start;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   .nav-link {
-    padding: 8px 10px;
+    flex: 0 0 auto;
+    min-width: 46px;
+    padding: 4px 5px;
   }
 
-  .nav-link i {
-    font-size: 1.1rem;
+  .nav-link span {
+    font-size: 0.52rem;
+  }
+
+  .aesthetic-music-widget {
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 54px);
+    left: 10px;
+  }
+  .vinyl-disc-wrapper {
+    width: 42px;
+    height: 42px;
+  }
+  .cover-names {
+    font-size: 2.1rem;
+  }
+
+  .hero-title {
+    font-size: 1.85rem;
+  }
+
+  .back-to-top {
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 54px);
+    right: 10px;
+    width: 38px;
+    height: 38px;
   }
 }

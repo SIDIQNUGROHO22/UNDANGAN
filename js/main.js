@@ -1203,6 +1203,9 @@ const MainApp = (function () {
         const href = link.getAttribute("href");
         if (href === `#${targetId}`) {
           link.classList.add("active");
+          try {
+            link.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+          } catch (_) {}
         } else {
           link.classList.remove("active");
         }

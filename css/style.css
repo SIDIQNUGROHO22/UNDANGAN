@@ -85,6 +85,17 @@ body.scroll-locked {
   height: 100vh;
 }
 
+/* Sembunyikan elemen navigasi & widget melayang saat cover sampul pembuka masih terkunci */
+body.scroll-locked .bottom-nav,
+body.scroll-locked .aesthetic-music-widget,
+body.scroll-locked .back-to-top {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(40px) !important;
+  transition: opacity 0.35s ease, visibility 0.35s ease, transform 0.35s ease;
+}
+
 body.modal-open {
   overflow: hidden;
 }
@@ -2053,50 +2064,68 @@ textarea.form-control {
 /* --- FLOATING BOTTOM NAVIGATION BAR --- */
 .bottom-nav {
   position: fixed;
-  bottom: 16px;
+  bottom: max(12px, env(safe-area-inset-bottom, 12px));
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(18, 14, 11, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(223, 177, 91, 0.4);
-  border-radius: var(--radius-full);
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.65), 0 0 20px rgba(223, 177, 91, 0.15);
+  background: rgba(16, 13, 10, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(223, 177, 91, 0.45);
+  border-radius: 40px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.75), 0 0 20px rgba(223, 177, 91, 0.2);
   display: flex;
   align-items: center;
-  padding: 6px 10px;
+  justify-content: center;
+  padding: 5px 8px;
   z-index: 990;
-  max-width: 92%;
+  width: auto;
+  max-width: calc(100vw - 20px);
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  transition: opacity 0.35s ease, visibility 0.35s ease, transform 0.35s ease;
+}
+
+.bottom-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .nav-link {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 2px;
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
+  padding: 6px 12px;
+  border-radius: 24px;
   color: var(--text-muted);
-  font-size: 0.68rem;
+  font-size: 0.65rem;
   font-weight: 600;
   transition: var(--transition-smooth);
   white-space: nowrap;
+  text-decoration: none;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.nav-link span {
+  display: block;
+  font-size: 0.62rem;
+  line-height: 1.1;
 }
 
 .nav-link:hover,
 .nav-link.active {
-  color: var(--primary-gold-light);
-  background: rgba(223, 177, 91, 0.15);
+  color: #ffffff;
+  background: var(--gold-gradient, linear-gradient(135deg, #c5a059, #dfb15b));
+  box-shadow: 0 2px 8px rgba(223, 177, 91, 0.35);
 }
 
 .nav-link i {
-  font-size: 1rem;
-}
-
-.nav-link.active,
-.nav-link:hover {
-  color: #ffffff;
-  background: var(--primary-gold);
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 /* --- TOAST NOTIFIKASI --- */

@@ -1531,6 +1531,97 @@ const AdminApp = (function () {
     return url;
   }
 
+  // Kompresi & optimasi gambar otomatis di sisi browser (kamera HP/laptop)
+  function optimizeImage(file, maxDim = 1200, quality = 0.8) {
+    return new Promise((resolve) => {
+      if (!file) return resolve(null);
+      if (file.type === "image/svg+xml" || (file.name && file.name.endsWith(".svg"))) {
+        const r = new FileReader();
+        r.onload = (e) => resolve(e.target.result);
+        r.onerror = () => resolve(null);
+        r.readAsDataURL(file);
+        return;
+      }
+      const r = new FileReader();
+      r.onload = (e) => {
+        try {
+          const img = new Image();
+          img.onload = () => {
+            try {
+              let w = img.width;
+              let h = img.height;
+              if (!w || !h) {
+                return resolve(e.target.result);
+              }
+              if (w > maxDim || h > maxDim) {
+                if (w > h) {
+                  h = Math.round((h * maxDim) / w);
+                  w = maxDim;
+                } else {
+                  w = Math.round((w * maxDim) / h);
+                  h = maxDim;
+                }
+              }
+              const canvas = document.createElement("canvas");
+              canvas.width = w;
+              canvas.height = h;
+              const ctx = canvas.getContext("2d");
+              if (!ctx) return resolve(e.target.result);
+              ctx.drawImage(img, 0, 0, w, h);
+              const format = file.type === "image/png" ? "image/png" : "image/jpeg";
+              const dataUrl = canvas.toDataURL(format, quality);
+              resolve(dataUrl || e.target.result);
+            } catch (canvasErr) {
+              console.warn("[optimizeImage] Canvas export failed, fallback to raw data:", canvasErr);
+              resolve(e.target.result);
+            }
+          };
+          img.onerror = () => resolve(e.target.result);
+          img.src = e.target.result;
+        } catch (imgErr) {
+          console.warn("[optimizeImage] Image creation failed, fallback to raw data:", imgErr);
+          resolve(e.target.result);
+        }
+      };
+      r.onerror = () => resolve(null);
+      r.readAsDataURL(file);
+    });
+  }
+
+  // Listener real-time input gambar untuk memperbarui preview secara instan & resolusi link Pinterest
+  async function handleUrlPasteOrInput(inputEl) {
+    if (!inputEl) return;
+    const rawVal = inputEl.value.trim();
+    if (!rawVal) return;
+
+    // Jika user paste link Pinterest pin.it atau pinterest.com/pin
+    if (rawVal.includes("pin.it/") || (rawVal.includes("pinterest.com/pin/") && !rawVal.includes("i.pinimg.com"))) {
+      showToast("🔍 Mendeteksi link Pinterest, mengekstrak gambar resolusi tinggi...");
+      try {
+        if (window.API && window.API.resolveMediaUrl) {
+          const res = await window.API.resolveMediaUrl(rawVal);
+          if (res && res.success && res.resolvedUrl) {
+            inputEl.value = res.resolvedUrl;
+            inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+            inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+            updateThemePreviews();
+            updateCouplePreviews();
+            if (inputEl.id === "cfg-favicon-admin") {
+              updateAdminTabFavicon(res.resolvedUrl);
+            }
+            showToast("✨ Berhasil mengekstrak gambar Pinterest!");
+          }
+        }
+      } catch (err) {
+        console.warn("Gagal resolusi link Pinterest:", err);
+      }
+    } else if (inputEl.id === "cfg-favicon-admin") {
+      updateAdminTabFavicon(rawVal);
+    } else if (inputEl.id === "cfg-admin-logo-img") {
+      applyAdminLogo(rawVal, document.getElementById("cfg-admin-brand-title")?.value);
+    }
+  }
+
   function updateAdminTabFavicon(iconUrl) {
     if (!iconUrl) return;
     const cleanUrl = normalizeMediaUrl(iconUrl, "image");
@@ -2204,38 +2295,6 @@ const AdminApp = (function () {
       });
     }
 
-    // Listener real-time input gambar tema untuk memperbarui preview secara instan
-    const handleUrlPasteOrInput = async (inputEl) => {
-      if (!inputEl) return;
-      const rawVal = inputEl.value.trim();
-      if (!rawVal) return;
-
-      // Jika user paste link Pinterest pin.it atau pinterest.com/pin
-      if (rawVal.includes("pin.it/") || (rawVal.includes("pinterest.com/pin/") && !rawVal.includes("i.pinimg.com"))) {
-        showToast("🔍 Mendeteksi link Pinterest, mengekstrak gambar resolusi tinggi...");
-        try {
-          if (window.API && window.API.resolveMediaUrl) {
-            const res = await window.API.resolveMediaUrl(rawVal);
-            if (res && res.success && res.resolvedUrl) {
-              inputEl.value = res.resolvedUrl;
-              updateThemePreviews();
-              updateCouplePreviews();
-              if (inputEl.id === "cfg-favicon-admin") {
-                updateAdminTabFavicon(res.resolvedUrl);
-              }
-              showToast("✨ Berhasil mengekstrak gambar Pinterest!");
-            }
-          }
-        } catch (err) {
-          console.warn("Gagal resolusi link Pinterest:", err);
-        }
-      } else if (inputEl.id === "cfg-favicon-admin") {
-        updateAdminTabFavicon(rawVal);
-      } else if (inputEl.id === "cfg-admin-logo-img") {
-        applyAdminLogo(rawVal, document.getElementById("cfg-admin-brand-title")?.value);
-      }
-    };
-
     [
       "cfg-cover-photo",
       "cfg-gunungan-center-img",
@@ -2265,48 +2324,6 @@ const AdminApp = (function () {
         el.addEventListener("paste", () => setTimeout(() => handleUrlPasteOrInput(el), 100));
       }
     });
-
-    // Kompresi & optimasi gambar otomatis di sisi browser (kamera HP/laptop)
-    function optimizeImage(file, maxDim = 800, quality = 0.72) {
-      return new Promise((resolve) => {
-        if (!file) return resolve(null);
-        if (file.type === "image/svg+xml" || file.name.endsWith(".svg")) {
-          const r = new FileReader();
-          r.onload = (e) => resolve(e.target.result);
-          r.onerror = () => resolve(null);
-          r.readAsDataURL(file);
-          return;
-        }
-        const r = new FileReader();
-        r.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            let w = img.width;
-            let h = img.height;
-            if (w > maxDim || h > maxDim) {
-              if (w > h) {
-                h = Math.round((h * maxDim) / w);
-                w = maxDim;
-              } else {
-                w = Math.round((w * maxDim) / h);
-                h = maxDim;
-              }
-            }
-            const canvas = document.createElement("canvas");
-            canvas.width = w;
-            canvas.height = h;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0, w, h);
-            const dataUrl = canvas.toDataURL("image/jpeg", quality);
-            resolve(dataUrl);
-          };
-          img.onerror = () => resolve(e.target.result);
-          img.src = e.target.result;
-        };
-        r.onerror = () => resolve(null);
-        r.readAsDataURL(file);
-      });
-    }
 
     // Helper Universal Upload Gambar via API dengan Fallback Otomatis
     function setupFileUpload(btnId, fileInputId, textInputId, defaultPrefix, toastLabel) {
@@ -2813,7 +2830,11 @@ const AdminApp = (function () {
 
         currentLoveStories[idx].image = optimizedData;
         const srcInput = container.querySelector(`.story-input-image[data-index="${idx}"]`);
-        if (srcInput) srcInput.value = optimizedData;
+        if (srcInput) {
+          srcInput.value = optimizedData;
+          srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+          srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
         const img = container.querySelector(`.story-preview-img-${idx}`);
         const ph = container.querySelector(`.story-preview-placeholder-${idx}`);
         if (img && ph) {
@@ -2822,8 +2843,8 @@ const AdminApp = (function () {
           ph.style.display = "none";
         }
 
-        // Coba upload ke server jika backend terhubung & bukan GitHub Pages / offline
-        const isStaticHost = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+        // Coba upload ke server jika backend terhubung & bukan GitHub Pages
+        const isStaticHost = window.location.hostname.includes("github.io");
         if (!isStaticHost && window.API && window.API.uploadImage) {
           try {
             const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
@@ -2833,17 +2854,19 @@ const AdminApp = (function () {
             });
             if (res && res.success && res.filePath) {
               currentLoveStories[idx].image = res.filePath;
-              if (srcInput) srcInput.value = res.filePath;
+              if (srcInput) {
+                srcInput.value = res.filePath;
+                srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+                srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+              }
               if (img) img.src = res.filePath;
               showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
-              renderAdminLoveStories();
               return;
             }
           } catch (_) {}
         }
 
         showToast(`✨ Foto momen #${idx + 1} berhasil diimpor! Klik "Simpan Seluruh Perubahan" di atas.`);
-        renderAdminLoveStories();
       });
     });
 
@@ -2852,6 +2875,7 @@ const AdminApp = (function () {
       btn.addEventListener("click", function () {
         const idx = parseInt(this.getAttribute("data-index"), 10);
         if (currentLoveStories[idx]) {
+          syncLoveStoryFromInputs();
           currentLoveStories[idx].image = "";
           renderAdminLoveStories();
           showToast("Foto momen berhasil dihapus.");
@@ -3033,12 +3057,16 @@ const AdminApp = (function () {
 
         currentGalleryItems[idx].src = optimizedData;
         const srcInput = container.querySelector(`.gallery-input-src[data-index="${idx}"]`);
-        if (srcInput) srcInput.value = optimizedData;
+        if (srcInput) {
+          srcInput.value = optimizedData;
+          srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+          srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+        }
         const img = container.querySelector(`.gallery-preview-img-${idx}`);
         if (img) img.src = optimizedData;
 
-        // Coba upload ke server jika backend terhubung & bukan GitHub Pages / offline
-        const isStaticHost = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+        // Coba upload ke server jika backend terhubung & bukan GitHub Pages
+        const isStaticHost = window.location.hostname.includes("github.io");
         if (!isStaticHost && window.API && window.API.uploadImage) {
           try {
             const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
@@ -3048,7 +3076,11 @@ const AdminApp = (function () {
             });
             if (res && res.success && res.filePath) {
               currentGalleryItems[idx].src = res.filePath;
-              if (srcInput) srcInput.value = res.filePath;
+              if (srcInput) {
+                srcInput.value = res.filePath;
+                srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+                srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+              }
               if (img) img.src = res.filePath;
               showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
               return;
@@ -3073,6 +3105,9 @@ const AdminApp = (function () {
           img.src = clean;
         }
       });
+      input.addEventListener("change", () => handleUrlPasteOrInput(input));
+      input.addEventListener("paste", () => setTimeout(() => handleUrlPasteOrInput(input), 100));
+    });
     });
   }
 

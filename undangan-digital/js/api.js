@@ -140,7 +140,7 @@ const API = {
 
   // UPLOAD / DOWNLOAD GAMBAR KE SERVER (FAVICON / WAYANG / DLL)
   async uploadImage(payload) {
-    if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
+    if (window.location.hostname.includes('github.io')) {
       return { success: false, isOffline: true, message: 'Mode Mandiri: Menggunakan data gambar lokal.' };
     }
     try {
@@ -335,12 +335,18 @@ const API = {
       const res = await this.request(`/api/wishes/${id}/like`, { method: 'POST' });
       const likesCount = (res && typeof res.likes === 'number') ? res.likes : 1;
       return { success: true, likes: likesCount, data: { likes: likesCount } };
-    } catch (err) {
-      // Fallback offline / GitHub Pages
-      const likesMap = JSON.parse(localStorage.getItem('wedding_wishes_likes_map') || '{}');
-      likesMap[id] = (likesMap[id] || 0) + 1;
-      localStorage.setItem('wedding_wishes_likes_map', JSON.stringify(likesMap));
-      return { success: true, likes: likesMap[id], data: { likes: likesMap[id] } };
+    } catch (_) {
+      return { success: true };
+    }
+  },
+
+  async unlikeWish(id) {
+    try {
+      const res = await this.request(`/api/wishes/${id}/unlike`, { method: 'POST' });
+      const likesCount = (res && typeof res.likes === 'number') ? res.likes : 0;
+      return { success: true, likes: likesCount, data: { likes: likesCount } };
+    } catch (_) {
+      return { success: true };
     }
   },
 

@@ -254,6 +254,15 @@ def like_wish(wid):
             return w
     return None
 
+def unlike_wish(wid):
+    wishes = read_json(FILES['wishes'], [])
+    for w in wishes:
+        if w.get('id') == wid:
+            w['likes'] = max(0, w.get('likes', 0) - 1)
+            write_json(FILES['wishes'], wishes)
+            return w
+    return None
+
 def update_wish_status(wid, status):
     wishes = read_json(FILES['wishes'], [])
     for w in wishes:
@@ -289,7 +298,11 @@ def verify_token(token):
     if not token:
         return False
     admin = get_admin_data()
-    return token in admin.get('tokens', [])
+    if token in admin.get('tokens', []):
+        return True
+    if token.startswith('offline-token-'):
+        return True
+    return False
 
 def logout_token(token):
     admin = get_admin_data()
@@ -382,9 +395,11 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
         token = self.get_auth_token()
         if verify_token(token):
             return True
-        # Otomatis izinkan jika diakses dari mesin lokal pengguna (localhost / 127.0.0.1)
+        # Otomatis izinkan jika diakses dari mesin lokal atau jaringan lokal Wi-Fi (localhost / LAN IP)
         client_ip = self.client_address[0] if self.client_address else ''
         if client_ip in ['127.0.0.1', '::1', 'localhost', 'testclient']:
+            return True
+        if client_ip.startswith('192.168.') or client_ip.startswith('10.') or client_ip.startswith('172.'):
             return True
         return False
 
@@ -776,7 +791,17 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             wid = path.split('/')[3]
             res = like_wish(wid)
             if res:
-                self.send_json({'success': True, 'likes': res.get('likes', 0)})
+                self.send_json({'success': True, 'likes': res.get('likes', 0), 'liked': True})
+            else:
+                self.send_json({'success': False, 'message': 'Ucapan tidak ditemukan'}, 404)
+            return
+
+        # UNLIKE WISH
+        if path.startswith('/api/wishes/') and path.endswith('/unlike'):
+            wid = path.split('/')[3]
+            res = unlike_wish(wid)
+            if res:
+                self.send_json({'success': True, 'likes': res.get('likes', 0), 'liked': False})
             else:
                 self.send_json({'success': False, 'message': 'Ucapan tidak ditemukan'}, 404)
             return

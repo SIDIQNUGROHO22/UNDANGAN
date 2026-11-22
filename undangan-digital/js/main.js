@@ -1120,9 +1120,15 @@ const MainApp = (function () {
       ];
     }
 
-    if (countEl) countEl.textContent = `(${entries.length} Ucapan)`;
+    if (countEl) countEl.textContent = "";
 
     container.innerHTML = "";
+
+    // Ambil daftar ucapan yang telah disukai tamu ini dari localStorage
+    let userLikedMap = {};
+    try {
+      userLikedMap = JSON.parse(localStorage.getItem("wedding_user_liked_wishes") || "{}");
+    } catch (_) {}
 
     // Ambil peta likes tersimpan agar tidak pernah hilang saat refresh/kirim ucapan
     let localLikesMap = {};
@@ -1175,7 +1181,7 @@ const MainApp = (function () {
         stickerEl.appendChild(stickerImg);
       }
 
-      // Fitur Like Hati Interaktif & Persisten
+      // Fitur Like & Unlike Hati Interaktif & Persisten
       const footerEl = document.createElement("div");
       footerEl.className = "wish-footer";
       footerEl.style.cssText = "display: flex; align-items: center; gap: 6px; margin-top: 8px;";
@@ -1184,63 +1190,138 @@ const MainApp = (function () {
         ? localLikesMap[item.id]
         : (item.likes || 0);
 
+      const isLikedByMe = Boolean(userLikedMap[item.id]);
+
       const likeBtn = document.createElement("button");
       likeBtn.type = "button";
-      likeBtn.className = "btn-like-wish";
-      likeBtn.style.cssText = "background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 20px; padding: 4px 10px; cursor: pointer; color: #ef4444; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px; transition: transform 0.15s ease, background 0.2s ease;";
-      likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span class="like-count">${initialLikes}</span>`;
-      likeBtn.title = "Kirim Like / Doa Restu";
+      likeBtn.className = isLikedByMe ? "btn-like-wish liked" : "btn-like-wish";
+      likeBtn.style.cssText = isLikedByMe
+        ? "background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.45); border-radius: 20px; padding: 4px 10px; cursor: pointer; color: #ef4444; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px; font-weight: 600; transition: transform 0.15s ease, background 0.2s ease;"
+        : "background: rgba(239, 68, 68, 0.06); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 20px; padding: 4px 10px; cursor: pointer; color: #ef4444; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px; transition: transform 0.15s ease, background 0.2s ease;";
+      likeBtn.innerHTML = isLikedByMe
+        ? `<i class="fas fa-heart"></i> <span class="like-count">${initialLikes}</span>`
+        : `<i class="far fa-heart"></i> <span class="like-count">${initialLikes}</span>`;
+      likeBtn.title = isLikedByMe ? "Batalkan Suka (Unlike)" : "Sukai Ucapan (Like)";
 
       likeBtn.addEventListener("click", async function (e) {
         e.preventDefault();
 
-        // Efek visual klik hati (bounce)
-        likeBtn.style.transform = "scale(1.25)";
-        likeBtn.style.background = "rgba(239, 68, 68, 0.2)";
-        setTimeout(() => {
-          likeBtn.style.transform = "scale(1)";
-          likeBtn.style.background = "rgba(239, 68, 68, 0.08)";
-        }, 220);
+        // Cek status like saat ini
+        let myLikedState = false;
+        try {
+          const currentMap = JSON.parse(localStorage.getItem("wedding_user_liked_wishes") || "{}");
+          myLikedState = Boolean(currentMap[item.id]);
+        } catch (_) {}
 
         const countSpan = likeBtn.querySelector(".like-count");
         let currentLikes = parseInt(countSpan.textContent, 10) || 0;
-        currentLikes++;
-        countSpan.textContent = currentLikes;
-        item.likes = currentLikes;
 
-        // Simpan langsung ke local map agar persisten di browser tamu
-        try {
-          const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
-          map[item.id] = currentLikes;
-          localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
-        } catch (_) {}
+        if (myLikedState) {
+          // --- AKSI UNLIKE: Kurang 1 ---
+          currentLikes = Math.max(0, currentLikes - 1);
+          countSpan.textContent = currentLikes;
+          item.likes = currentLikes;
 
-        // Simpan ke cached wishes jika ada
-        try {
-          const cached = JSON.parse(localStorage.getItem("wedding_cached_wishes") || "[]");
-          const target = cached.find(w => w.id === item.id);
-          if (target) {
-            target.likes = currentLikes;
-            localStorage.setItem("wedding_cached_wishes", JSON.stringify(cached));
-          }
-        } catch (_) {}
+          likeBtn.className = "btn-like-wish";
+          likeBtn.style.background = "rgba(239, 68, 68, 0.06)";
+          likeBtn.style.borderColor = "rgba(239, 68, 68, 0.2)";
+          likeBtn.innerHTML = `<i class="far fa-heart"></i> <span class="like-count">${currentLikes}</span>`;
+          likeBtn.title = "Sukai Ucapan (Like)";
 
-        // Sinkronkan ke API jika server backend online
-        try {
-          if (window.API && window.API.likeWish && item.id) {
-            const res = await window.API.likeWish(item.id);
-            const serverLikes = (res && typeof res.likes === "number") ? res.likes : res?.data?.likes;
-            if (typeof serverLikes === "number" && serverLikes >= currentLikes) {
-              countSpan.textContent = serverLikes;
-              item.likes = serverLikes;
-              try {
-                const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
-                map[item.id] = serverLikes;
-                localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
-              } catch (_) {}
+          // Perbarui status user liked di localStorage
+          try {
+            const currentMap = JSON.parse(localStorage.getItem("wedding_user_liked_wishes") || "{}");
+            delete currentMap[item.id];
+            localStorage.setItem("wedding_user_liked_wishes", JSON.stringify(currentMap));
+          } catch (_) {}
+
+          // Simpan hitungan di likes map
+          try {
+            const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+            map[item.id] = currentLikes;
+            localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
+          } catch (_) {}
+
+          // Update cached wishes jika ada
+          try {
+            const cached = JSON.parse(localStorage.getItem("wedding_cached_wishes") || "[]");
+            const target = cached.find(w => w.id === item.id);
+            if (target) {
+              target.likes = currentLikes;
+              localStorage.setItem("wedding_cached_wishes", JSON.stringify(cached));
             }
-          }
-        } catch (_) {}
+          } catch (_) {}
+
+          // Sinkron ke API unlike
+          try {
+            if (window.API && window.API.unlikeWish && item.id) {
+              const res = await window.API.unlikeWish(item.id);
+              if (res && typeof res.likes === "number") {
+                countSpan.textContent = res.likes;
+                item.likes = res.likes;
+                const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+                map[item.id] = res.likes;
+                localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
+              }
+            }
+          } catch (_) {}
+        } else {
+          // --- AKSI LIKE: Tambah 1 ---
+          currentLikes++;
+          countSpan.textContent = currentLikes;
+          item.likes = currentLikes;
+
+          // Animasi detak hati (bounce)
+          likeBtn.style.transform = "scale(1.25)";
+          likeBtn.style.background = "rgba(239, 68, 68, 0.22)";
+          setTimeout(() => {
+            likeBtn.style.transform = "scale(1)";
+            likeBtn.style.background = "rgba(239, 68, 68, 0.16)";
+          }, 200);
+
+          likeBtn.className = "btn-like-wish liked";
+          likeBtn.style.borderColor = "rgba(239, 68, 68, 0.45)";
+          likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span class="like-count">${currentLikes}</span>`;
+          likeBtn.title = "Batalkan Suka (Unlike)";
+
+          // Perbarui status user liked di localStorage
+          try {
+            const currentMap = JSON.parse(localStorage.getItem("wedding_user_liked_wishes") || "{}");
+            currentMap[item.id] = true;
+            localStorage.setItem("wedding_user_liked_wishes", JSON.stringify(currentMap));
+          } catch (_) {}
+
+          // Simpan hitungan di likes map
+          try {
+            const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+            map[item.id] = currentLikes;
+            localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
+          } catch (_) {}
+
+          // Update cached wishes jika ada
+          try {
+            const cached = JSON.parse(localStorage.getItem("wedding_cached_wishes") || "[]");
+            const target = cached.find(w => w.id === item.id);
+            if (target) {
+              target.likes = currentLikes;
+              localStorage.setItem("wedding_cached_wishes", JSON.stringify(cached));
+            }
+          } catch (_) {}
+
+          // Sinkron ke API like
+          try {
+            if (window.API && window.API.likeWish && item.id) {
+              const res = await window.API.likeWish(item.id);
+              if (res && typeof res.likes === "number") {
+                countSpan.textContent = res.likes;
+                item.likes = res.likes;
+                const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+                map[item.id] = res.likes;
+                localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
+              }
+            }
+          } catch (_) {}
+        }
       });
 
       footerEl.appendChild(likeBtn);

@@ -199,18 +199,22 @@ const AdminApp = (function () {
     const loginView = document.getElementById("login-view");
     const dashboardView = document.getElementById("dashboard-view");
     const navbarEmail = document.getElementById("navbar-user-email");
+    const openBtn = document.getElementById("btn-open-account-modal");
 
     if (loginView) loginView.style.display = "none";
     if (dashboardView) dashboardView.style.display = "block";
     if (navbarEmail && email) navbarEmail.textContent = email;
+    if (openBtn && email) {
+      openBtn.title = `Akun: ${email} (Klik untuk kelola password & email)`;
+    }
 
     // Indikator status server
     let serverBadge = document.getElementById("admin-server-status-badge");
-    if (!serverBadge && navbarEmail && navbarEmail.parentElement) {
+    if (!serverBadge && openBtn) {
       serverBadge = document.createElement("span");
       serverBadge.id = "admin-server-status-badge";
-      serverBadge.style.cssText = "margin-left: 8px; font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;";
-      navbarEmail.parentElement.insertAdjacentElement("afterend", serverBadge);
+      serverBadge.style.cssText = "font-size: 0.72rem; padding: 2px 8px; border-radius: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;";
+      openBtn.insertAdjacentElement("beforebegin", serverBadge);
     }
     if (serverBadge) {
       const isOnline = await window.API.checkServerHealth();
@@ -728,6 +732,7 @@ const AdminApp = (function () {
           if (res && res.success) {
             const navbarEmail = document.getElementById("navbar-user-email");
             if (navbarEmail) navbarEmail.textContent = newEmail;
+            if (openBtn) openBtn.title = `Akun: ${newEmail} (Klik untuk kelola password & email)`;
             closeModal();
             showToast("Email & Password Admin berhasil diperbarui!");
           } else {
@@ -2262,10 +2267,10 @@ const AdminApp = (function () {
     });
 
     // Kompresi & optimasi gambar otomatis di sisi browser (kamera HP/laptop)
-    function optimizeImage(file, maxDim = 1200, quality = 0.82) {
+    function optimizeImage(file, maxDim = 800, quality = 0.72) {
       return new Promise((resolve) => {
         if (!file) return resolve(null);
-        if (file.type === "image/svg+xml" || file.name.endsWith(".svg") || file.size < 120 * 1024) {
+        if (file.type === "image/svg+xml" || file.name.endsWith(".svg")) {
           const r = new FileReader();
           r.onload = (e) => resolve(e.target.result);
           r.onerror = () => resolve(null);
@@ -2718,7 +2723,7 @@ const AdminApp = (function () {
                   <button type="button" class="btn-sm btn-upload-story-item" data-index="${idx}" style="white-space: nowrap; background: #dfb15b; color: #1a1511; font-weight: 600; border: 1px solid #c99e46; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;" title="Impor foto dari file manager / galeri HP / laptop">
                     <i class="fas fa-folder-open"></i> Impor Foto
                   </button>
-                  <input type="file" class="story-file-input-${idx}" accept="image/png,image/jpeg,image/webp,image/gif,image/svg+xml" style="display: none;">
+                  <input type="file" class="story-file-input-${idx}" accept="image/*" style="display: none;">
                   ${story.image ? `
                   <button type="button" class="btn-sm btn-clear-story-img" data-index="${idx}" style="white-space: nowrap; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-size: 0.8rem; padding: 6px 9px; border-radius: 6px; cursor: pointer;" title="Hapus foto momen ini">
                     <i class="fas fa-times"></i>
@@ -2817,22 +2822,25 @@ const AdminApp = (function () {
           ph.style.display = "none";
         }
 
-        // Coba upload ke server jika backend terhubung
-        try {
-          const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
-          const res = await window.API.uploadImage({
-            filename: `story-${idx + 1}-${Date.now()}.${ext}`,
-            fileData: optimizedData
-          });
-          if (res && res.success && res.filePath) {
-            currentLoveStories[idx].image = res.filePath;
-            if (srcInput) srcInput.value = res.filePath;
-            if (img) img.src = res.filePath;
-            showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
-            renderAdminLoveStories();
-            return;
-          }
-        } catch (_) {}
+        // Coba upload ke server jika backend terhubung & bukan GitHub Pages / offline
+        const isStaticHost = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+        if (!isStaticHost && window.API && window.API.uploadImage) {
+          try {
+            const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+            const res = await window.API.uploadImage({
+              filename: `story-${idx + 1}-${Date.now()}.${ext}`,
+              fileData: optimizedData
+            });
+            if (res && res.success && res.filePath) {
+              currentLoveStories[idx].image = res.filePath;
+              if (srcInput) srcInput.value = res.filePath;
+              if (img) img.src = res.filePath;
+              showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
+              renderAdminLoveStories();
+              return;
+            }
+          } catch (_) {}
+        }
 
         showToast(`✨ Foto momen #${idx + 1} berhasil diimpor! Klik "Simpan Seluruh Perubahan" di atas.`);
         renderAdminLoveStories();
@@ -2967,7 +2975,7 @@ const AdminApp = (function () {
                 <button type="button" class="btn-sm btn-export btn-upload-gallery-item" data-index="${idx}" style="white-space: nowrap; padding: 7px 10px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Pilih Foto dari Galeri HP/Laptop">
                   <i class="fas fa-camera"></i> Unggah
                 </button>
-                <input type="file" class="gallery-file-input-${idx}" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                <input type="file" class="gallery-file-input-${idx}" accept="image/*" style="display: none;">
               </div>
             </div>
 
@@ -3029,20 +3037,24 @@ const AdminApp = (function () {
         const img = container.querySelector(`.gallery-preview-img-${idx}`);
         if (img) img.src = optimizedData;
 
-        try {
-          const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
-          const res = await window.API.uploadImage({
-            filename: `gallery-${idx + 1}-${Date.now()}.${ext}`,
-            fileData: optimizedData
-          });
-          if (res && res.success && res.filePath) {
-            currentGalleryItems[idx].src = res.filePath;
-            if (srcInput) srcInput.value = res.filePath;
-            if (img) img.src = res.filePath;
-            showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
-            return;
-          }
-        } catch (_) {}
+        // Coba upload ke server jika backend terhubung & bukan GitHub Pages / offline
+        const isStaticHost = window.location.hostname.includes("github.io") || window.location.protocol === "file:";
+        if (!isStaticHost && window.API && window.API.uploadImage) {
+          try {
+            const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+            const res = await window.API.uploadImage({
+              filename: `gallery-${idx + 1}-${Date.now()}.${ext}`,
+              fileData: optimizedData
+            });
+            if (res && res.success && res.filePath) {
+              currentGalleryItems[idx].src = res.filePath;
+              if (srcInput) srcInput.value = res.filePath;
+              if (img) img.src = res.filePath;
+              showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
+              return;
+            }
+          } catch (_) {}
+        }
 
         showToast(`✨ Foto galeri #${idx + 1} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
       });

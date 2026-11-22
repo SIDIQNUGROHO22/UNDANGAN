@@ -88,18 +88,27 @@ const API = {
     return typeof WEDDING_CONFIG !== 'undefined' ? WEDDING_CONFIG : null;
   },
 
+  safeSetLocalStorage(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {
+      console.warn(`Gagal menyimpan ${key} ke localStorage (kuota terlampaui):`, e);
+    }
+  },
+
   async updateInvitationConfig(settingsData) {
     try {
       const res = await this.request('/api/invitation', {
         method: 'POST',
-        body: JSON.stringify(settingsData)
+        body: JSON.stringify(settingsData),
+        timeout: 30000
       });
       // Sinkronkan juga salinan lokal di browser
-      localStorage.setItem('wedding_custom_settings', JSON.stringify(settingsData));
+      this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(settingsData));
       return res;
     } catch (err) {
       // Simpan lokal saat backend tidak terjangkau (Offline mode)
-      localStorage.setItem('wedding_custom_settings', JSON.stringify(settingsData));
+      this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(settingsData));
       if (typeof WEDDING_CONFIG !== 'undefined') {
         Object.assign(WEDDING_CONFIG, settingsData);
       }
@@ -114,6 +123,9 @@ const API = {
 
   // UPLOAD FILE MUSIK MP3 KE SERVER
   async uploadMusic(payload) {
+    if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
+      return { success: false, isOffline: true, message: 'Mode Mandiri: Menggunakan link audio.' };
+    }
     try {
       return await this.request('/api/upload/music', {
         method: 'POST',
@@ -128,11 +140,14 @@ const API = {
 
   // UPLOAD / DOWNLOAD GAMBAR KE SERVER (FAVICON / WAYANG / DLL)
   async uploadImage(payload) {
+    if (window.location.hostname.includes('github.io') || window.location.protocol === 'file:') {
+      return { success: false, isOffline: true, message: 'Mode Mandiri: Menggunakan data gambar lokal.' };
+    }
     try {
       return await this.request('/api/upload/image', {
         method: 'POST',
         body: JSON.stringify(payload),
-        timeout: 30000
+        timeout: 25000
       });
     } catch (err) {
       console.warn("Gagal upload gambar ke server:", err.message);
@@ -268,20 +283,36 @@ const API = {
           createdAt: new Date().toISOString()
         }
       ];
+      // Gabungkan ucapan pengguna lokal dengan ucapan bawaan agar tidak tertimpa
+      const merged = [...local, ...defaultWishes];
       return {
         success: true,
-        total: local.length > 0 ? local.length : defaultWishes.length,
-        data: local.length > 0 ? local : defaultWishes
+        total: merged.length,
+        data: merged
       };
     }
   },
 
   async submitWish(wishData) {
     try {
-      return await this.request('/api/wishes', {
+      const res = await this.request('/api/wishes', {
         method: 'POST',
         body: JSON.stringify(wishData)
       });
+      // Juga sinkronkan ke local cache
+      const wishes = JSON.parse(localStorage.getItem('wedding_cached_wishes') || '[]');
+      const newWish = res && res.data ? res.data : {
+        id: 'wish-' + Date.now(),
+        name: wishData.name,
+        message: wishData.message,
+        sticker: wishData.sticker || '',
+        status: 'APPROVED',
+        likes: 0,
+        createdAt: new Date().toISOString()
+      };
+      wishes.unshift(newWish);
+      localStorage.setItem('wedding_cached_wishes', JSON.stringify(wishes));
+      return res || { success: true, message: 'Ucapan berhasil dikirim!', data: newWish };
     } catch (err) {
       const wishes = JSON.parse(localStorage.getItem('wedding_cached_wishes') || '[]');
       const newWish = {
@@ -301,9 +332,15 @@ const API = {
 
   async likeWish(id) {
     try {
-      return await this.request(`/api/wishes/${id}/like`, { method: 'POST' });
+      const res = await this.request(`/api/wishes/${id}/like`, { method: 'POST' });
+      const likesCount = (res && typeof res.likes === 'number') ? res.likes : 1;
+      return { success: true, likes: likesCount, data: { likes: likesCount } };
     } catch (err) {
-      return { success: true, likes: 1 };
+      // Fallback offline / GitHub Pages
+      const likesMap = JSON.parse(localStorage.getItem('wedding_wishes_likes_map') || '{}');
+      likesMap[id] = (likesMap[id] || 0) + 1;
+      localStorage.setItem('wedding_wishes_likes_map', JSON.stringify(likesMap));
+      return { success: true, likes: likesMap[id], data: { likes: likesMap[id] } };
     }
   },
 

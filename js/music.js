@@ -178,52 +178,42 @@ const MusicHandler = (function () {
 
     let errorMsg = "Video YouTube dibatasi";
     if (errorCode === 150 || errorCode === 101) {
-      errorMsg = "Video YouTube ini dibatasi hak cipta (Error 150 - Tidak boleh di-embed). Silakan ganti link YouTube lain atau unggah file MP3 di Admin!";
+      errorMsg = "YouTube dibatasi hak cipta embed (Error 150). Beralih ke musik pengiring...";
     } else if (errorCode === 100) {
-      errorMsg = "Video YouTube tidak ditemukan (Error 100)";
+      errorMsg = "Video YouTube tidak ditemukan. Beralih ke musik pengiring...";
     } else if (errorCode === 2) {
-      errorMsg = "Format link YouTube tidak valid";
+      errorMsg = "Format link YouTube tidak valid. Beralih ke musik pengiring...";
     }
 
     const musicCfg = (window.CURRENT_CONFIG?.music)
       || (typeof WEDDING_CONFIG !== "undefined" ? WEDDING_CONFIG.music : null);
 
-    // Cek apakah ada file cadangan kustom yang BUKAN default instrumental
-    const customFallback = (musicCfg?.filePath && musicCfg.filePath !== "assets/music/lagu-undangan.mp3")
-      ? musicCfg.filePath
-      : null;
-
-    if (customFallback) {
-      console.info("Beralih ke file audio cadangan kustom:", customFallback);
-      activeEngine = "html5";
-      if (audioElement) {
-        audioElement.src = normalizeAudioUrl(customFallback);
-        if (shouldPlayAfterReady || isPlaying) playMusic();
-      }
-      showTooltipTemporarily(`Beralih: ${musicCfg?.title || 'Musik Kustom'}`);
-    } else {
-      // PENTING: Jangan paksa putar instrumental default jika user memilih YouTube tapi diblokir oleh pemilik video
-      isPlaying = false;
-      updateMusicUI(false, true);
-      showTooltipTemporarily(errorMsg);
-      console.warn(`[MusicHandler] ${errorMsg}. Default instrumental tidak diputar paksa agar tidak menimbulkan kebingungan.`);
+    const fallbackSrc = musicCfg?.filePath || "assets/music/lagu-undangan.mp3";
+    console.info("Beralih otomatis ke audio cadangan:", fallbackSrc);
+    activeEngine = "html5";
+    if (!audioElement) {
+      audioElement = new Audio();
+      audioElement.loop = true;
+      audioElement.preload = "auto";
     }
+    audioElement.src = normalizeAudioUrl(fallbackSrc);
+    playMusic();
+    showTooltipTemporarily(errorMsg);
   }
 
   function fallbackToHtml5() {
     activeEngine = "html5";
     const musicCfg = (window.CURRENT_CONFIG?.music)
       || (typeof WEDDING_CONFIG !== "undefined" ? WEDDING_CONFIG.music : null);
-    const targetSrc = (musicCfg?.filePath && musicCfg.filePath !== "assets/music/lagu-undangan.mp3")
-      ? musicCfg.filePath
-      : null;
+    const targetSrc = musicCfg?.filePath || "assets/music/lagu-undangan.mp3";
 
-    if (audioElement && targetSrc) {
-      audioElement.src = normalizeAudioUrl(targetSrc);
-      if (shouldPlayAfterReady) {
-        playMusic();
-      }
+    if (!audioElement) {
+      audioElement = new Audio();
+      audioElement.loop = true;
+      audioElement.preload = "auto";
     }
+    audioElement.src = normalizeAudioUrl(targetSrc);
+    playMusic();
   }
 
   /**
@@ -269,12 +259,14 @@ const MusicHandler = (function () {
       });
     }
 
+    // Selalu siapkan src cadangan audio HTML5 agar segera siap jika YouTube dibatasi atau lambat
+    audioElement.src = normalizeAudioUrl(rawPath);
+
     if (isYouTube && ytId) {
       activeEngine = "youtube";
       initYouTubePlayer(ytId);
     } else {
       activeEngine = "html5";
-      audioElement.src = normalizeAudioUrl(rawPath);
     }
 
     // Set judul lagu pada tooltip
@@ -399,10 +391,18 @@ const MusicHandler = (function () {
         try {
           ytPlayer.playVideo();
         } catch (e) {
-          console.warn("YT play error:", e);
+          console.warn("YT play error, beralih ke HTML5:", e);
+          fallbackToHtml5();
         }
       } else {
         shouldPlayAfterReady = true;
+        // Jika YouTube player lambat dimuat atau tidak siap dalam 2.5 detik, segera putar audio fallback
+        setTimeout(() => {
+          if (!isPlaying && activeEngine === "youtube" && shouldPlayAfterReady) {
+            console.info("YouTube loading lambat, memutar cadangan instrumental");
+            fallbackToHtml5();
+          }
+        }, 2500);
       }
     } else {
       if (audioElement) {

@@ -1086,13 +1086,27 @@ const MainApp = (function () {
       console.warn("API server wishes offline, fallback lokal:", e);
     }
 
-    // 2. Fallback ke default jika kosong
+    // 2. Gabungkan dengan ucapan tersimpan di local cache (Mode Mandiri / Offline)
+    try {
+      const localCached = JSON.parse(localStorage.getItem("wedding_cached_wishes") || "[]");
+      if (Array.isArray(localCached) && localCached.length > 0) {
+        const existingIds = new Set(entries.map(w => w.id));
+        localCached.forEach(w => {
+          if (!existingIds.has(w.id)) {
+            entries.unshift(w);
+            existingIds.add(w.id);
+          }
+        });
+      }
+    } catch (_) {}
+
+    // 3. Fallback jika masih kosong sama sekali
     if (!entries || entries.length === 0) {
       entries = [
         {
           id: "def-1",
           name: "Budi & Keluarga",
-          message: "Selamat menempuh hidup baru untuk Dimas dan Anindya! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.",
+          message: "Selamat menempuh hidup baru untuk kedua mempelai! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.",
           likes: 5,
           createdAt: new Date().toISOString()
         },
@@ -1109,6 +1123,12 @@ const MainApp = (function () {
     if (countEl) countEl.textContent = `(${entries.length} Ucapan)`;
 
     container.innerHTML = "";
+
+    // Ambil peta likes tersimpan agar tidak pernah hilang saat refresh/kirim ucapan
+    let localLikesMap = {};
+    try {
+      localLikesMap = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+    } catch (_) {}
 
     entries.forEach(item => {
       const card = document.createElement("div");
@@ -1155,32 +1175,71 @@ const MainApp = (function () {
         stickerEl.appendChild(stickerImg);
       }
 
-      // Fitur Like Hati
+      // Fitur Like Hati Interaktif & Persisten
       const footerEl = document.createElement("div");
       footerEl.className = "wish-footer";
       footerEl.style.cssText = "display: flex; align-items: center; gap: 6px; margin-top: 8px;";
 
+      const initialLikes = typeof localLikesMap[item.id] === "number"
+        ? localLikesMap[item.id]
+        : (item.likes || 0);
+
       const likeBtn = document.createElement("button");
       likeBtn.type = "button";
       likeBtn.className = "btn-like-wish";
-      likeBtn.style.cssText = "background: none; border: none; cursor: pointer; color: #ef4444; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px;";
-      likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span class="like-count">${item.likes || 0}</span>`;
+      likeBtn.style.cssText = "background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 20px; padding: 4px 10px; cursor: pointer; color: #ef4444; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 5px; transition: transform 0.15s ease, background 0.2s ease;";
+      likeBtn.innerHTML = `<i class="fas fa-heart"></i> <span class="like-count">${initialLikes}</span>`;
+      likeBtn.title = "Kirim Like / Doa Restu";
 
-      likeBtn.addEventListener("click", async function () {
-        if (likeBtn.disabled) return;
-        likeBtn.disabled = true;
+      likeBtn.addEventListener("click", async function (e) {
+        e.preventDefault();
+
+        // Efek visual klik hati (bounce)
+        likeBtn.style.transform = "scale(1.25)";
+        likeBtn.style.background = "rgba(239, 68, 68, 0.2)";
+        setTimeout(() => {
+          likeBtn.style.transform = "scale(1)";
+          likeBtn.style.background = "rgba(239, 68, 68, 0.08)";
+        }, 220);
+
+        const countSpan = likeBtn.querySelector(".like-count");
+        let currentLikes = parseInt(countSpan.textContent, 10) || 0;
+        currentLikes++;
+        countSpan.textContent = currentLikes;
+        item.likes = currentLikes;
+
+        // Simpan langsung ke local map agar persisten di browser tamu
+        try {
+          const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+          map[item.id] = currentLikes;
+          localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
+        } catch (_) {}
+
+        // Simpan ke cached wishes jika ada
+        try {
+          const cached = JSON.parse(localStorage.getItem("wedding_cached_wishes") || "[]");
+          const target = cached.find(w => w.id === item.id);
+          if (target) {
+            target.likes = currentLikes;
+            localStorage.setItem("wedding_cached_wishes", JSON.stringify(cached));
+          }
+        } catch (_) {}
+
+        // Sinkronkan ke API jika server backend online
         try {
           if (window.API && window.API.likeWish && item.id) {
             const res = await window.API.likeWish(item.id);
-            if (res && res.data) {
-              likeBtn.querySelector(".like-count").textContent = res.data.likes;
+            const serverLikes = (res && typeof res.likes === "number") ? res.likes : res?.data?.likes;
+            if (typeof serverLikes === "number" && serverLikes >= currentLikes) {
+              countSpan.textContent = serverLikes;
+              item.likes = serverLikes;
+              try {
+                const map = JSON.parse(localStorage.getItem("wedding_wishes_likes_map") || "{}");
+                map[item.id] = serverLikes;
+                localStorage.setItem("wedding_wishes_likes_map", JSON.stringify(map));
+              } catch (_) {}
             }
-          } else {
-            const current = parseInt(likeBtn.querySelector(".like-count").textContent, 10) || 0;
-            likeBtn.querySelector(".like-count").textContent = current + 1;
           }
-          likeBtn.style.transform = "scale(1.2)";
-          setTimeout(() => { likeBtn.style.transform = "scale(1)"; }, 200);
         } catch (_) {}
       });
 

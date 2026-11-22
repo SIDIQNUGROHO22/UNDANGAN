@@ -121,7 +121,7 @@ const WEDDING_CONFIG = {
     }
   ],
   "music": {
-    "sourceType": "youtube",
+    "sourceType": "local",
     "youtubeUrl": "https://youtu.be/ouxzBgJO7sc?si=zjQOdALNhBhtuB5j",
     "youtubeId": "ouxzBgJO7sc",
     "filePath": "assets/music/lagu-undangan.mp3",

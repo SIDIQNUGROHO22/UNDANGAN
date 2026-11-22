@@ -836,6 +836,7 @@ const MainApp = (function () {
     { id: "animals-deer", category: "animals", name: "Rusa Manis", emoji: "🦌", url: "assets/stickers/animals-deer.gif" },
     { id: "animals-puppy", category: "animals", name: "Anak Anjing Ceria", emoji: "🐶", url: "assets/stickers/animals-puppy.gif" }
   ];
+  window.STICKERS_DATA = STICKERS_DATA;
 
   function insertTextAtCursor(inputEl, text) {
     if (!inputEl) return;

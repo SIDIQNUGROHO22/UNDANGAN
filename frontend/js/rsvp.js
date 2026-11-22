@@ -194,8 +194,30 @@ const RsvpHandler = (function () {
     if (message) {
       waMessage += `*Pesan / Doa:* \n"${message}"\n`;
     }
+    let stickerPreviewHtml = "";
     if (sticker) {
-      waMessage += `*Stiker Pilihan:* [GIF Terlampir di Sistem]\n`;
+      const stickersList = window.STICKERS_DATA || (window.MainApp && window.MainApp.STICKERS) || [];
+      const foundStk = stickersList.find(s => s.url === sticker || s.id === sticker);
+      const stkName = foundStk ? foundStk.name : "Stiker Pilihan";
+      const stkEmoji = foundStk ? (foundStk.emoji || "✨") : "✨";
+
+      // Susun URL publik stiker agar bisa dibuka dan memicu preview gambar GIF di WhatsApp
+      let fullStickerUrl = sticker;
+      if (!sticker.startsWith("http://") && !sticker.startsWith("https://") && !sticker.startsWith("data:")) {
+        const publicBase = (typeof INVITATION_PUBLIC_URL !== "undefined" && INVITATION_PUBLIC_URL) 
+          ? INVITATION_PUBLIC_URL.replace(/\/+$/, "")
+          : "https://sidiqnugroho22.github.io/UNDANGAN";
+        fullStickerUrl = `${publicBase}/${sticker.replace(/^\/+/, "")}`;
+      }
+
+      waMessage += `*Stiker:* ${stkEmoji} ${stkName}\n${fullStickerUrl}\n`;
+
+      stickerPreviewHtml = `
+        <div style="margin: 0.75rem auto 0.5rem auto; padding: 6px 14px; background: #ffffff; border: 1px solid rgba(223, 177, 91, 0.4); border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);">
+          <img src="${sticker}" alt="${stkName}" style="height: 48px; width: auto; object-fit: contain;">
+          <span style="font-size: 0.85rem; font-weight: 600; color: #1a1511;">${stkEmoji} ${stkName}</span>
+        </div>
+      `;
     }
     waMessage += `-------------------------------------------\n`;
     waMessage += `Tersimpan di Sistem Server Undangan Digital`;
@@ -204,12 +226,15 @@ const RsvpHandler = (function () {
 
     waContainer.innerHTML = `
       <div class="wa-action-box" style="margin-top: 1.25rem; padding: 1.25rem; background: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 12px; text-align: center;">
-        <p class="wa-action-text" style="color: #15803d; font-weight: 600; margin-bottom: 0.75rem;">
+        <p class="wa-action-text" style="color: #15803d; font-weight: 600; margin-bottom: 0.5rem;">
           <i class="fas fa-check-circle"></i> Konfirmasi kehadiran berhasil tersimpan di database server!
         </p>
-        <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn-maps" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; padding: 10px 18px; border-radius: 30px; text-decoration: none; font-weight: 600;">
-          <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Kirim Salinan Konfirmasi ke WhatsApp${contactLabel}
-        </a>
+        ${stickerPreviewHtml}
+        <div style="margin-top: 0.5rem;">
+          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn-maps" style="display: inline-flex; align-items: center; gap: 8px; background: #25D366; color: white; padding: 10px 18px; border-radius: 30px; text-decoration: none; font-weight: 600;">
+            <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> Kirim Salinan Konfirmasi ke WhatsApp${contactLabel}
+          </a>
+        </div>
       </div>
     `;
     waContainer.style.display = "block";

@@ -868,9 +868,9 @@ div[style*="display:flex"] > input.form-control {
   }
 
   .navbar-gunungan-icon {
-    width: 34px;
-    height: 34px;
-    padding: 2px;
+    width: 28px;
+    height: 28px;
+    padding: 1px;
   }
 
   .navbar-brand-name {
@@ -1303,13 +1303,13 @@ div[style*="display:flex"] > input.form-control {
 
 @media (max-width: 768px) {
   .admin-quick-scroll {
-    bottom: 18px;
-    right: 16px;
-    gap: 8px;
+    bottom: 12px;
+    right: 12px;
+    gap: 6px;
   }
   .btn-quick-scroll {
-    width: 38px;
-    height: 38px;
-    font-size: 0.92rem;
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
   }
 }

@@ -5,10 +5,17 @@
  * Optimasi tata letak dan pengalaman pengguna untuk:
  * - Layar Desktop & Laptop (>= 992px)
  * - Tablet (768px - 991px)
- * - Smartphone (<= 767px)
- * - Small Mobile & iPhone SE (<= 380px)
+ * - Smartphone / HP Mobile (<= 767px)
+ * - Small Mobile & iPhone SE (<= 360px)
  * ==============================================================================
  */
+
+/* Guard Anti-Overflow Horizontal untuk Semua Perangkat Mobile */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  width: 100%;
+}
 
 /* --- TABLET (MAKSIMAL 991px) --- */
 @media screen and (max-width: 991px) {
@@ -40,129 +47,244 @@
 
 /* --- SMARTPHONE / MOBILE (MAKSIMAL 767px) --- */
 @media screen and (max-width: 767px) {
-  /* Tipografi & Ruang */
+  /* Tipografi & Ruang Section */
   .section-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.75rem;
   }
 
   .section-title {
-    font-size: 1.75rem;
-  }
-
-  .section-subtitle {
     font-size: 1.6rem;
   }
 
-  /* Cover Opening */
+  .section-subtitle {
+    font-size: 1.4rem;
+  }
+
+  /* Cover Opening Card */
   .cover-content {
-    padding: 2rem 1.4rem;
-    width: 92%;
+    padding: 1.75rem 1.15rem;
+    width: 90%;
+    max-width: 360px;
+    box-sizing: border-box;
+  }
+
+  .cover-gunungan-center {
+    width: 44px;
+    height: 54px;
+    margin: 0 auto 0.5rem;
+  }
+
+  .cover-gunungan-center img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .cover-tagline {
+    font-size: 0.72rem;
+    letter-spacing: 2px;
   }
 
   .cover-names {
-    font-size: 2.7rem;
+    font-size: 2.15rem;
+    line-height: 1.2;
+    margin: 0.45rem 0 0.65rem;
+  }
+
+  .cover-guest-label {
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
   }
 
   .cover-guest-name {
-    font-size: 1.3rem;
+    font-size: 1.15rem;
   }
 
-  /* Gunungan Wayang & Ornamen di Layar Mobile */
+  .cover-guest-address {
+    font-size: 0.78rem;
+  }
+
+  .cover-date-badge {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.9rem;
+    margin: 0.75rem auto 1rem;
+  }
+
+  .btn-open-envelope {
+    padding: 0.65rem 1.35rem;
+    font-size: 0.88rem;
+  }
+
+  /* Gunungan Tirai Pembuka di Layar HP - Proporsional & Elegan, Tidak Menutupi Layar */
   .gunungan-curtain {
-    height: 65vh;
-    max-height: 520px;
+    height: auto;
+    max-height: 38vh;
+    width: 36vw;
+    max-width: 140px;
+    bottom: 0;
+  }
+
+  .gunungan-curtain img {
+    width: 100%;
+    height: auto;
+    max-height: 38vh;
+    object-fit: contain;
   }
 
   .gunungan-left {
-    left: -15px;
+    left: -5px;
     transform: translateX(0);
   }
 
   .gunungan-right {
-    right: -15px;
+    right: -5px;
     transform: scaleX(-1) translateX(0);
   }
 
   .gunungan-right.unmirrored {
-    right: -15px;
+    right: -5px;
     transform: translateX(0);
   }
 
+  /* Sudut Hiasan Wayang / Corner Ornament */
   .javanese-corner-ornament {
-    width: 45px;
-    height: 45px;
+    width: 32px;
+    height: 32px;
   }
 
-  .corner-top-left { top: 10px; left: 10px; }
-  .corner-top-right { top: 10px; right: 10px; }
-  .corner-bottom-left { bottom: 10px; left: 10px; }
-  .corner-bottom-right { bottom: 10px; right: 10px; }
+  .corner-top-left { top: 8px; left: 8px; }
+  .corner-top-right { top: 8px; right: 8px; }
+  .corner-bottom-left { bottom: 8px; left: 8px; }
+  .corner-bottom-right { bottom: 8px; right: 8px; }
 
-  .cover-gunungan-center {
-    width: 58px;
-    height: 74px;
-  }
-
+  /* Watermark Siluet Wayang Pengantin */
   .wayang-card-watermark {
-    width: 160px;
+    width: 105px;
+    max-height: 145px;
+    opacity: 0.08;
   }
 
   /* Hero Section */
   .hero-section {
-    padding: 4rem 1rem 3rem;
+    padding: 3.5rem 0.85rem 2.5rem;
   }
 
   .hero-card {
-    padding: 2rem 1.25rem;
+    padding: 1.75rem 1.15rem;
+    max-width: 400px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .hero-title {
-    font-size: 2.3rem;
+    font-size: 2.1rem;
+    line-height: 1.25;
+    margin: 0.5rem 0;
+  }
+
+  .hero-date-badge {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.9rem;
   }
 
   .countdown-grid {
-    gap: 8px;
+    gap: 6px;
   }
 
   .countdown-item {
-    padding: 0.65rem 0.35rem;
+    padding: 0.55rem 0.25rem;
+    min-width: 60px;
   }
 
   .countdown-number {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
   }
 
   .countdown-label {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
   }
 
-  /* Mempelai (Couple) - Stack Vertikal */
+  /* Quote Box */
+  .quote-box {
+    padding: 1.5rem 1rem;
+  }
+
+  .quote-box i.quote-icon {
+    font-size: 1.35rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .quote-verse {
+    font-size: 0.98rem;
+    line-height: 1.65;
+  }
+
+  .quote-source {
+    font-size: 0.82rem;
+  }
+
+  /* Mempelai (Couple) - Stack Vertikal Rapi */
   .couple-grid {
     grid-template-columns: 1fr;
-    gap: 2rem;
+    gap: 1.5rem;
   }
 
   .couple-ampersand {
-    font-size: 2.8rem;
-    margin: -1rem 0;
+    font-size: 2.2rem;
+    margin: -0.5rem 0;
   }
 
   .couple-card {
     max-width: 360px;
     margin: 0 auto;
     width: 100%;
+    padding: 1.5rem 1.15rem;
+    box-sizing: border-box;
   }
 
-  /* Timeline - Bergeser ke Sisi Kiri */
+  .couple-photo-wrapper {
+    width: 120px;
+    height: 120px;
+    padding: 4px;
+    margin: 0 auto 1rem;
+  }
+
+  .couple-role-badge {
+    font-size: 0.72rem;
+    padding: 0.25rem 0.85rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .couple-name {
+    font-size: 1.45rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .couple-parents {
+    font-size: 0.82rem;
+    line-height: 1.45;
+    margin-bottom: 0.75rem;
+  }
+
+  .couple-social-link {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* Timeline - Bergeser ke Sisi Kiri Proporsional */
   .timeline::after {
     left: 20px;
   }
 
   .timeline-item {
     width: 100%;
-    padding-left: 50px;
+    padding-left: 48px;
     padding-right: 0;
     text-align: left !important;
+    margin-bottom: 1.5rem;
   }
 
   .timeline-item.right {
@@ -170,44 +292,213 @@
   }
 
   .timeline-dot {
-    left: 4px !important;
+    left: 6px !important;
     right: auto !important;
+    width: 28px;
+    height: 28px;
+    font-size: 0.72rem;
+    line-height: 28px;
   }
 
-  /* Acara (Events) - Stack Vertikal */
+  .timeline-content {
+    padding: 1.15rem 1rem;
+  }
+
+  .timeline-date {
+    font-size: 0.8rem;
+  }
+
+  .timeline-title {
+    font-size: 1.05rem;
+  }
+
+  .timeline-desc {
+    font-size: 0.82rem;
+    line-height: 1.5;
+  }
+
+  /* Acara (Events) - Stack Vertikal & Ukuran Ikon Ideal */
   .event-grid {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 
   .event-card {
-    max-width: 420px;
+    max-width: 400px;
     margin: 0 auto;
     width: 100%;
+    padding: 1.5rem 1.15rem;
+    box-sizing: border-box;
   }
 
-  /* Galeri - 1 Kolom atau 2 Kolom Rapat */
+  .event-icon-circle {
+    width: 48px;
+    height: 48px;
+    font-size: 1.2rem;
+    margin: 0 auto 0.75rem;
+  }
+
+  .event-title {
+    font-size: 1.45rem;
+  }
+
+  .event-detail-item {
+    margin-bottom: 0.85rem;
+  }
+
+  .event-detail-item i {
+    font-size: 0.95rem;
+  }
+
+  .event-btn-group {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .event-btn-group .btn {
+    width: 100%;
+    padding: 0.55rem 0.9rem;
+    font-size: 0.82rem;
+  }
+
+  /* Galeri - 2 Kolom Presisi di Layar HP */
   .gallery-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
     max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .gallery-item {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .gallery-overlay i {
+    font-size: 1.2rem;
   }
 
   /* RSVP & Buku Tamu */
   .rsvp-wrapper,
   .guestbook-form-card {
-    padding: 1.75rem 1.25rem;
+    padding: 1.5rem 1.1rem;
+  }
+
+  .form-group label {
+    font-size: 0.82rem;
+  }
+
+  .form-control,
+  .form-select {
+    font-size: 0.88rem;
+    padding: 0.65rem 0.85rem;
+  }
+
+  .sticker-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    max-height: 200px;
+  }
+
+  .sticker-grid-item img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .form-label-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .quick-emojis {
+    width: 100%;
+    gap: 5px;
+  }
+
+  .quick-emoji-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.95rem;
+  }
+
+  .wish-card {
+    padding: 0.85rem;
+  }
+
+  .wish-avatar {
+    width: 34px;
+    height: 34px;
+    font-size: 0.85rem;
+  }
+
+  /* Bank Cards Grid & Kado Digital Mobile */
+  .bank-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto 1.75rem;
+  }
+
+  .bank-card {
+    padding: 1.2rem 1rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .bank-badge {
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .account-number {
+    font-size: 1.05rem;
+  }
+
+  .btn-copy {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.65rem;
+  }
+
+  .qris-card {
+    padding: 1.5rem 1rem;
+    max-width: 380px;
+  }
+
+  .qris-img-container {
+    width: 160px;
+    height: 160px;
+    margin: 0.75rem auto;
+    padding: 6px;
+  }
+
+  /* Lightbox Mobile Nav */
+  .lightbox-prev {
+    left: 10px;
+  }
+
+  .lightbox-next {
+    right: 10px;
+  }
+
+  .lightbox-nav-btn {
+    width: 38px;
+    height: 38px;
+    font-size: 0.95rem;
+    background: rgba(0, 0, 0, 0.45);
   }
 
   /* Navigasi Bawah Mengambang Mobile (100% Kompatibel HP, Rapi & Bebas Cacat) */
   .bottom-nav {
-    padding: 4px 6px;
+    padding: 3px 6px;
     bottom: max(10px, env(safe-area-inset-bottom, 10px));
     width: calc(100% - 16px);
     max-width: 480px;
+    height: 48px;
     justify-content: space-between;
     gap: 2px;
-    border-radius: 32px;
+    border-radius: 30px;
     box-sizing: border-box;
     overflow-x: auto;
     overflow-y: hidden;
@@ -221,16 +512,16 @@
   .nav-link {
     flex: 1 1 0;
     min-width: 0;
-    padding: 5px 2px;
-    font-size: 0.58rem;
+    padding: 4px 2px;
+    font-size: 0.55rem;
     gap: 2px;
-    border-radius: 18px;
+    border-radius: 16px;
     text-align: center;
     box-sizing: border-box;
   }
 
   .nav-link i {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
   }
 
   .nav-link span {
@@ -239,7 +530,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-size: 0.54rem;
+    font-size: 0.52rem;
     line-height: 1.1;
     letter-spacing: -0.2px;
   }
@@ -247,67 +538,23 @@
   /* Posisi Tombol Musik & Kembali ke Atas - Mengambang Rapi Tepat di Atas Tab Bawah */
   .music-toggle-btn,
   .aesthetic-music-widget {
-    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 58px);
-    left: 14px;
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 54px);
+    left: 12px;
     z-index: 995;
+  }
+
+  .vinyl-disc-wrapper {
+    width: 38px;
+    height: 38px;
   }
 
   .back-to-top {
-    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 58px);
-    right: 14px;
-    width: 42px;
-    height: 42px;
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 54px);
+    right: 12px;
+    width: 38px;
+    height: 38px;
+    font-size: 0.85rem;
     z-index: 995;
-  }
-
-  /* Bank Cards Grid & Kado Digital Mobile */
-  .bank-cards-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto 2rem;
-  }
-
-  .bank-card {
-    padding: 1.25rem 1rem;
-    width: 100%;
-    box-sizing: border-box;
-  }
-
-  /* Lightbox Mobile Nav */
-  .lightbox-prev {
-    left: 10px;
-  }
-
-  .lightbox-next {
-    right: 10px;
-  }
-
-  .lightbox-nav-btn {
-    width: 40px;
-    height: 40px;
-    font-size: 1rem;
-    background: rgba(0, 0, 0, 0.45);
-  }
-
-  /* Sticker & Quick Emoji Mobile Responsive */
-  .sticker-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    max-height: 220px;
-  }
-  .sticker-grid-item img {
-    width: 44px;
-    height: 44px;
-  }
-  .form-label-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 6px;
-  }
-  .quick-emojis {
-    width: 100%;
   }
 }
 
@@ -316,41 +563,58 @@
   .bottom-nav {
     width: calc(100% - 10px);
     padding: 3px 4px;
-    justify-content: flex-start;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    height: 46px;
   }
 
   .nav-link {
     flex: 0 0 auto;
-    min-width: 46px;
-    padding: 4px 5px;
+    min-width: 44px;
+    padding: 3px 4px;
   }
 
   .nav-link span {
-    font-size: 0.52rem;
+    font-size: 0.5rem;
   }
 
-  .aesthetic-music-widget {
-    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 54px);
-    left: 10px;
-  }
-  .vinyl-disc-wrapper {
-    width: 42px;
-    height: 42px;
-  }
   .cover-names {
-    font-size: 2.1rem;
-  }
-
-  .hero-title {
     font-size: 1.85rem;
   }
 
+  .gunungan-curtain {
+    max-width: 110px;
+    max-height: 32vh;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .couple-photo-wrapper {
+    width: 105px;
+    height: 105px;
+  }
+
+  .event-icon-circle {
+    width: 42px;
+    height: 42px;
+    font-size: 1.05rem;
+  }
+
+  .aesthetic-music-widget {
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 50px);
+    left: 8px;
+  }
+
+  .vinyl-disc-wrapper {
+    width: 34px;
+    height: 34px;
+  }
+
   .back-to-top {
-    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 54px);
-    right: 10px;
-    width: 38px;
-    height: 38px;
+    bottom: calc(max(10px, env(safe-area-inset-bottom, 10px)) + 50px);
+    right: 8px;
+    width: 34px;
+    height: 34px;
+    font-size: 0.78rem;
   }
 }

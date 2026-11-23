@@ -1285,6 +1285,9 @@ const AdminApp = (function () {
     // Aset Gambar Tema (Halaman Sampul, Kotak Buka Undangan, Dual Gunungan Kayon, Siluet Wayang, Ornamen)
     const ta = c.themeAssets || {};
     setValue("cfg-cover-photo", c.couple?.coverPhoto || "assets/images/cover.jpg");
+    setValue("cfg-background-photo", c.couple?.backgroundPhoto || ta.backgroundPhoto || "assets/images/background.jpg");
+    setValue("cfg-bg-overlay", ta.backgroundOverlay || "medium");
+    setCheckbox("cfg-show-bg-batik", ta.showBackgroundBatik !== false);
     setCheckbox("cfg-show-gunungan-center", ta.showGununganCenter !== false);
     setValue("cfg-gunungan-center-img", ta.gununganCenterImage || ta.gununganLeftImage || ta.gununganImage || "assets/images/gunungan-gold.svg");
     setCheckbox("cfg-show-cover-wayang", ta.showCoverWayang !== false);
@@ -1834,11 +1837,13 @@ const AdminApp = (function () {
     const rightVal = document.getElementById("cfg-gunungan-right-img")?.value || leftVal;
     const centerVal = document.getElementById("cfg-gunungan-center-img")?.value || leftVal;
     const coverVal = document.getElementById("cfg-cover-photo")?.value;
+    const bgVal = document.getElementById("cfg-background-photo")?.value;
     const coverGroomVal = document.getElementById("cfg-cover-wayang-groom-img")?.value;
     const coverBrideVal = document.getElementById("cfg-cover-wayang-bride-img")?.value;
     const coverCoupleVal = document.getElementById("cfg-cover-couple-photo")?.value || coverVal;
 
     setImg(coverVal, "preview-cover-photo", "assets/images/cover.jpg");
+    setImg(bgVal, "preview-background-photo", "assets/images/background.jpg");
     setImg(centerVal, "preview-gunungan-center-img", "assets/images/gunungan-gold.svg");
     setImg(coverGroomVal, "preview-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg");
     setImg(coverBrideVal, "preview-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg");
@@ -1912,8 +1917,9 @@ const AdminApp = (function () {
       updated.couple.bride.instagram = document.getElementById("cfg-bride-ig").value.trim();
       updated.couple.bride.photo = (document.getElementById("cfg-bride-photo")?.value || "assets/images/couple-2.jpg").trim();
 
-      // Update Cover Photo Halaman Pembuka
+      // Update Cover Photo Halaman Pembuka & Background Isi Undangan
       updated.couple.coverPhoto = (document.getElementById("cfg-cover-photo")?.value || "assets/images/cover.jpg").trim();
+      updated.couple.backgroundPhoto = (document.getElementById("cfg-background-photo")?.value || "assets/images/background.jpg").trim();
 
       // Update Akad
       updated.events.akad.dateFormatted = document.getElementById("cfg-akad-date").value.trim();
@@ -2016,7 +2022,10 @@ const AdminApp = (function () {
         favicon: (document.getElementById("cfg-favicon-invitation")?.value || "assets/images/favicon.png").trim(),
         adminFavicon: (document.getElementById("cfg-favicon-admin")?.value || "assets/images/favicon-admin.png").trim(),
         adminLogo: (document.getElementById("cfg-admin-logo-img")?.value || "assets/images/gunungan-gold.svg").trim(),
-        adminTitle: (document.getElementById("cfg-admin-brand-title")?.value || "PANEL ADMIN").trim()
+        adminTitle: (document.getElementById("cfg-admin-brand-title")?.value || "PANEL ADMIN").trim(),
+        backgroundPhoto: (document.getElementById("cfg-background-photo")?.value || "assets/images/background.jpg").trim(),
+        backgroundOverlay: document.getElementById("cfg-bg-overlay")?.value || "medium",
+        showBackgroundBatik: Boolean(document.getElementById("cfg-show-bg-batik")?.checked)
       };
       updated.adminLogo = updated.themeAssets.adminLogo;
       updated.adminTitle = updated.themeAssets.adminTitle;
@@ -2357,6 +2366,7 @@ const AdminApp = (function () {
 
     [
       "cfg-cover-photo",
+      "cfg-background-photo",
       "cfg-gunungan-center-img",
       "cfg-cover-wayang-groom-img",
       "cfg-cover-wayang-bride-img",
@@ -2452,6 +2462,7 @@ const AdminApp = (function () {
 
     // Wiring Tombol Upload Seluruh Gambar Halaman Sampul & Kotak Buka Undangan
     setupFileUpload("btn-upload-cover-photo", "file-cover-photo", "cfg-cover-photo", "cover", "Foto background sampul");
+    setupFileUpload("btn-upload-background-photo", "file-background-photo", "cfg-background-photo", "background", "Foto background isi undangan");
     setupFileUpload("btn-upload-gunungan-center", "file-gunungan-center", "cfg-gunungan-center-img", "gunungan-center", "Lambang puncak kotak sampul");
     setupFileUpload("btn-upload-cover-wayang-groom", "file-cover-wayang-groom", "cfg-cover-wayang-groom-img", "cover-groom", "Figur pria kotak sampul");
     setupFileUpload("btn-upload-cover-wayang-bride", "file-cover-wayang-bride", "cfg-cover-wayang-bride-img", "cover-bride", "Figur wanita kotak sampul");

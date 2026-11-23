@@ -135,7 +135,10 @@
     "favicon": "assets/images/gunungan-gold.svg",
     "adminFavicon": "assets/images/gunungan-gold.svg",
     "adminLogo": "assets/images/gunungan-gold.svg",
-    "adminTitle": "PANEL ADMIN"
+    "adminTitle": "PANEL ADMIN",
+    "backgroundPhoto": "assets/images/background.jpg",
+    "backgroundOverlay": "medium",
+    "showBackgroundBatik": true
   },
   "adminLogo": "assets/images/gunungan-gold.svg",
   "adminTitle": "PANEL ADMIN",

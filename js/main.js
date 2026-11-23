@@ -103,6 +103,8 @@ const MainApp = (function () {
 
       setImage("cover-photo-img", c.couple.coverPhoto || "assets/images/cover.jpg", "Foto Sampul");
       setImage("vinyl-label-img", c.couple.coverPhoto || "assets/images/cover.jpg", "Foto Vinyl");
+      const mainBgPhoto = c.couple.backgroundPhoto || c.themeAssets?.backgroundPhoto || "assets/images/background.jpg";
+      setImage("main-bg-image", mainBgPhoto, "Foto Background Utama");
     }
 
     // 2. Kutipan Doa
@@ -349,6 +351,23 @@ const MainApp = (function () {
         coverCoupleImg.src = coverCoupleSrc;
         coverCoupleImg.onerror = function () { this.onerror = null; this.src = "assets/images/cover.jpg"; };
       }
+    }
+
+    // 5c. Foto Background Utama Isi Undangan (Layar Setelah Buka Undangan)
+    const mainBgImg = document.getElementById("main-bg-image");
+    if (mainBgImg && assets.backgroundPhoto) {
+      const bgSrc = normalizeMediaUrl(assets.backgroundPhoto, "image");
+      mainBgImg.src = bgSrc;
+      mainBgImg.onerror = function () { this.onerror = null; this.src = "assets/images/background.jpg"; };
+    }
+    const mainBgOverlay = document.getElementById("main-bg-overlay");
+    if (mainBgOverlay) {
+      const overlayLevel = assets.backgroundOverlay || "medium";
+      mainBgOverlay.className = `main-bg-overlay overlay-${overlayLevel}`;
+    }
+    const mainBgBatik = document.getElementById("main-bg-batik");
+    if (mainBgBatik) {
+      mainBgBatik.style.display = assets.showBackgroundBatik !== false ? "block" : "none";
     }
 
     // 6. Favicon / Ikon Tab Browser Kustom (Desktop & Mobile)

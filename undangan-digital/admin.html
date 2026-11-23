@@ -1153,7 +1153,84 @@ Tersimpan di Sistem Server Undangan Digital</pre>
                 </div>
 
                 <!-- ============================================================== -->
-                <!-- B. TIRAI GUNUNGAN WAYANG & SILUET PROFIL MEMPELAI              -->
+                <!-- B. KUSTOMISASI FOTO BACKGROUND ISI UNDANGAN (SETELAH BUKA UNDANGAN) -->
+                <!-- ============================================================== -->
+                <div style="background: #ffffff; padding: 1.25rem; border-radius: 8px; border: 2px solid #dfb15b; margin-bottom: 1.25rem; box-shadow: 0 4px 15px rgba(223, 177, 91, 0.1);">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; border-bottom: 1px dashed #e2e8f0; padding-bottom: 0.65rem; flex-wrap: wrap; gap: 8px;">
+                    <div>
+                      <strong style="font-size: 1rem; color: #1e293b; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-image" style="color: #dfb15b;"></i> Foto Background Isi Undangan (Layar Setelah "Buka Undangan" Diklik)
+                      </strong>
+                      <p style="font-size: 0.8rem; color: #64748b; margin: 3px 0 0 0;">
+                        Kustomisasi gambar latar belakang yang tampil di balik seluruh halaman isi undangan (acara akad, resepsi, mempelai, galeri, dll).
+                      </p>
+                    </div>
+                    <span style="font-size: 0.75rem; background: #dbeafe; color: #1e40af; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
+                      <i class="fas fa-desktop"></i> Halaman Utama Website
+                    </span>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+                    <!-- 1. Input URL & Tombol Upload Foto Background -->
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+                      <strong style="font-size: 0.9rem; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+                        <i class="fas fa-upload" style="color: #dfb15b;"></i> File / URL Foto Background Utama
+                      </strong>
+                      <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.6rem;">
+                        Pilih foto prewedding atau latar dari HP/Laptop atau masukkan link internet/Pinterest/Google Drive.
+                      </p>
+                      <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+                        <input type="text" id="cfg-background-photo" class="form-control" placeholder="assets/images/background.jpg atau URL Web / Pinterest" style="font-size: 0.85rem;">
+                        <button type="button" class="btn-sm" id="btn-upload-background-photo" style="white-space: nowrap; background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px;" title="Upload dari laptop / HP">
+                          <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <input type="file" id="file-background-photo" accept="image/png,image/jpeg,image/webp" style="display: none;">
+                      </div>
+                      <div style="text-align: center; height: 100px; background: #1a1511; border-radius: 6px; display: flex; align-items: center; justify-content: center; padding: 4px; overflow: hidden; border: 1px solid #333;">
+                        <img id="preview-background-photo" src="assets/images/background.jpg" alt="Preview Background Utama" style="max-height: 92px; width: 100%; object-fit: cover; border-radius: 4px;" onerror="this.src='assets/images/background.jpg'">
+                      </div>
+                    </div>
+
+                    <!-- 2. Pengaturan Lapisan Gelap & Efek Batik -->
+                    <div style="background: #f8fafc; padding: 1rem; border-radius: 8px; border: 1px solid #cbd5e1; display: flex; flex-direction: column; justify-content: space-between;">
+                      <div>
+                        <strong style="font-size: 0.9rem; color: #1e293b; display: block; margin-bottom: 0.35rem;">
+                          <i class="fas fa-sliders-h" style="color: #dfb15b;"></i> Pengaturan Lapisan &amp; Keterbacaan Teks
+                        </strong>
+                        <p style="font-size: 0.78rem; color: #64748b; margin-bottom: 0.75rem;">
+                          Atur kepekatan lapisan gelap agar teks dan tulisan undangan tetap kontras dan nyaman dibaca para tamu.
+                        </p>
+
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                          <label class="form-label" style="font-size: 0.82rem; font-weight: 600;">Kepekatan Lapisan Gelap (Overlay):</label>
+                          <select id="cfg-bg-overlay" class="form-control" style="font-size: 0.85rem;">
+                            <option value="light">Ringan (Foto Lebih Terang)</option>
+                            <option value="medium" selected>Sedang (Seimbang - Direkomendasikan)</option>
+                            <option value="dark">Pekat (Elegan &amp; Teks Sangat Jelas)</option>
+                            <option value="none">Tanpa Lapisan Gelap</option>
+                          </select>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0;">
+                          <label style="font-size: 0.82rem; cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                            <input type="checkbox" id="cfg-show-bg-batik" checked>
+                            <span>Padukan dengan Motif Batik Halus Tradisional</span>
+                          </label>
+                          <span style="font-size: 0.74rem; color: #64748b; margin-top: 2px; display: block;">
+                            Memberikan sentuhan ukiran batik Jawa halus yang menyatu di atas foto latar belakang.
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style="font-size: 0.74rem; color: #0284c7; background: #f0f9ff; padding: 6px 10px; border-radius: 4px; border: 1px solid #bae6fd; margin-top: 0.75rem;">
+                        <i class="fas fa-info-circle"></i> Foto latar belakang ini otomatis tampil di seluruh halaman undangan begitu tamu menekan tombol <strong>"Buka Undangan"</strong>.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ============================================================== -->
+                <!-- C. TIRAI GUNUNGAN WAYANG & SILUET PROFIL MEMPELAI              -->
                 <!-- ============================================================== -->
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
                   

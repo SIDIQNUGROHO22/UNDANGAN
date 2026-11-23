@@ -824,8 +824,8 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
                 self.send_json({'success': False, 'message': 'Nama tamu wajib diisi!'}, 400)
                 return
             settings = get_settings()
-            groom = settings.get('couple', {}).get('groom', {}).get('callName', 'Dimas')
-            bride = settings.get('couple', {}).get('bride', {}).get('callName', 'Anindya')
+            groom = settings.get('couple', {}).get('groom', {}).get('callName', 'Sidiq')
+            bride = settings.get('couple', {}).get('bride', {}).get('callName', 'Anisa')
             event_date = settings.get('events', {}).get('akad', {}).get('dateFormatted', 'Sabtu, 19 Desember 2026')
             venue = settings.get('events', {}).get('akad', {}).get('venueName', 'Masjid Agung')
             

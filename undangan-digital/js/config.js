@@ -2,11 +2,11 @@
  * KONFIGURASI OTOMATIS TERSINKRON DARI SERVER
  */
 const WEDDING_CONFIG = {
-  "weddingTitle": "The Wedding of Dimas & Anindya - Undangan Pernikahan Digital",
+  "weddingTitle": "The Wedding of Sidiq & Anisa - Undangan Pernikahan Digital",
   "couple": {
     "groom": {
-      "callName": "Prabowo",
-      "fullName": "prabiwi subiinti",
+      "callName": "Sidiq",
+      "fullName": "Sidiq Nugroho",
       "fatherName": "bambang",
       "motherName": "Ibu Siti Rahmawati",
       "childOrder": "Putra pertama dari",
@@ -15,8 +15,8 @@ const WEDDING_CONFIG = {
       "bio": "Seorang insan yang bertekad menjaga komitmen suci, membimbing dalam kasih sayang, dan membangun bahtera rumah tangga yang sakinah, mawaddah, warahmah."
     },
     "bride": {
-      "callName": "Teddy",
-      "fullName": "mayor tidi",
+      "callName": "Anisa",
+      "fullName": "Anisa Azzahroh, S.Pd.",
       "fatherName": "michael",
       "motherName": "Ibu Hj. Nurul Hasanah",
       "childOrder": "Putri kedua dari",
@@ -168,19 +168,19 @@ const WEDDING_CONFIG = {
       {
         "bankName": "Bank Central Asia (BCA)",
         "accountNumber": "8830123456",
-        "accountHolder": "Dimas Pratama",
+        "accountHolder": "Sidiq Nugroho",
         "badge": "BCA"
       },
       {
         "bankName": "Bank Rakyat Indonesia (BRI)",
         "accountNumber": "012301001234567",
-        "accountHolder": "Anindya Putri",
+        "accountHolder": "Anisa Azzahroh",
         "badge": "BRI"
       },
       {
         "bankName": "Bank Syariah Indonesia (BSI)",
         "accountNumber": "7123456789",
-        "accountHolder": "Dimas Pratama",
+        "accountHolder": "Sidiq Nugroho",
         "badge": "BSI"
       }
     ],
@@ -191,14 +191,14 @@ const WEDDING_CONFIG = {
     },
     "physicalGift": {
       "enable": true,
-      "recipientName": "Dimas & Anindya",
+      "recipientName": "Sidiq & Anisa",
       "phoneNumber": "+62 812-3456-7890",
       "fullAddress": "Jl. Kemang Pratama Raya No. 12, Kel. Bojong Rawalumbu, Kec. Rawalumbu, Kota Bekasi, Jawa Barat 17116"
     }
   },
   "rsvp": {
     "whatsappNumber": "6281234567890",
-    "contactPersonName": "Dimas & Anindya",
+    "contactPersonName": "Sidiq & Anisa",
     "autoOpenWhatsApp": true
   },
   "guest": {
@@ -211,9 +211,9 @@ const WEDDING_CONFIG = {
     "islami": "Assalamu’alaikum Warahmatullahi Wabarakatuh\n\nKepada Yth. Bapak/Ibu/Saudara/i: *{guest_name}*\n\nMaha Suci Allah yang telah menciptakan makhluk-Nya berpasang-pasangan. Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Anda dalam ikatan suci pernikahan:\n\n💍 *{groom_name} & {bride_name}* 💍\n\n📅 {event_date}\n📍 {venue_name}\n\nTautan Undangan Digital:\n👉 {invite_link}\n\nSemoga senantiasa dilimpahkan keberkahan, kesehatan, dan kebahagiaan. Aamiin Yaa Rabbal 'Aalamiin.\n\nWassalamu’alaikum Wr. Wb.\nKeluarga Besar *{groom_name} & {bride_name}*"
   },
   "footer": {
-    "coupleNames": "prabowo & teddy",
+    "coupleNames": "Sidiq & Anisa",
     "closingGreeting": "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.",
-    "copyright": "© 2026 prabowo & teddy Wedding Invitation. Dibuat dengan penuh cinta."
+    "copyright": "© 2026 Sidiq & Anisa Wedding Invitation. Dibuat dengan penuh cinta."
   }
 };
 if (typeof module !== 'undefined' && module.exports) {

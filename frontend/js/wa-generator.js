@@ -74,8 +74,8 @@ const WaGenerator = {
     const inviteLink = `${cleanBaseUrl}?to=${encodeURIComponent(guestName)}`;
 
     // Ambil data dari konfigurasi aktif
-    const groomName = options.groomName || (window.CURRENT_CONFIG?.couple?.groom?.callName) || "Dimas";
-    const brideName = options.brideName || (window.CURRENT_CONFIG?.couple?.bride?.callName) || "Anindya";
+    const groomName = options.groomName || (window.CURRENT_CONFIG?.couple?.groom?.callName) || "Sidiq";
+    const brideName = options.brideName || (window.CURRENT_CONFIG?.couple?.bride?.callName) || "Anisa";
     const eventDate = options.eventDate || (window.CURRENT_CONFIG?.events?.akad?.dateFormatted) || "Sabtu, 19 Desember 2026";
     const venueName = options.venueName || `${window.CURRENT_CONFIG?.events?.akad?.venueName || "Masjid Agung"} & ${window.CURRENT_CONFIG?.events?.resepsi?.venueName || "Grand Ballroom"}`;
 

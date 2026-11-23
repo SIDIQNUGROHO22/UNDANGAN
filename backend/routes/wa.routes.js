@@ -43,8 +43,8 @@ router.post('/generate', (req, res) => {
     const inviteLink = `${origin}/?to=${queryParam}`;
 
     // Ambil data mempelai & acara dari setting
-    const groomName = settings.couple?.groom?.callName || "Dimas";
-    const brideName = settings.couple?.bride?.callName || "Anindya";
+    const groomName = settings.couple?.groom?.callName || "Sidiq";
+    const brideName = settings.couple?.bride?.callName || "Anisa";
     const eventDate = settings.events?.akad?.dateFormatted || "Sabtu, 19 Desember 2026";
     const venueName = `${settings.events?.akad?.venueName || "Masjid Agung"} & ${settings.events?.resepsi?.venueName || "Grand Ballroom"}`;
 

@@ -21,19 +21,19 @@ const AdminApp = (function () {
     {
       bankName: "Bank Central Asia (BCA)",
       accountNumber: "8830123456",
-      accountHolder: "Dimas Pratama",
+      accountHolder: "Sidiq Nugroho",
       badge: "BCA"
     },
     {
       bankName: "Bank Rakyat Indonesia (BRI)",
       accountNumber: "012301001234567",
-      accountHolder: "Anindya Putri",
+      accountHolder: "Anisa Azzahroh",
       badge: "BRI"
     },
     {
       bankName: "Bank Syariah Indonesia (BSI)",
       accountNumber: "7123456789",
-      accountHolder: "Dimas Pratama",
+      accountHolder: "Sidiq Nugroho",
       badge: "BSI"
     }
   ];
@@ -428,8 +428,8 @@ const AdminApp = (function () {
       }
 
       // Buat template pesan WhatsApp siap kirim
-      const groomName = currentSettings?.couple?.groom?.callName || "Dimas";
-      const brideName = currentSettings?.couple?.bride?.callName || "Anindya";
+      const groomName = currentSettings?.couple?.groom?.callName || "Sidiq";
+      const brideName = currentSettings?.couple?.bride?.callName || "Anisa";
       const eventDate = currentSettings?.events?.akad?.dateFormatted || "Sabtu, 19 Desember 2026";
       const venueName = currentSettings?.events?.akad?.venueName || "Masjid Agung";
 
@@ -1109,8 +1109,8 @@ const AdminApp = (function () {
 
         broadcastTbody.innerHTML = cachedGuests.map((g, idx) => {
           const shareUrl = `${baseInviteUrl}?to=${encodeURIComponent(g.name)}`;
-          const groomName = currentSettings?.couple?.groom?.callName || "Dimas";
-          const brideName = currentSettings?.couple?.bride?.callName || "Anindya";
+          const groomName = currentSettings?.couple?.groom?.callName || "Sidiq";
+          const brideName = currentSettings?.couple?.bride?.callName || "Anisa";
           const eventDate = currentSettings?.events?.akad?.dateFormatted || "Sabtu, 19 Desember 2026";
           const venueName = currentSettings?.events?.akad?.venueName || "Masjid Agung";
 
@@ -1516,8 +1516,8 @@ const AdminApp = (function () {
     }
     const sampleEl = document.getElementById("rsvp-wa-sample-preview");
     if (sampleEl) {
-      const groomCall = document.getElementById("cfg-groom-call")?.value || "Dimas";
-      const brideCall = document.getElementById("cfg-bride-call")?.value || "Anindya";
+      const groomCall = document.getElementById("cfg-groom-call")?.value || "Sidiq";
+      const brideCall = document.getElementById("cfg-bride-call")?.value || "Anisa";
       sampleEl.textContent = `*KONFIRMASI KEHADIRAN UNDANGAN PERNIKAHAN*\nKepada: ${groomCall} & ${brideCall}\n-------------------------------------------\n*Nama:* Budi Santoso\n*Status:* Akan Hadir\n*Jumlah Tamu:* 2 orang\n*Pesan / Doa:* "Selamat menempuh hidup baru!"\n-------------------------------------------\nTersimpan di Sistem Server (ke WA: ${clean || "628..."})`;
     }
   }
@@ -1895,7 +1895,7 @@ const AdminApp = (function () {
     };
 
     // Update Groom
-    updated.couple.groom.callName = getVal("cfg-groom-call", updated.couple.groom.callName || "Dimas");
+    updated.couple.groom.callName = getVal("cfg-groom-call", updated.couple.groom.callName || "Sidiq");
     updated.couple.groom.fullName = getVal("cfg-groom-full", updated.couple.groom.fullName || "");
     updated.couple.groom.fatherName = getVal("cfg-groom-father", updated.couple.groom.fatherName || "");
     updated.couple.groom.motherName = getVal("cfg-groom-mother", updated.couple.groom.motherName || "");
@@ -1904,7 +1904,7 @@ const AdminApp = (function () {
     updated.couple.groom.photo = getVal("cfg-groom-photo", updated.couple.groom.photo || "assets/images/couple-1.jpg");
 
     // Update Bride
-    updated.couple.bride.callName = getVal("cfg-bride-call", updated.couple.bride.callName || "Anindya");
+    updated.couple.bride.callName = getVal("cfg-bride-call", updated.couple.bride.callName || "Anisa");
     updated.couple.bride.fullName = getVal("cfg-bride-full", updated.couple.bride.fullName || "");
     updated.couple.bride.fatherName = getVal("cfg-bride-father", updated.couple.bride.fatherName || "");
     updated.couple.bride.motherName = getVal("cfg-bride-mother", updated.couple.bride.motherName || "");
@@ -2652,7 +2652,7 @@ const AdminApp = (function () {
 
           <div class="form-group" style="margin-bottom: 0;">
             <label class="form-label" style="font-size: 0.78rem; font-weight: 600;">Atas Nama (Nama Pemilik Rekening)</label>
-            <input type="text" class="form-control bank-input-holder" data-index="${idx}" value="${holder}" placeholder="Contoh: Dimas Pratama">
+            <input type="text" class="form-control bank-input-holder" data-index="${idx}" value="${holder}" placeholder="Contoh: Sidiq Nugroho">
           </div>
         </div>
       `;

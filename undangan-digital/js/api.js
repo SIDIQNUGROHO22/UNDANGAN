@@ -261,7 +261,7 @@ const API = {
         {
           id: "wish-001",
           name: "Budi Santoso",
-          message: "Barakallahu lakum wa baraka alaikum wa jama'a bainakuma fii khair. Selamat berbahagia Dimas dan Anindya!",
+          message: "Barakallahu lakum wa baraka alaikum wa jama'a bainakuma fii khair. Selamat berbahagia Sidiq dan Anisa!",
           status: "APPROVED",
           likes: 12,
           createdAt: new Date().toISOString()
@@ -269,7 +269,7 @@ const API = {
         {
           id: "wish-002",
           name: "Ratna Dewi",
-          message: "Selamat ya Anin & Mas Dimas! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.",
+          message: "Selamat ya Anisa & Mas Sidiq! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.",
           status: "APPROVED",
           likes: 8,
           createdAt: new Date().toISOString()

@@ -176,8 +176,8 @@ const RsvpHandler = (function () {
     }
 
     const cfg = window.CURRENT_CONFIG || (typeof WEDDING_CONFIG !== "undefined" ? WEDDING_CONFIG : {});
-    const groomName = cfg.couple?.groom?.callName || "Dimas";
-    const brideName = cfg.couple?.bride?.callName || "Anindya";
+    const groomName = cfg.couple?.groom?.callName || "Sidiq";
+    const brideName = cfg.couple?.bride?.callName || "Anisa";
     let rawNum = cfg.rsvp?.whatsappNumber || "6281234567890";
     let waNumber = String(rawNum).replace(/[^0-9]/g, "");
     if (waNumber.startsWith("0")) waNumber = "62" + waNumber.slice(1);

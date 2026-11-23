@@ -103,7 +103,7 @@ function initDb() {
         code: "WDG-001",
         status: "hadir",
         pax: 2,
-        message: "Selamat menempuh hidup baru Dimas & Anindya, semoga samawa selamanya!",
+        message: "Selamat menempuh hidup baru Sidiq & Anisa, semoga samawa selamanya!",
         createdAt: new Date(Date.now() - 3600000 * 5).toISOString()
       },
       {
@@ -125,7 +125,7 @@ function initDb() {
       {
         id: "wish-001",
         name: "Budi Santoso",
-        message: "Barakallahu lakum wa baraka alaikum wa jama'a bainakuma fii khair. Selamat berbahagia Dimas dan Anindya!",
+        message: "Barakallahu lakum wa baraka alaikum wa jama'a bainakuma fii khair. Selamat berbahagia Sidiq dan Anisa!",
         status: "APPROVED",
         likes: 12,
         createdAt: new Date(Date.now() - 3600000 * 6).toISOString()
@@ -133,7 +133,7 @@ function initDb() {
       {
         id: "wish-002",
         name: "Ratna Dewi",
-        message: "Selamat ya Anin & Mas Dimas! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah dan lekas dikaruniai momongan.",
+        message: "Selamat ya Anisa & Mas Sidiq! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah dan lekas dikaruniai momongan.",
         status: "APPROVED",
         likes: 8,
         createdAt: new Date(Date.now() - 3600000 * 3).toISOString()
@@ -141,7 +141,7 @@ function initDb() {
       {
         id: "wish-003",
         name: "Rian Hidayat",
-        message: "Akhirnya berlabuh juga di pelaminan kawan sejuangan! Selamat buat Dimas & Anindya, lancar acaranya sampai hari H!",
+        message: "Akhirnya berlabuh juga di pelaminan kawan sejuangan! Selamat buat Sidiq & Anisa, lancar acaranya sampai hari H!",
         status: "APPROVED",
         likes: 15,
         createdAt: new Date(Date.now() - 3600000 * 1).toISOString()

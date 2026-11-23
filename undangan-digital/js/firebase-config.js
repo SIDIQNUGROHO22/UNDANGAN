@@ -6,7 +6,7 @@
  * 
  * PANDUAN PENGISIAN UNTUK PENGGUNA:
  * 1. Buka Firebase Console: https://console.firebase.google.com/
- * 2. Buat proyek baru (misal: "wedding-dimas-anindya").
+ * 2. Buat proyek baru (misal: "wedding-sidiq-anisa").
  * 3. Tambahkan Web App (ikon </>) lalu salin objek "firebaseConfig" ke bawah ini.
  * 4. Aktifkan "Email/Password" di menu Firebase Authentication > Sign-in method.
  * 5. Aktifkan "Cloud Firestore" di menu Firestore Database (pilih mode produksi).

@@ -8,15 +8,18 @@
   <meta name="description" content="Undangan Pernikahan Digital Sidiq Nugroho & Anisa Azzahroh. Kami mengundang Anda untuk merayakan momen bahagia pernikahan kami.">
 
   <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Layar HP Mobile) -->
-  <link rel="icon" type="image/svg+xml" sizes="any" id="browser-favicon" href="assets/images/gunungan-gold.svg">
-  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="192x192" id="browser-favicon" href="assets/images/favicon.png">
+  <link rel="shortcut icon" type="image/png" id="browser-shortcut-icon" href="assets/images/favicon.png">
   <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon.png">
 
   <!-- Immediate Favicon Loader (Desktop & Mobile) -->
   <script>
     (function() {
       try {
-        var fav = localStorage.getItem("wedding_custom_favicon") || "assets/images/gunungan-gold.svg";
+        var fav = localStorage.getItem("wedding_custom_favicon");
+        if (!fav || fav === "assets/images/gunungan-gold.svg") {
+          fav = "assets/images/favicon.png";
+        }
         var isSvg = fav.indexOf(".svg") !== -1 || fav.indexOf("image/svg+xml") !== -1;
         var existing = document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']");
         existing.forEach(function(el) { el.remove(); });
@@ -25,9 +28,15 @@
         l.rel = "icon";
         l.type = isSvg ? "image/svg+xml" : "image/png";
         if (isSvg) l.setAttribute("sizes", "any");
-        else l.setAttribute("sizes", "32x32");
+        else l.setAttribute("sizes", "192x192");
         l.href = fav + (fav.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now();
         document.head.appendChild(l);
+        var s = document.createElement("link");
+        s.id = "browser-shortcut-icon";
+        s.rel = "shortcut icon";
+        s.type = isSvg ? "image/svg+xml" : "image/png";
+        s.href = l.href;
+        document.head.appendChild(s);
       } catch(e) {}
     })();
   </script>

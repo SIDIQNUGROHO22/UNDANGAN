@@ -12,15 +12,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Layar HP Mobile) -->
-  <link rel="icon" type="image/svg+xml" sizes="any" id="browser-favicon" href="assets/images/gunungan-gold.svg">
-  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon-admin.png">
+  <link rel="icon" type="image/png" sizes="192x192" id="browser-favicon" href="assets/images/favicon-admin.png">
+  <link rel="shortcut icon" type="image/png" id="browser-shortcut-icon" href="assets/images/favicon-admin.png">
   <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon-admin.png">
 
   <!-- Immediate Admin Favicon Loader (Desktop & Mobile) -->
   <script>
     (function() {
       try {
-        var fav = localStorage.getItem("wedding_admin_favicon") || "assets/images/gunungan-gold.svg";
+        var fav = localStorage.getItem("wedding_admin_favicon");
+        if (!fav || fav === "assets/images/gunungan-gold.svg") {
+          fav = "assets/images/favicon-admin.png";
+        }
         var isSvg = fav.indexOf(".svg") !== -1 || fav.indexOf("image/svg+xml") !== -1;
         var existing = document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']");
         existing.forEach(function(el) { el.remove(); });
@@ -29,9 +32,15 @@
         l.rel = "icon";
         l.type = isSvg ? "image/svg+xml" : "image/png";
         if (isSvg) l.setAttribute("sizes", "any");
-        else l.setAttribute("sizes", "32x32");
+        else l.setAttribute("sizes", "192x192");
         l.href = fav + (fav.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now();
         document.head.appendChild(l);
+        var s = document.createElement("link");
+        s.id = "browser-shortcut-icon";
+        s.rel = "shortcut icon";
+        s.type = isSvg ? "image/svg+xml" : "image/png";
+        s.href = l.href;
+        document.head.appendChild(s);
       } catch(e) {}
     })();
   </script>
@@ -1354,10 +1363,31 @@ Tersimpan di Sistem Server Undangan Digital</pre>
                         <input type="file" id="file-fav-invitation" accept="image/png,image/jpeg,image/webp,image/x-icon,image/svg+xml" style="display: none;">
                       </div>
 
-                      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.75rem;">
+                      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem;">
                         <span style="font-size: 0.73rem; color: #64748b;">
                           <i class="fab fa-pinterest" style="color: #e60023;"></i> Tips: Bisa salin link Pinterest (otomatis diekstrak jadi gambar).
                         </span>
+                      </div>
+
+                      <!-- Pilihan Cepat Preset Favicon Undangan -->
+                      <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">
+                          <i class="fas fa-bolt" style="color: #dfb15b;"></i> Pilihan Cepat:
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                          <button type="button" class="btn-preset-fav-inv" data-src="assets/images/favicon.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Favicon Emas Keraton">
+                            <img src="assets/images/favicon.png" alt="Keraton" style="width: 14px; height: 14px;"> Emas Keraton
+                          </button>
+                          <button type="button" class="btn-preset-fav-inv" data-src="assets/images/wayang-arjuna.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Siluet Arjuna">
+                            <img src="assets/images/wayang-arjuna.png" alt="Arjuna" style="width: 14px; height: 14px;"> Arjuna
+                          </button>
+                          <button type="button" class="btn-preset-fav-inv" data-src="assets/images/wayang-srikandi.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Siluet Srikandi">
+                            <img src="assets/images/wayang-srikandi.png" alt="Srikandi" style="width: 14px; height: 14px;"> Srikandi
+                          </button>
+                          <button type="button" class="btn-preset-fav-inv" data-src="assets/images/gunungan-gold.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Gunungan Emas">
+                            <img src="assets/images/gunungan-gold.png" alt="Gunungan" style="width: 14px; height: 14px;"> Gunungan
+                          </button>
+                        </div>
                       </div>
 
                       <!-- Realistis Dual Preview: Chrome Tab + Mobile Icon -->
@@ -1404,10 +1434,31 @@ Tersimpan di Sistem Server Undangan Digital</pre>
                         <input type="file" id="file-fav-admin" accept="image/png,image/jpeg,image/webp,image/x-icon,image/svg+xml" style="display: none;">
                       </div>
 
-                      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.75rem;">
+                      <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 0.5rem;">
                         <span style="font-size: 0.73rem; color: #64748b;">
                           <i class="fas fa-magic" style="color: var(--admin-gold);"></i> Ikon tab admin berubah secara langsung saat disimpan.
                         </span>
+                      </div>
+
+                      <!-- Pilihan Cepat Preset Favicon Admin -->
+                      <div style="margin-bottom: 0.75rem;">
+                        <div style="font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 0.5px;">
+                          <i class="fas fa-bolt" style="color: #dfb15b;"></i> Pilihan Cepat:
+                        </div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                          <button type="button" class="btn-preset-fav-adm" data-src="assets/images/favicon-admin.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Favicon Admin Keraton">
+                            <img src="assets/images/favicon-admin.png" alt="Admin" style="width: 14px; height: 14px;"> Admin Emas
+                          </button>
+                          <button type="button" class="btn-preset-fav-adm" data-src="assets/images/wayang-arjuna.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Siluet Arjuna">
+                            <img src="assets/images/wayang-arjuna.png" alt="Arjuna" style="width: 14px; height: 14px;"> Arjuna
+                          </button>
+                          <button type="button" class="btn-preset-fav-adm" data-src="assets/images/wayang-srikandi.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Siluet Srikandi">
+                            <img src="assets/images/wayang-srikandi.png" alt="Srikandi" style="width: 14px; height: 14px;"> Srikandi
+                          </button>
+                          <button type="button" class="btn-preset-fav-adm" data-src="assets/images/gunungan-gold.png" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 4px 8px; font-size: 0.75rem; cursor: pointer; display: inline-flex; align-items: center; gap: 5px;" title="Gunungan Emas">
+                            <img src="assets/images/gunungan-gold.png" alt="Gunungan" style="width: 14px; height: 14px;"> Gunungan
+                          </button>
+                        </div>
                       </div>
 
                       <!-- Realistis Dual Preview: Chrome Tab + Mobile Icon -->

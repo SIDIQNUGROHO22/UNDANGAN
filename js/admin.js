@@ -1648,7 +1648,7 @@ const AdminApp = (function () {
             inputEl.dispatchEvent(new Event("change", { bubbles: true }));
             updateThemePreviews();
             updateCouplePreviews();
-            if (inputEl.id === "cfg-favicon-admin") {
+            if (inputEl.id === "cfg-favicon-admin" || inputEl.id === "cfg-favicon-invitation") {
               updateAdminTabFavicon(res.resolvedUrl);
             }
             showToast("✨ Berhasil mengekstrak gambar Pinterest!");
@@ -1657,7 +1657,7 @@ const AdminApp = (function () {
       } catch (err) {
         console.warn("Gagal resolusi link Pinterest:", err);
       }
-    } else if (inputEl.id === "cfg-favicon-admin") {
+    } else if (inputEl.id === "cfg-favicon-admin" || inputEl.id === "cfg-favicon-invitation") {
       updateAdminTabFavicon(rawVal);
     } else if (inputEl.id === "cfg-admin-logo-img") {
       applyAdminLogo(rawVal, document.getElementById("cfg-admin-brand-title")?.value);
@@ -1678,62 +1678,75 @@ const AdminApp = (function () {
     const mimeType = isSvg ? "image/svg+xml" : (isIco ? "image/x-icon" : (cleanUrl.endsWith(".webp") ? "image/webp" : "image/png"));
     const cacheBust = cleanUrl.startsWith("data:") ? cleanUrl : (cleanUrl + (cleanUrl.includes("?") ? "&" : "?") + "v=" + Date.now());
 
-    // Hapus seluruh tag link icon lama agar browser Google Chrome dipaksa memuat ulang tab icon
-    document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => el.remove());
+    function setBrowserFavicon(hrefUrl, type = "image/png") {
+      document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => el.remove());
 
-    const favEl = document.createElement("link");
-    favEl.id = "browser-favicon";
-    favEl.rel = "icon";
-    favEl.type = mimeType;
-    if (isSvg) {
-      favEl.setAttribute("sizes", "any");
-    } else {
-      favEl.setAttribute("sizes", "32x32");
+      const favEl = document.createElement("link");
+      favEl.id = "browser-favicon";
+      favEl.rel = "icon";
+      favEl.type = type;
+      favEl.setAttribute("sizes", "64x64");
+      favEl.href = hrefUrl;
+      document.head.appendChild(favEl);
+
+      const shortcutEl = document.createElement("link");
+      shortcutEl.id = "browser-shortcut-icon";
+      shortcutEl.rel = "shortcut icon";
+      shortcutEl.type = type;
+      shortcutEl.href = hrefUrl;
+      document.head.appendChild(shortcutEl);
+
+      const appleEl = document.createElement("link");
+      appleEl.id = "browser-apple-touch-icon";
+      appleEl.rel = "apple-touch-icon";
+      appleEl.setAttribute("sizes", "180x180");
+      appleEl.href = hrefUrl;
+      document.head.appendChild(appleEl);
     }
-    favEl.href = cacheBust;
-    document.head.appendChild(favEl);
 
-    const shortcutEl = document.createElement("link");
-    shortcutEl.id = "browser-shortcut-icon";
-    shortcutEl.rel = "shortcut icon";
-    shortcutEl.type = mimeType;
-    shortcutEl.href = cacheBust;
-    document.head.appendChild(shortcutEl);
-
-    const appleEl = document.createElement("link");
-    appleEl.id = "browser-apple-touch-icon";
-    appleEl.rel = "apple-touch-icon";
-    appleEl.setAttribute("sizes", "180x180");
-    if (isSvg) {
-      try {
-        const tempImg = new Image();
-        tempImg.crossOrigin = "anonymous";
-        tempImg.onload = function () {
-          try {
-            const canvas = document.createElement("canvas");
-            canvas.width = 180;
-            canvas.height = 180;
-            const ctx = canvas.getContext("2d");
+    // Gunakan rasterisasi HTML5 Canvas untuk menghasilkan Data URL PNG 64x64 instan
+    // Google Chrome tab strip memperbarui ikon seketika (0ms) jika diberikan format PNG Data URL
+    try {
+      const tempImg = new Image();
+      tempImg.crossOrigin = "anonymous";
+      tempImg.onload = function () {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            // Latar belakang mewah rounded badge agar kontras sempurna di tab Chrome gelap maupun terang
+            ctx.clearRect(0, 0, 64, 64);
+            ctx.beginPath();
+            if (ctx.roundRect) {
+              ctx.roundRect(2, 2, 60, 60, 12);
+            } else {
+              ctx.arc(32, 32, 28, 0, Math.PI * 2);
+            }
             ctx.fillStyle = "#1b1713";
-            ctx.fillRect(0, 0, 180, 180);
-            const pad = 18;
-            ctx.drawImage(tempImg, pad, pad, 180 - pad * 2, 180 - pad * 2);
-            appleEl.href = canvas.toDataURL("image/png");
-          } catch (_) {
-            appleEl.href = cacheBust;
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "#dfb15b";
+            ctx.stroke();
+
+            // Gambar ikon di tengah
+            const pad = 8;
+            ctx.drawImage(tempImg, pad, pad, 64 - pad * 2, 64 - pad * 2);
+            const pngDataUrl = canvas.toDataURL("image/png");
+            setBrowserFavicon(pngDataUrl, "image/png");
+            return;
           }
-        };
-        tempImg.onerror = function () {
-          appleEl.href = "assets/images/favicon-admin.png";
-        };
-        tempImg.src = cleanUrl;
-      } catch (_) {
-        appleEl.href = cacheBust;
-      }
-    } else {
-      appleEl.href = cacheBust;
+        } catch (_) {}
+        setBrowserFavicon(cacheBust, mimeType);
+      };
+      tempImg.onerror = function () {
+        setBrowserFavicon(cacheBust, mimeType);
+      };
+      tempImg.src = cacheBust;
+    } catch (_) {
+      setBrowserFavicon(cacheBust, mimeType);
     }
-    document.head.appendChild(appleEl);
   }
 
   function applyAdminLogo(logoUrl, titleText) {
@@ -2092,6 +2105,8 @@ const AdminApp = (function () {
         }
         if (updated.themeAssets?.adminFavicon) {
           updateAdminTabFavicon(updated.themeAssets.adminFavicon);
+        } else if (updated.themeAssets?.favicon) {
+          updateAdminTabFavicon(updated.themeAssets.favicon);
         }
         if (res.data?.animation) {
           updateAdminAnimationStatusText(res.data.animation.enabled !== false);
@@ -2412,12 +2427,12 @@ const AdminApp = (function () {
         el.addEventListener("input", () => {
           updateThemePreviews();
           updateCouplePreviews();
-          if (inputId === "cfg-favicon-admin") {
+          if (inputId === "cfg-favicon-admin" || inputId === "cfg-favicon-invitation") {
             updateAdminTabFavicon(el.value);
-            try { localStorage.setItem("wedding_admin_favicon", el.value); } catch (_) {}
-          }
-          if (inputId === "cfg-favicon-invitation") {
-            try { localStorage.setItem("wedding_custom_favicon", el.value); } catch (_) {}
+            try {
+              if (inputId === "cfg-favicon-admin") localStorage.setItem("wedding_admin_favicon", el.value);
+              if (inputId === "cfg-favicon-invitation") localStorage.setItem("wedding_custom_favicon", el.value);
+            } catch (_) {}
           }
           if (inputId === "cfg-admin-logo-img") applyAdminLogo(el.value, document.getElementById("cfg-admin-brand-title")?.value);
         });
@@ -2470,7 +2485,7 @@ const AdminApp = (function () {
             }
             updateThemePreviews();
             updateCouplePreviews();
-            if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(optimizedData);
+            if (textInputId === "cfg-favicon-admin" || textInputId === "cfg-favicon-invitation") updateAdminTabFavicon(optimizedData);
 
             // Coba simpan ke server backend jika backend online (misal localhost)
             try {
@@ -2488,12 +2503,12 @@ const AdminApp = (function () {
                 }
                 updateThemePreviews();
                 updateCouplePreviews();
-                if (textInputId === "cfg-favicon-admin") {
+                if (textInputId === "cfg-favicon-admin" || textInputId === "cfg-favicon-invitation") {
                   updateAdminTabFavicon(res.filePath);
-                  try { localStorage.setItem("wedding_admin_favicon", res.filePath); } catch (_) {}
-                }
-                if (textInputId === "cfg-favicon-invitation") {
-                  try { localStorage.setItem("wedding_custom_favicon", res.filePath); } catch (_) {}
+                  try {
+                    if (textInputId === "cfg-favicon-admin") localStorage.setItem("wedding_admin_favicon", res.filePath);
+                    if (textInputId === "cfg-favicon-invitation") localStorage.setItem("wedding_custom_favicon", res.filePath);
+                  } catch (_) {}
                 }
                 if (textInputId === "cfg-admin-logo-img") applyAdminLogo(res.filePath, document.getElementById("cfg-admin-brand-title")?.value);
                 await saveCurrentSettings({ toastMsg: `✅ ${toastLabel || "Foto"} berhasil disimpan & LANGSUNG DITERAPKAN ke website!` });
@@ -2560,6 +2575,38 @@ const AdminApp = (function () {
         document.querySelectorAll(".btn-preset-admin-logo").forEach(b => b.classList.remove("active"));
         this.classList.add("active");
         showToast("Preset logo admin diterapkan!");
+      });
+    });
+
+    // Listener Tombol Preset Cepat Favicon Undangan (1-Klik)
+    document.querySelectorAll(".btn-preset-fav-inv").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const src = this.getAttribute("data-src");
+        if (!src) return;
+        const input = document.getElementById("cfg-favicon-invitation");
+        if (input) {
+          input.value = src;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        updateAdminTabFavicon(src);
+        saveCurrentSettings({ toastMsg: "✨ Ikon tab undangan berhasil diperbarui!" });
+      });
+    });
+
+    // Listener Tombol Preset Cepat Favicon Dasbor Admin (1-Klik)
+    document.querySelectorAll(".btn-preset-fav-adm").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const src = this.getAttribute("data-src");
+        if (!src) return;
+        const input = document.getElementById("cfg-favicon-admin");
+        if (input) {
+          input.value = src;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        updateAdminTabFavicon(src);
+        saveCurrentSettings({ toastMsg: "✨ Ikon tab dasbor admin berhasil diperbarui!" });
       });
     });
 

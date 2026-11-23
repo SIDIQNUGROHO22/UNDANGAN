@@ -397,19 +397,23 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 
+    def do_HEAD(self):
+        self.do_GET(head_only=True)
+
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_cors()
         self.end_headers()
 
-    def send_json(self, data, status=200):
+    def send_json(self, data, status=200, head_only=False):
         body = json.dumps(data, ensure_ascii=False).encode('utf-8')
         self.send_response(status)
         self.send_header('Content-Type', 'application/json; charset=utf-8')
         self.send_header('Content-Length', str(len(body)))
         self.send_cors()
         self.end_headers()
-        self.wfile.write(body)
+        if not head_only:
+            self.wfile.write(body)
 
     def parse_json_body(self):
         content_length = int(self.headers.get('Content-Length', 0))
@@ -440,7 +444,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             return True
         return False
 
-    def do_GET(self):
+    def do_GET(self, head_only=False):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
 
@@ -451,52 +455,52 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
                 'engine': 'Python Standard Library',
                 'message': 'Server Undangan Digital Berjalan Normal',
                 'timestamp': datetime.now().isoformat()
-            })
+            }, head_only=head_only)
             return
 
         # 2. API INVITATION
         if path == '/api/invitation':
-            self.send_json({'success': True, 'data': get_settings()})
+            self.send_json({'success': True, 'data': get_settings()}, head_only=head_only)
             return
 
         # 3. API GUESTS
         if path == '/api/guests':
             if not self.is_authenticated():
-                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401)
+                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401, head_only=head_only)
                 return
             guests = get_guests()
-            self.send_json({'success': True, 'total': len(guests), 'data': guests})
+            self.send_json({'success': True, 'total': len(guests), 'data': guests}, head_only=head_only)
             return
 
         # 4. API RSVPS
         if path == '/api/rsvps':
             if not self.is_authenticated():
-                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401)
+                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401, head_only=head_only)
                 return
             rsvps = get_rsvps()
-            self.send_json({'success': True, 'stats': get_stats(), 'data': rsvps})
+            self.send_json({'success': True, 'stats': get_stats(), 'data': rsvps}, head_only=head_only)
             return
 
         # 5. API WISHES
         if path == '/api/wishes':
             is_admin = self.is_authenticated()
             wishes = get_wishes(only_approved=not is_admin)
-            self.send_json({'success': True, 'total': len(wishes), 'data': wishes})
+            self.send_json({'success': True, 'total': len(wishes), 'data': wishes}, head_only=head_only)
             return
 
         # 6. API AUTH ME
         if path == '/api/auth/me':
             if not self.is_authenticated():
-                self.send_json({'success': False, 'message': 'Sesi tidak valid'}, 401)
+                self.send_json({'success': False, 'message': 'Sesi tidak valid'}, 401, head_only=head_only)
                 return
             admin = get_admin_data()
-            self.send_json({'success': True, 'email': admin.get('email')})
+            self.send_json({'success': True, 'email': admin.get('email')}, head_only=head_only)
             return
 
         # 7. EXPORT EXCEL & CSV
         if path in ['/api/export/rsvps.xlsx', '/api/export/rsvps.xls', '/api/export/rsvps.csv']:
             if not self.is_authenticated():
-                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401)
+                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401, head_only=head_only)
                 return
             rsvps = get_rsvps()
             # Format XML Spreadsheet untuk Excel
@@ -526,12 +530,13 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             self.send_header('Content-Length', str(len(body)))
             self.send_cors()
             self.end_headers()
-            self.wfile.write(body)
+            if not head_only:
+                self.wfile.write(body)
             return
 
         if path in ['/api/export/guests.xlsx', '/api/export/guests.xls', '/api/export/guests.csv']:
             if not self.is_authenticated():
-                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401)
+                self.send_json({'success': False, 'message': 'Sesi admin tidak valid.'}, 401, head_only=head_only)
                 return
             guests = get_guests()
             origin = f"http://localhost:{PORT}"
@@ -561,11 +566,12 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             self.send_header('Content-Length', str(len(body)))
             self.send_cors()
             self.end_headers()
-            self.wfile.write(body)
+            if not head_only:
+                self.wfile.write(body)
             return
 
         # 8. STATIC FILES
-        self.serve_static_file(path)
+        self.serve_static_file(path, head_only=head_only)
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
@@ -944,7 +950,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
 
         self.send_json({'success': False, 'message': 'Endpoint DELETE tidak ditemukan'}, 404)
 
-    def serve_static_file(self, rel_path):
+    def serve_static_file(self, rel_path, head_only=False):
         # Normalisasi path
         clean_path = rel_path.lstrip('/')
         if not clean_path or clean_path == '/':
@@ -953,6 +959,40 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             file_name = 'admin.html'
         else:
             file_name = clean_path
+
+        # Penanganan khusus favicon.ico dan favicon.png untuk browser Google Chrome / Firefox / Safari
+        if file_name in ['favicon.ico', 'favicon.png']:
+            settings = get_settings()
+            ta = settings.get('themeAssets', {})
+            fav_src = ta.get('favicon') or 'assets/images/favicon.png'
+            clean_fav = fav_src.lstrip('/')
+            fav_candidate = os.path.normpath(os.path.join(FRONTEND_DIR, clean_fav))
+            if os.path.exists(fav_candidate) and os.path.isfile(fav_candidate) and not fav_candidate.endswith('.svg'):
+                file_path = fav_candidate
+                mime_type = 'image/png' if fav_candidate.endswith('.png') else 'image/x-icon'
+            else:
+                default_fav = os.path.normpath(os.path.join(FRONTEND_DIR, 'assets', 'images', 'favicon.png'))
+                if os.path.exists(default_fav):
+                    file_path = default_fav
+                    mime_type = 'image/png'
+                else:
+                    file_path = None
+
+            if file_path and os.path.exists(file_path):
+                try:
+                    with open(file_path, 'rb') as f:
+                        content = f.read()
+                    self.send_response(200)
+                    self.send_header('Content-Type', mime_type)
+                    self.send_header('Content-Length', str(len(content)))
+                    self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                    self.send_cors()
+                    self.end_headers()
+                    if not head_only:
+                        self.wfile.write(content)
+                    return
+                except Exception as e_fav:
+                    print(f"Error serving favicon: {e_fav}")
 
         # Cari file di FRONTEND_DIR
         file_path = os.path.normpath(os.path.join(FRONTEND_DIR, file_name))
@@ -963,10 +1003,17 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             return
 
         if not os.path.exists(file_path) or os.path.isdir(file_path):
+            # Cek ekstensi file: file statis tidak boleh dialihkan ke index.html (merusak decoder browser)
+            _, ext = os.path.splitext(file_name)
+            if ext.lower() in ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico', '.webp', '.js', '.css', '.woff', '.woff2', '.ttf']:
+                self.send_error(404, "File tidak ditemukan")
+                return
+
             # Fallback ke index.html untuk Single Page Application
             fallback = os.path.join(FRONTEND_DIR, 'index.html')
             if os.path.exists(fallback):
                 file_path = fallback
+                file_name = 'index.html'
             else:
                 self.send_error(404, "File tidak ditemukan")
                 return
@@ -996,17 +1043,21 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
                     settings = get_settings()
                     ta = settings.get('themeAssets', {})
                     if file_name == 'index.html':
-                        fav = ta.get('favicon') or 'assets/images/gunungan-gold.svg'
+                        fav = ta.get('favicon') or 'assets/images/favicon.png'
                     else:
-                        fav = ta.get('adminFavicon') or 'assets/images/gunungan-gold.svg'
+                        fav = ta.get('adminFavicon') or 'assets/images/favicon-admin.png'
 
                     is_svg = fav.endswith('.svg') or 'image/svg+xml' in fav
                     mime = 'image/svg+xml' if is_svg else 'image/png'
-                    sizes = 'sizes="any"' if is_svg else 'sizes="32x32"'
+                    sizes = 'sizes="any"' if is_svg else 'sizes="192x192"'
                     cache_bust = fav if fav.startswith('data:') else f"{fav}{'&' if '?' in fav else '?'}v={int(datetime.now().timestamp())}"
 
-                    fav_tag = f'<link rel="icon" type="{mime}" {sizes} id="browser-favicon" href="{cache_bust}">'
-                    text_html = re.sub(r'<link[^>]*id=["\']browser-favicon["\'][^>]*>', fav_tag, text_html)
+                    fav_tag = (
+                        f'<link rel="icon" type="{mime}" {sizes} id="browser-favicon" href="{cache_bust}">\n'
+                        f'  <link rel="shortcut icon" type="{mime}" id="browser-shortcut-icon" href="{cache_bust}">\n'
+                        f'  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="{cache_bust}">'
+                    )
+                    text_html = re.sub(r'<link[^>]*id=["\']browser-favicon["\'][^>]*>(?:\s*<link[^>]*id=["\']browser-(?:shortcut|apple-touch)-icon["\'][^>]*>)*', fav_tag, text_html)
                     content = text_html.encode('utf-8')
                 except Exception as e_inj:
                     print(f"Error injecting dynamic favicon into {file_name}: {e_inj}")
@@ -1014,13 +1065,14 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', mime_type)
             self.send_header('Content-Length', str(len(content)))
-            if file_path.endswith(('.js', '.css', '.html', '.json')):
+            if file_path.endswith(('.js', '.css', '.html', '.json', '.ico', '.png', '.svg', '.webp')):
                 self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
                 self.send_header('Pragma', 'no-cache')
                 self.send_header('Expires', '0')
             self.send_cors()
             self.end_headers()
-            self.wfile.write(content)
+            if not head_only:
+                self.wfile.write(content)
         except Exception as e:
             self.send_error(500, f"Error membaca file: {e}")
 

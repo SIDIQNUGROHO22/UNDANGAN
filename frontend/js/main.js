@@ -375,67 +375,75 @@ const MainApp = (function () {
     const mimeType = isSvg ? "image/svg+xml" : (isIco ? "image/x-icon" : (cleanUrl.endsWith(".webp") ? "image/webp" : "image/png"));
     const cacheBust = cleanUrl.startsWith("data:") ? cleanUrl : (cleanUrl + (cleanUrl.includes("?") ? "&" : "?") + "v=" + Date.now());
 
-    // Hapus seluruh tag link icon lama agar browser (khususnya Google Chrome) dipaksa merefresh icon tab
-    document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => el.remove());
+    function setBrowserFavicon(hrefUrl, type = "image/png") {
+      document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => el.remove());
 
-    // 1. Desktop standard tab icon
-    const favEl = document.createElement("link");
-    favEl.id = "browser-favicon";
-    favEl.rel = "icon";
-    favEl.type = mimeType;
-    if (isSvg) {
-      favEl.setAttribute("sizes", "any");
-    } else {
-      favEl.setAttribute("sizes", "32x32");
+      const favEl = document.createElement("link");
+      favEl.id = "browser-favicon";
+      favEl.rel = "icon";
+      favEl.type = type;
+      favEl.setAttribute("sizes", "64x64");
+      favEl.href = hrefUrl;
+      document.head.appendChild(favEl);
+
+      const shortcutEl = document.createElement("link");
+      shortcutEl.id = "browser-shortcut-icon";
+      shortcutEl.rel = "shortcut icon";
+      shortcutEl.type = type;
+      shortcutEl.href = hrefUrl;
+      document.head.appendChild(shortcutEl);
+
+      const appleEl = document.createElement("link");
+      appleEl.id = "browser-apple-touch-icon";
+      appleEl.rel = "apple-touch-icon";
+      appleEl.setAttribute("sizes", "180x180");
+      appleEl.href = hrefUrl;
+      document.head.appendChild(appleEl);
     }
-    favEl.href = cacheBust;
-    document.head.appendChild(favEl);
 
-    // 2. Shortcut icon legacy
-    const shortcutEl = document.createElement("link");
-    shortcutEl.id = "browser-shortcut-icon";
-    shortcutEl.rel = "shortcut icon";
-    shortcutEl.type = mimeType;
-    shortcutEl.href = cacheBust;
-    document.head.appendChild(shortcutEl);
-
-    // 3. Apple Touch Icon & Layar Ponsel (Mobile Home Screen)
-    const appleEl = document.createElement("link");
-    appleEl.id = "browser-apple-touch-icon";
-    appleEl.rel = "apple-touch-icon";
-    appleEl.setAttribute("sizes", "180x180");
-
-    if (isSvg) {
-      // Perangkat mobile (iOS / Android) membutuhkan format raster PNG untuk home screen icon
-      try {
-        const tempImg = new Image();
-        tempImg.crossOrigin = "anonymous";
-        tempImg.onload = function () {
-          try {
-            const canvas = document.createElement("canvas");
-            canvas.width = 180;
-            canvas.height = 180;
-            const ctx = canvas.getContext("2d");
+    // Gunakan rasterisasi HTML5 Canvas untuk menghasilkan Data URL PNG 64x64 instan
+    // Google Chrome tab strip memperbarui ikon seketika (0ms) jika diberikan format PNG Data URL
+    try {
+      const tempImg = new Image();
+      tempImg.crossOrigin = "anonymous";
+      tempImg.onload = function () {
+        try {
+          const canvas = document.createElement("canvas");
+          canvas.width = 64;
+          canvas.height = 64;
+          const ctx = canvas.getContext("2d");
+          if (ctx) {
+            // Latar belakang mewah rounded badge agar kontras sempurna di tab Chrome gelap maupun terang
+            ctx.clearRect(0, 0, 64, 64);
+            ctx.beginPath();
+            if (ctx.roundRect) {
+              ctx.roundRect(2, 2, 60, 60, 12);
+            } else {
+              ctx.arc(32, 32, 28, 0, Math.PI * 2);
+            }
             ctx.fillStyle = "#1b1713";
-            ctx.fillRect(0, 0, 180, 180);
-            const pad = 18;
-            ctx.drawImage(tempImg, pad, pad, 180 - pad * 2, 180 - pad * 2);
-            appleEl.href = canvas.toDataURL("image/png");
-          } catch (_) {
-            appleEl.href = cacheBust;
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = "#dfb15b";
+            ctx.stroke();
+
+            // Gambar ikon di tengah
+            const pad = 8;
+            ctx.drawImage(tempImg, pad, pad, 64 - pad * 2, 64 - pad * 2);
+            const pngDataUrl = canvas.toDataURL("image/png");
+            setBrowserFavicon(pngDataUrl, "image/png");
+            return;
           }
-        };
-        tempImg.onerror = function () {
-          appleEl.href = "assets/images/favicon.png";
-        };
-        tempImg.src = cleanUrl;
-      } catch (_) {
-        appleEl.href = cacheBust;
-      }
-    } else {
-      appleEl.href = cacheBust;
+        } catch (_) {}
+        setBrowserFavicon(cacheBust, mimeType);
+      };
+      tempImg.onerror = function () {
+        setBrowserFavicon(cacheBust, mimeType);
+      };
+      tempImg.src = cacheBust;
+    } catch (_) {
+      setBrowserFavicon(cacheBust, mimeType);
     }
-    document.head.appendChild(appleEl);
   }
 
   function setTextAll(selector, text) {

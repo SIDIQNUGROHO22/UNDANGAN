@@ -17,6 +17,42 @@ const AdminApp = (function () {
   let currentBankAccounts = [];
   const INVITATION_PUBLIC_URL = "https://sidiqnugroho22.github.io/UNDANGAN/";
 
+  // Helper tampilan info kredensial di form login
+  let isLoginHintPwdVisible = false;
+  function renderLoginHintPwd() {
+    const noteCredPwd = document.getElementById("note-cred-pwd");
+    const btnToggleHintPwd = document.getElementById("btn-toggle-login-hint-pwd");
+    const noteUser = document.getElementById("note-cred-user");
+    const savedUser = localStorage.getItem("wedding_admin_email") || "admin";
+    const savedPwd = localStorage.getItem("wedding_admin_password") || "admin123";
+
+    if (noteUser) {
+      noteUser.textContent = savedUser;
+    }
+    if (!noteCredPwd) return;
+    if (isLoginHintPwdVisible) {
+      noteCredPwd.textContent = savedPwd;
+      if (btnToggleHintPwd) {
+        btnToggleHintPwd.title = "Sembunyikan password";
+        const icon = btnToggleHintPwd.querySelector("i");
+        if (icon) {
+          icon.classList.remove("fa-eye");
+          icon.classList.add("fa-eye-slash");
+        }
+      }
+    } else {
+      noteCredPwd.textContent = "••••••••";
+      if (btnToggleHintPwd) {
+        btnToggleHintPwd.title = "Lihat password";
+        const icon = btnToggleHintPwd.querySelector("i");
+        if (icon) {
+          icon.classList.remove("fa-eye-slash");
+          icon.classList.add("fa-eye");
+        }
+      }
+    }
+  }
+
   const DEFAULT_BANK_ACCOUNTS = [
     {
       bankName: "Bank Central Asia (BCA)",
@@ -115,17 +151,37 @@ const AdminApp = (function () {
     const loginPassInput = document.getElementById("admin-password");
 
     // Otomatis isi kredensial yang tersimpan jika pernah login sebelumnya
-    const savedEmail = localStorage.getItem("wedding_admin_email");
-    const savedPassword = localStorage.getItem("wedding_admin_password");
+    const savedEmail = localStorage.getItem("wedding_admin_email") || "admin";
+    const savedPassword = localStorage.getItem("wedding_admin_password") || "admin123";
     if (loginEmailInput) {
-      loginEmailInput.value = savedEmail || "admin";
+      loginEmailInput.value = savedEmail;
     }
     if (loginPassInput && savedPassword) {
       loginPassInput.value = savedPassword;
     }
-    const noteUser = document.getElementById("note-cred-user");
-    if (noteUser) {
-      noteUser.textContent = savedEmail || "admin";
+    renderLoginHintPwd();
+
+    // Toggle lihat/sembunyikan password di note info login
+    const btnToggleHintPwd = document.getElementById("btn-toggle-login-hint-pwd");
+    if (btnToggleHintPwd) {
+      btnToggleHintPwd.addEventListener("click", function (e) {
+        e.preventDefault();
+        isLoginHintPwdVisible = !isLoginHintPwdVisible;
+        renderLoginHintPwd();
+      });
+    }
+
+    // Tombol isi otomatis form login
+    const btnAutofill = document.getElementById("btn-autofill-login");
+    if (btnAutofill) {
+      btnAutofill.addEventListener("click", function (e) {
+        e.preventDefault();
+        const curUser = localStorage.getItem("wedding_admin_email") || "admin";
+        const curPwd = localStorage.getItem("wedding_admin_password") || "admin123";
+        if (loginEmailInput) loginEmailInput.value = curUser;
+        if (loginPassInput) loginPassInput.value = curPwd;
+        showToast("Kredensial login berhasil diisi otomatis!");
+      });
     }
 
     // Submit Form Login
@@ -716,14 +772,23 @@ const AdminApp = (function () {
     const confirmInput = document.getElementById("acc-admin-password-confirm");
     const alertBox = document.getElementById("account-modal-alert");
 
-    // Elemen Tampilkan / Salin Kata Sandi Saat Ini
+    // Elemen Tampilkan / Salin Email & Kata Sandi Saat Ini
     let currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+    let currentRawEmail = localStorage.getItem("wedding_admin_email") || "admin";
     let isCurrentPwdVisible = false;
 
+    const currentEmailDisplay = document.getElementById("current-email-display");
+    const btnCopyCurrentEmail = document.getElementById("btn-copy-current-email");
     const currentPwdDisplay = document.getElementById("current-pwd-display");
     const btnToggleCurrent = document.getElementById("btn-toggle-current-pwd");
     const lblToggleCurrent = document.getElementById("lbl-toggle-current-pwd");
     const btnCopyCurrent = document.getElementById("btn-copy-current-pwd");
+
+    function renderCurrentEmail() {
+      if (currentEmailDisplay) {
+        currentEmailDisplay.textContent = currentRawEmail;
+      }
+    }
 
     function renderCurrentPwd() {
       if (!currentPwdDisplay) return;
@@ -754,6 +819,19 @@ const AdminApp = (function () {
       }
     }
 
+    if (btnCopyCurrentEmail) {
+      btnCopyCurrentEmail.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentRawEmail).then(() => {
+            showToast("Email / akun saat ini berhasil disalin ke clipboard!");
+          }).catch(() => {
+            showToast("Gagal menyalin email / akun.");
+          });
+        }
+      });
+    }
+
     if (btnToggleCurrent) {
       btnToggleCurrent.addEventListener("click", function (e) {
         e.preventDefault();
@@ -776,8 +854,9 @@ const AdminApp = (function () {
     }
 
     const openModal = async () => {
-      const currentEmail = localStorage.getItem("wedding_admin_email") || "admin";
-      if (emailInput) emailInput.value = currentEmail;
+      currentRawEmail = localStorage.getItem("wedding_admin_email") || "admin";
+      currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+      if (emailInput) emailInput.value = currentRawEmail;
       if (passInput) {
         passInput.value = "";
         passInput.type = "password";
@@ -794,18 +873,23 @@ const AdminApp = (function () {
       }
       if (alertBox) alertBox.style.display = "none";
 
-      // Coba ambil password terbaru dari backend jika tersedia
+      // Coba ambil email & password terbaru dari backend jika tersedia
       try {
         const me = await window.API.checkAdminAuth();
-        if (me && me.password) {
-          currentRawPassword = me.password;
-          localStorage.setItem("wedding_admin_password", me.password);
-        } else {
-          currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+        if (me) {
+          if (me.email || me.username) {
+            currentRawEmail = me.username || me.email;
+            localStorage.setItem("wedding_admin_email", currentRawEmail);
+            if (emailInput) emailInput.value = currentRawEmail;
+          }
+          if (me.password) {
+            currentRawPassword = me.password;
+            localStorage.setItem("wedding_admin_password", me.password);
+          }
         }
-      } catch (_) {
-        currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
-      }
+      } catch (_) {}
+
+      renderCurrentEmail();
       isCurrentPwdVisible = false;
       renderCurrentPwd();
       initPasswordToggles();
@@ -866,12 +950,14 @@ const AdminApp = (function () {
           const res = await window.API.updateCredentials(newEmail, newPassword || null);
           if (res && res.success) {
             const activeIdentifier = newEmail || res.username || res.email;
+            currentRawEmail = activeIdentifier;
             localStorage.setItem("wedding_admin_email", activeIdentifier);
-            if (newPassword) {
-              currentRawPassword = newPassword;
-              localStorage.setItem("wedding_admin_password", newPassword);
-              renderCurrentPwd();
+            if (newPassword || res.password) {
+              currentRawPassword = newPassword || res.password;
+              localStorage.setItem("wedding_admin_password", currentRawPassword);
             }
+            renderCurrentEmail();
+            renderCurrentPwd();
 
             const navbarEmail = document.getElementById("navbar-user-email");
             if (navbarEmail) navbarEmail.textContent = activeIdentifier;
@@ -881,11 +967,10 @@ const AdminApp = (function () {
             const loginEmailInput = document.getElementById("admin-email");
             const loginPassInput = document.getElementById("admin-password");
             if (loginEmailInput) loginEmailInput.value = activeIdentifier;
-            if (loginPassInput && newPassword) loginPassInput.value = newPassword;
+            if (loginPassInput && (newPassword || res.password)) loginPassInput.value = newPassword || res.password;
 
-            // Update teks info kredensial jika ada
-            const noteUser = document.getElementById("note-cred-user");
-            if (noteUser) noteUser.textContent = activeIdentifier;
+            // Update teks info kredensial di form login
+            renderLoginHintPwd();
 
             closeModal();
             showToast("Akun & Password Admin berhasil diperbarui!");

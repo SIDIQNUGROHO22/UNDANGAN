@@ -373,7 +373,7 @@ def update_credentials(new_email, new_password):
         admin['password'] = str(new_password).strip()
     write_json(FILES['admin'], admin)
     identifier = admin.get('username') or admin.get('email')
-    return {'success': True, 'email': identifier, 'username': identifier, 'message': 'Akun & Password admin berhasil diperbarui!'}
+    return {'success': True, 'email': identifier, 'username': identifier, 'password': admin.get('password'), 'message': 'Akun & Password admin berhasil diperbarui!'}
 
 def get_stats():
     guests = get_guests()

@@ -2598,7 +2598,7 @@ const AdminApp = (function () {
     currentBankAccounts.push({
       bankName: "Bank Syariah Indonesia (BSI)",
       accountNumber: "",
-      accountHolder: document.getElementById("cfg-groom-name")?.value.trim() || "Mempelai",
+      accountHolder: document.getElementById("cfg-groom-full")?.value.trim() || document.getElementById("cfg-groom-call")?.value.trim() || "Mempelai",
       badge: "BSI"
     });
     renderAdminBankAccounts();
@@ -3107,7 +3107,6 @@ const AdminApp = (function () {
       });
       input.addEventListener("change", () => handleUrlPasteOrInput(input));
       input.addEventListener("paste", () => setTimeout(() => handleUrlPasteOrInput(input), 100));
-    });
     });
   }
 

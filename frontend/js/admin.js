@@ -159,24 +159,7 @@ const AdminApp = (function () {
             showLoginAlert(res.message || "Username/email atau password salah!");
           }
         } catch (err) {
-          // Fallback darurat jika ada kendala koneksi tetapi kredensial valid
-          const cleanEmail = email.trim().toLowerCase();
-          const savedEmailLocal = (localStorage.getItem("wedding_admin_email") || "admin").toLowerCase();
-          const savedPasswordLocal = localStorage.getItem("wedding_admin_password") || "admin123";
-
-          const isMatchUser = (cleanEmail === savedEmailLocal) || (cleanEmail === "admin") || (cleanEmail === "admin@wedding.com");
-          const isMatchPass = (password === savedPasswordLocal) || (savedEmailLocal === "admin" && password === "admin123") || (password === "admin123");
-
-          if (isMatchUser && isMatchPass) {
-            const fallbackToken = "offline-token-" + Date.now();
-            localStorage.setItem("wedding_admin_token", fallbackToken);
-            localStorage.setItem("wedding_admin_email", email);
-            localStorage.setItem("wedding_admin_password", password);
-            showDashboard(email);
-            showToast("Masuk ke dasbor (Mode Mandiri)");
-          } else {
-            showLoginAlert(err.message || "Gagal menghubungi server backend!");
-          }
+          showLoginAlert(err.message || "Gagal menghubungi server backend!");
         } finally {
           if (submitBtn) {
             submitBtn.disabled = false;

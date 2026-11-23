@@ -52,7 +52,10 @@ const API = {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.message || `HTTP Error ${response.status}`);
+        const err = new Error(data.message || `HTTP Error ${response.status}`);
+        err.status = response.status;
+        err.data = data;
+        throw err;
       }
 
       return data;
@@ -515,13 +518,23 @@ const API = {
       }
       return res;
     } catch (err) {
-      // Fallback offline jika server backend belum dinyalakan atau dibuka via file://
+      // Jika server backend online dan merespon 401 Unauthorized (Password/Akun Salah),
+      // MAKA TOLAK SEGERA! JANGAN gunakan fallback offline karena server aktif dan menolak kredensial!
+      if (err && (err.status === 401 || err.status === 400)) {
+        return {
+          success: false,
+          message: (err.data && err.data.message) || err.message || 'Username/email atau password salah!'
+        };
+      }
+
+      // Fallback offline HANYA jika server benar-benar offline (koneksi putus / protokol file://)
       const inputUser = cleanEmail.toLowerCase();
-      const savedEmail = (localStorage.getItem('wedding_admin_email') || 'admin@wedding.com').toLowerCase();
+      const savedEmail = (localStorage.getItem('wedding_admin_email') || 'admin').toLowerCase();
       const savedPassword = localStorage.getItem('wedding_admin_password') || 'admin123';
 
-      const isUserMatch = (inputUser === savedEmail) || (inputUser === 'admin') || (inputUser === 'admin@wedding.com');
-      const isPassMatch = (cleanPassword === savedPassword) || (savedEmail === 'admin@wedding.com' && cleanPassword === 'admin123');
+      const isUserMatch = (inputUser === savedEmail) || (savedEmail === 'admin' && (inputUser === 'admin' || inputUser === 'admin@wedding.com'));
+      // HANYA terima kata sandi yang tersimpan! TIDAK BOLEH ada bypass 'admin123' jika kata sandi sudah diubah!
+      const isPassMatch = (cleanPassword === savedPassword);
 
       if (isUserMatch && isPassMatch) {
         const dummyToken = 'offline-token-' + Date.now();
@@ -537,7 +550,10 @@ const API = {
           message: 'Login berhasil dalam mode mandiri/offline.'
         };
       }
-      throw err;
+      return {
+        success: false,
+        message: 'Username/email atau password salah!'
+      };
     }
   },
 

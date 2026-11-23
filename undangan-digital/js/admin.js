@@ -2519,7 +2519,11 @@ const AdminApp = (function () {
               console.warn("[Upload] Backend offline, menggunakan mode penyimpanan lokal DataURL:", uploadErr.message);
             }
 
-            await saveCurrentSettings({ toastMsg: `✨ ${toastLabel || "Foto"} berhasil dipasang & LANGSUNG DITERAPKAN ke website!` });
+            if (window.location.hostname.includes("github.io")) {
+              await saveCurrentSettings({ toastMsg: `✨ ${toastLabel || "Foto"} terpasang di pratinjau. Untuk permanen, taruh berkas di folder assets/images/` });
+            } else {
+              await saveCurrentSettings({ toastMsg: `✨ ${toastLabel || "Foto"} berhasil dipasang & LANGSUNG DITERAPKAN ke website!` });
+            }
           } catch (err) {
             console.error(`[Upload ${toastLabel}] Error:`, err);
             showToast(`Gagal memproses ${toastLabel || "foto"}: ${err.message || err}`);

@@ -156,7 +156,7 @@ const API = {
       return await this.request('/api/upload/image', {
         method: 'POST',
         body: JSON.stringify(payload),
-        timeout: 6000
+        timeout: 60000
       });
     } catch (err) {
       console.warn("Gagal upload gambar ke server:", err.message);

@@ -1535,56 +1535,93 @@ const AdminApp = (function () {
   function optimizeImage(file, maxDim = 1200, quality = 0.8) {
     return new Promise((resolve) => {
       if (!file) return resolve(null);
-      if (file.type === "image/svg+xml" || (file.name && file.name.endsWith(".svg"))) {
-        const r = new FileReader();
-        r.onload = (e) => resolve(e.target.result);
-        r.onerror = () => resolve(null);
-        r.readAsDataURL(file);
-        return;
-      }
-      const r = new FileReader();
-      r.onload = (e) => {
-        try {
-          const img = new Image();
-          img.onload = () => {
-            try {
-              let w = img.width;
-              let h = img.height;
-              if (!w || !h) {
-                return resolve(e.target.result);
-              }
-              if (w > maxDim || h > maxDim) {
-                if (w > h) {
-                  h = Math.round((h * maxDim) / w);
-                  w = maxDim;
-                } else {
-                  w = Math.round((w * maxDim) / h);
-                  h = maxDim;
-                }
-              }
-              const canvas = document.createElement("canvas");
-              canvas.width = w;
-              canvas.height = h;
-              const ctx = canvas.getContext("2d");
-              if (!ctx) return resolve(e.target.result);
-              ctx.drawImage(img, 0, 0, w, h);
-              const format = file.type === "image/png" ? "image/png" : "image/jpeg";
-              const dataUrl = canvas.toDataURL(format, quality);
-              resolve(dataUrl || e.target.result);
-            } catch (canvasErr) {
-              console.warn("[optimizeImage] Canvas export failed, fallback to raw data:", canvasErr);
-              resolve(e.target.result);
-            }
-          };
-          img.onerror = () => resolve(e.target.result);
-          img.src = e.target.result;
-        } catch (imgErr) {
-          console.warn("[optimizeImage] Image creation failed, fallback to raw data:", imgErr);
-          resolve(e.target.result);
+
+      // Batas waktu maksimal 3 detik agar kompresi TIDAK PERNAH menggantung/hang
+      let resolved = false;
+      let rawResult = null;
+
+      const safeResolve = (val) => {
+        if (!resolved) {
+          resolved = true;
+          clearTimeout(hardTimeout);
+          resolve(val || rawResult || null);
         }
       };
-      r.onerror = () => resolve(null);
-      r.readAsDataURL(file);
+
+      const hardTimeout = setTimeout(() => {
+        if (!resolved) {
+          console.warn("[optimizeImage] Batas waktu optimasi tercapai (3s), menggunakan fallback DataURL mentah");
+          safeResolve(rawResult);
+        }
+      }, 3000);
+
+      try {
+        const r = new FileReader();
+        r.onload = (e) => {
+          rawResult = e.target.result;
+
+          // Jika format SVG, langsung selesaikan tanpa kompresi canvas
+          if (file.type === "image/svg+xml" || (file.name && file.name.toLowerCase().endsWith(".svg"))) {
+            return safeResolve(rawResult);
+          }
+
+          // Coba kompresi canvas
+          try {
+            const img = new Image();
+            img.onload = () => {
+              try {
+                let w = img.width;
+                let h = img.height;
+                if (!w || !h) {
+                  return safeResolve(rawResult);
+                }
+                if (w > maxDim || h > maxDim) {
+                  if (w > h) {
+                    h = Math.round((h * maxDim) / w);
+                    w = maxDim;
+                  } else {
+                    w = Math.round((w * maxDim) / h);
+                    h = maxDim;
+                  }
+                }
+                const canvas = document.createElement("canvas");
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext("2d");
+                if (!ctx) return safeResolve(rawResult);
+
+                ctx.drawImage(img, 0, 0, w, h);
+                const format = file.type === "image/png" ? "image/png" : "image/jpeg";
+                const dataUrl = canvas.toDataURL(format, quality);
+                safeResolve(dataUrl || rawResult);
+              } catch (canvasErr) {
+                console.warn("[optimizeImage] Canvas export failed, fallback to raw data:", canvasErr);
+                safeResolve(rawResult);
+              }
+            };
+
+            img.onerror = (imgErr) => {
+              console.warn("[optimizeImage] Image element load error, fallback to raw data:", imgErr);
+              safeResolve(rawResult);
+            };
+
+            img.src = rawResult;
+          } catch (imgErr) {
+            console.warn("[optimizeImage] Image creation failed, fallback to raw data:", imgErr);
+            safeResolve(rawResult);
+          }
+        };
+
+        r.onerror = (readErr) => {
+          console.warn("[optimizeImage] FileReader error:", readErr);
+          safeResolve(null);
+        };
+
+        r.readAsDataURL(file);
+      } catch (err) {
+        console.warn("[optimizeImage] Fatal error in optimizeImage:", err);
+        safeResolve(null);
+      }
     });
   }
 
@@ -2335,52 +2372,57 @@ const AdminApp = (function () {
           fileInput.click();
         });
         fileInput.addEventListener("change", async function () {
-          const file = this.files && this.files[0];
-          if (!file) return;
-
-          showToast(`Memproses ${toastLabel || "foto"}...`);
-          const optimizedData = await optimizeImage(file);
-          if (!optimizedData) {
-            showToast("Gagal membaca file gambar!");
-            return;
-          }
-
-          const inputEl = document.getElementById(textInputId);
-          if (inputEl) {
-            inputEl.value = optimizedData;
-            inputEl.dispatchEvent(new Event("input", { bubbles: true }));
-            inputEl.dispatchEvent(new Event("change", { bubbles: true }));
-          }
-          updateThemePreviews();
-          updateCouplePreviews();
-          if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(optimizedData);
-
-          // Coba simpan ke server backend jika backend online (misal localhost)
           try {
-            const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
-            const filename = `${defaultPrefix}-${Date.now()}.${ext}`;
-            const res = await window.API.uploadImage({
-              filename: filename,
-              fileData: optimizedData
-            });
-            if (res && res.success && res.filePath) {
-              if (inputEl) {
-                inputEl.value = res.filePath;
-                inputEl.dispatchEvent(new Event("input", { bubbles: true }));
-                inputEl.dispatchEvent(new Event("change", { bubbles: true }));
-              }
-              updateThemePreviews();
-              updateCouplePreviews();
-              if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
-              if (textInputId === "cfg-admin-logo-img") applyAdminLogo(res.filePath, document.getElementById("cfg-admin-brand-title")?.value);
-              showToast(`✅ ${toastLabel || "Foto"} tersimpan ke server!`);
+            const file = this.files && this.files[0];
+            if (!file) return;
+
+            showToast(`Memproses ${toastLabel || "foto"}...`);
+            const optimizedData = await optimizeImage(file);
+            if (!optimizedData) {
+              showToast("Gagal membaca file gambar!");
               return;
             }
-          } catch (uploadErr) {
-            console.warn("[Upload] Backend offline, menggunakan mode penyimpanan lokal DataURL:", uploadErr.message);
-          }
 
-          showToast(`✨ ${toastLabel || "Foto"} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
+            const inputEl = document.getElementById(textInputId);
+            if (inputEl) {
+              inputEl.value = optimizedData;
+              inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+              inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+            updateThemePreviews();
+            updateCouplePreviews();
+            if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(optimizedData);
+
+            // Coba simpan ke server backend jika backend online (misal localhost)
+            try {
+              const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+              const filename = `${defaultPrefix}-${Date.now()}.${ext}`;
+              const res = await window.API.uploadImage({
+                filename: filename,
+                fileData: optimizedData
+              });
+              if (res && res.success && res.filePath) {
+                if (inputEl) {
+                  inputEl.value = res.filePath;
+                  inputEl.dispatchEvent(new Event("input", { bubbles: true }));
+                  inputEl.dispatchEvent(new Event("change", { bubbles: true }));
+                }
+                updateThemePreviews();
+                updateCouplePreviews();
+                if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
+                if (textInputId === "cfg-admin-logo-img") applyAdminLogo(res.filePath, document.getElementById("cfg-admin-brand-title")?.value);
+                showToast(`✅ ${toastLabel || "Foto"} tersimpan ke server!`);
+                return;
+              }
+            } catch (uploadErr) {
+              console.warn("[Upload] Backend offline, menggunakan mode penyimpanan lokal DataURL:", uploadErr.message);
+            }
+
+            showToast(`✨ ${toastLabel || "Foto"} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
+          } catch (err) {
+            console.error(`[Upload ${toastLabel}] Error:`, err);
+            showToast(`Gagal memproses ${toastLabel || "foto"}: ${err.message || err}`);
+          }
         });
       }
     }
@@ -2740,7 +2782,7 @@ const AdminApp = (function () {
                   <button type="button" class="btn-sm btn-upload-story-item" data-index="${idx}" style="white-space: nowrap; background: #dfb15b; color: #1a1511; font-weight: 600; border: 1px solid #c99e46; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 6px; cursor: pointer;" title="Impor foto dari file manager / galeri HP / laptop">
                     <i class="fas fa-folder-open"></i> Impor Foto
                   </button>
-                  <input type="file" class="story-file-input-${idx}" accept="image/*" style="display: none;">
+                  <input type="file" class="story-file-input story-file-input-${idx}" data-index="${idx}" accept="image/*" style="display: none;">
                   ${story.image ? `
                   <button type="button" class="btn-sm btn-clear-story-img" data-index="${idx}" style="white-space: nowrap; background: #fee2e2; color: #dc2626; border: 1px solid #fca5a5; font-size: 0.8rem; padding: 6px 9px; border-radius: 6px; cursor: pointer;" title="Hapus foto momen ini">
                     <i class="fas fa-times"></i>
@@ -2812,61 +2854,70 @@ const AdminApp = (function () {
     });
 
     // Listener File Picker saat file dipilih dari File Manager
-    container.querySelectorAll("input[type='file'][class^='story-file-input-']").forEach(fileInput => {
+    container.querySelectorAll("input[type='file'].story-file-input, input[type='file'][class*='story-file-input-']").forEach(fileInput => {
       fileInput.addEventListener("change", async function () {
-        const className = this.className;
-        const match = className.match(/story-file-input-(\d+)/);
-        if (!match) return;
-        const idx = parseInt(match[1], 10);
-        const file = this.files && this.files[0];
-        if (!file || !currentLoveStories[idx]) return;
+        try {
+          const idxAttr = this.getAttribute("data-index");
+          const idx = idxAttr !== null ? parseInt(idxAttr, 10) : parseInt((this.className.match(/story-file-input-(\d+)/) || [])[1], 10);
+          if (isNaN(idx) || !currentLoveStories[idx]) return;
 
-        showToast(`Memproses foto momen #${idx + 1}...`);
-        const optimizedData = await optimizeImage(file);
-        if (!optimizedData) {
-          showToast("Gagal membaca file gambar!");
-          return;
-        }
+          const file = this.files && this.files[0];
+          if (!file) return;
 
-        currentLoveStories[idx].image = optimizedData;
-        const srcInput = container.querySelector(`.story-input-image[data-index="${idx}"]`);
-        if (srcInput) {
-          srcInput.value = optimizedData;
-          srcInput.dispatchEvent(new Event("input", { bubbles: true }));
-          srcInput.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-        const img = container.querySelector(`.story-preview-img-${idx}`);
-        const ph = container.querySelector(`.story-preview-placeholder-${idx}`);
-        if (img && ph) {
-          img.src = optimizedData;
-          img.style.display = "block";
-          ph.style.display = "none";
-        }
+          showToast(`Memproses foto momen #${idx + 1}...`);
+          const optimizedData = await optimizeImage(file);
+          if (!optimizedData) {
+            showToast("Gagal membaca file gambar!");
+            return;
+          }
 
-        // Coba upload ke server jika backend terhubung & bukan GitHub Pages
-        const isStaticHost = window.location.hostname.includes("github.io");
-        if (!isStaticHost && window.API && window.API.uploadImage) {
-          try {
-            const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
-            const res = await window.API.uploadImage({
-              filename: `story-${idx + 1}-${Date.now()}.${ext}`,
-              fileData: optimizedData
-            });
-            if (res && res.success && res.filePath) {
-              currentLoveStories[idx].image = res.filePath;
-              if (srcInput) {
-                srcInput.value = res.filePath;
-                srcInput.dispatchEvent(new Event("input", { bubbles: true }));
-                srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+          currentLoveStories[idx].image = optimizedData;
+          const srcInput = container.querySelector(`.story-input-image[data-index="${idx}"]`);
+          if (srcInput) {
+            srcInput.value = optimizedData;
+            srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+            srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          const img = container.querySelector(`.story-preview-img-${idx}`);
+          const ph = container.querySelector(`.story-preview-placeholder-${idx}`);
+          if (img) {
+            img.src = optimizedData;
+            img.style.display = "block";
+          }
+          if (ph) {
+            ph.style.display = "none";
+          }
+
+          // Coba upload ke server jika backend terhubung & bukan GitHub Pages
+          const isStaticHost = window.location.hostname.includes("github.io");
+          if (!isStaticHost && window.API && window.API.uploadImage) {
+            try {
+              const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+              const res = await window.API.uploadImage({
+                filename: `story-${idx + 1}-${Date.now()}.${ext}`,
+                fileData: optimizedData
+              });
+              if (res && res.success && res.filePath) {
+                currentLoveStories[idx].image = res.filePath;
+                if (srcInput) {
+                  srcInput.value = res.filePath;
+                  srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+                  srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+                }
+                if (img) img.src = res.filePath;
+                showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
+                return;
               }
-              if (img) img.src = res.filePath;
-              showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
-              return;
+            } catch (upErr) {
+              console.warn(`[Upload Story] Upload ke backend gagal, fallback lokal:`, upErr);
             }
-          } catch (_) {}
-        }
+          }
 
-        showToast(`✨ Foto momen #${idx + 1} berhasil diimpor! Klik "Simpan Seluruh Perubahan" di atas.`);
+          showToast(`✨ Foto momen #${idx + 1} berhasil diimpor! Klik "Simpan Seluruh Perubahan" di atas.`);
+        } catch (err) {
+          console.error("[Upload Story] Error:", err);
+          showToast(`Gagal memproses foto: ${err.message || err}`);
+        }
       });
     });
 
@@ -2999,7 +3050,7 @@ const AdminApp = (function () {
                 <button type="button" class="btn-sm btn-export btn-upload-gallery-item" data-index="${idx}" style="white-space: nowrap; padding: 7px 10px; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" title="Pilih Foto dari Galeri HP/Laptop">
                   <i class="fas fa-camera"></i> Unggah
                 </button>
-                <input type="file" class="gallery-file-input-${idx}" accept="image/*" style="display: none;">
+                <input type="file" class="gallery-file-input gallery-file-input-${idx}" data-index="${idx}" accept="image/*" style="display: none;">
               </div>
             </div>
 
@@ -3039,56 +3090,65 @@ const AdminApp = (function () {
       });
     });
 
-    container.querySelectorAll("input[type='file'][class^='gallery-file-input-']").forEach(fileInput => {
+    container.querySelectorAll("input[type='file'].gallery-file-input, input[type='file'][class*='gallery-file-input-']").forEach(fileInput => {
       fileInput.addEventListener("change", async function () {
-        const className = this.className;
-        const match = className.match(/gallery-file-input-(\d+)/);
-        if (!match) return;
-        const idx = parseInt(match[1], 10);
-        const file = this.files && this.files[0];
-        if (!file || !currentGalleryItems[idx]) return;
+        try {
+          const idxAttr = this.getAttribute("data-index");
+          const idx = idxAttr !== null ? parseInt(idxAttr, 10) : parseInt((this.className.match(/gallery-file-input-(\d+)/) || [])[1], 10);
+          if (isNaN(idx) || !currentGalleryItems[idx]) return;
 
-        showToast(`Memproses foto galeri #${idx + 1}...`);
-        const optimizedData = await optimizeImage(file);
-        if (!optimizedData) {
-          showToast("Gagal membaca file gambar!");
-          return;
-        }
+          const file = this.files && this.files[0];
+          if (!file) return;
 
-        currentGalleryItems[idx].src = optimizedData;
-        const srcInput = container.querySelector(`.gallery-input-src[data-index="${idx}"]`);
-        if (srcInput) {
-          srcInput.value = optimizedData;
-          srcInput.dispatchEvent(new Event("input", { bubbles: true }));
-          srcInput.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-        const img = container.querySelector(`.gallery-preview-img-${idx}`);
-        if (img) img.src = optimizedData;
+          showToast(`Memproses foto galeri #${idx + 1}...`);
+          const optimizedData = await optimizeImage(file);
+          if (!optimizedData) {
+            showToast("Gagal membaca file gambar!");
+            return;
+          }
 
-        // Coba upload ke server jika backend terhubung & bukan GitHub Pages
-        const isStaticHost = window.location.hostname.includes("github.io");
-        if (!isStaticHost && window.API && window.API.uploadImage) {
-          try {
-            const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
-            const res = await window.API.uploadImage({
-              filename: `gallery-${idx + 1}-${Date.now()}.${ext}`,
-              fileData: optimizedData
-            });
-            if (res && res.success && res.filePath) {
-              currentGalleryItems[idx].src = res.filePath;
-              if (srcInput) {
-                srcInput.value = res.filePath;
-                srcInput.dispatchEvent(new Event("input", { bubbles: true }));
-                srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+          currentGalleryItems[idx].src = optimizedData;
+          const srcInput = container.querySelector(`.gallery-input-src[data-index="${idx}"]`);
+          if (srcInput) {
+            srcInput.value = optimizedData;
+            srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+            srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+          }
+          const img = container.querySelector(`.gallery-preview-img-${idx}`);
+          if (img) {
+            img.src = optimizedData;
+          }
+
+          // Coba upload ke server jika backend terhubung & bukan GitHub Pages
+          const isStaticHost = window.location.hostname.includes("github.io");
+          if (!isStaticHost && window.API && window.API.uploadImage) {
+            try {
+              const ext = file.type === "image/png" ? "png" : (file.name.split(".").pop() || "jpg");
+              const res = await window.API.uploadImage({
+                filename: `gallery-${idx + 1}-${Date.now()}.${ext}`,
+                fileData: optimizedData
+              });
+              if (res && res.success && res.filePath) {
+                currentGalleryItems[idx].src = res.filePath;
+                if (srcInput) {
+                  srcInput.value = res.filePath;
+                  srcInput.dispatchEvent(new Event("input", { bubbles: true }));
+                  srcInput.dispatchEvent(new Event("change", { bubbles: true }));
+                }
+                if (img) img.src = res.filePath;
+                showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
+                return;
               }
-              if (img) img.src = res.filePath;
-              showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
-              return;
+            } catch (upErr) {
+              console.warn(`[Upload Gallery] Upload ke backend gagal, fallback lokal:`, upErr);
             }
-          } catch (_) {}
-        }
+          }
 
-        showToast(`✨ Foto galeri #${idx + 1} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
+          showToast(`✨ Foto galeri #${idx + 1} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
+        } catch (err) {
+          console.error("[Upload Gallery] Error:", err);
+          showToast(`Gagal memproses foto: ${err.message || err}`);
+        }
       });
     });
 

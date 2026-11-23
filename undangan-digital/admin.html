@@ -102,14 +102,14 @@
         <i class="fas fa-users"></i> Daftar Tamu
       </div>
       <div class="tab-link" data-tab="tab-rsvps">
-        <i class="fas fa-envelope-open-text"></i> Konfirmasi RSVP
+        <i class="fas fa-envelope-open-text"></i> Data Masuk RSVP
       </div>
       <div class="tab-link" data-tab="tab-guestbook">
         <i class="fas fa-comments"></i> Moderasi Ucapan
         <span class="badge-count" id="pending-wishes-badge" style="display: none;">0</span>
       </div>
       <div class="tab-link" data-tab="tab-wa">
-        <i class="fab fa-whatsapp"></i> Broadcast WA
+        <i class="fab fa-whatsapp"></i> Kirim Undangan WA
       </div>
       <div class="tab-link" data-tab="tab-settings">
         <i class="fas fa-sliders-h"></i> Kustomisasi Undangan
@@ -302,9 +302,19 @@
       <!-- ========================================================== -->
       <section id="tab-rsvps" class="tab-pane">
         <div class="panel-card">
-          <div class="panel-header">
-            <h3 class="panel-title"><i class="fas fa-envelope-open-text"></i> Data Masuk RSVP Online</h3>
-            <div class="panel-actions">
+          <div class="panel-header" style="flex-wrap: wrap; gap: 10px; align-items: flex-start;">
+            <div>
+              <h3 class="panel-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fas fa-envelope-open-text" style="color: var(--admin-gold);"></i> Rekapitulasi Kehadiran Tamu (Data Masuk Web)
+              </h3>
+              <p style="font-size: 0.84rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">
+                Daftar seluruh tamu yang telah mengonfirmasi kehadiran melalui formulir di website undangan. Data dapat difilter dan diekspor ke file Excel (.xlsx).
+              </p>
+            </div>
+            <div class="panel-actions" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-sm" id="btn-goto-rsvp-settings" style="background: #f1f5f9; color: #1e293b; border: 1px solid #cbd5e1; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 6px; cursor: pointer;" title="Atur nomor WhatsApp penerima pesan konfirmasi dari tamu">
+                <i class="fab fa-whatsapp" style="color: #25D366; font-size: 0.95rem;"></i> Atur Nomor WA Penerima
+              </button>
               <input type="text" id="search-rsvp-input" class="search-input" placeholder="Cari nama tamu...">
               <select id="filter-rsvp-status" class="search-input" style="width: auto;">
                 <option value="all">Semua Status</option>
@@ -378,12 +388,19 @@
       <!-- ========================================================== -->
       <section id="tab-wa" class="tab-pane">
         <div class="panel-card">
-          <div class="panel-header">
-            <h3 class="panel-title"><i class="fab fa-whatsapp" style="color: #25D366;"></i> Generator Undangan WhatsApp Cepat</h3>
+          <div class="panel-header" style="flex-wrap: wrap; gap: 10px; align-items: flex-start;">
+            <div>
+              <h3 class="panel-title" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                <i class="fab fa-whatsapp" style="color: #25D366;"></i> Kirim Undangan ke Tamu (Bagikan Link WhatsApp)
+              </h3>
+              <p style="font-size: 0.88rem; color: var(--admin-text-muted); margin: 4px 0 0 0;">
+                Gunakan alat bantu ini untuk membuat pesan teks undangan resmi berformat rapi dan membagikannya langsung ke WhatsApp teman, keluarga, maupun kolega.
+              </p>
+            </div>
+            <span style="font-size: 0.78rem; background: #e0f2fe; color: #0369a1; padding: 4px 10px; border-radius: 20px; font-weight: 600; white-space: nowrap;">
+              <i class="fas fa-paper-plane"></i> Undangan Keluar (Outbound)
+            </span>
           </div>
-          <p style="font-size: 0.9rem; color: var(--admin-text-muted); margin-bottom: 1.25rem;">
-            Pilih tamu dari database atau ketik nama tamu dan nomor WhatsApp secara langsung untuk menghasilkan undangan resmi personal siap kirim via WhatsApp.
-          </p>
 
           <!-- Dropdown Pilih Tamu Langsung dari Database -->
           <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 1rem; margin-bottom: 1.25rem;">
@@ -749,17 +766,17 @@
             </div>
 
             <!-- 2b. PENGATURAN WHATSAPP KONFIRMASI KEHADIRAN (RSVP) -->
-            <div style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+            <div id="section-rsvp-wa-config" style="border-bottom: 1px solid var(--admin-border); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; flex-wrap: wrap; gap: 8px;">
-                <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0;">
-                  <i class="fab fa-whatsapp" style="color: #25D366;"></i> Pengaturan WhatsApp Konfirmasi Kehadiran (RSVP)
+                <h4 style="font-size: 1.1rem; color: var(--admin-text); margin: 0; display: flex; align-items: center; gap: 8px;">
+                  <i class="fab fa-whatsapp" style="color: #25D366;"></i> Nomor WhatsApp Penerima RSVP (Tujuan Chat Tamu)
                 </h4>
                 <span style="font-size: 0.75rem; background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 20px; font-weight: 600;">
-                  <i class="fas fa-link"></i> Terhubung ke Form RSVP Tamu
+                  <i class="fas fa-inbox"></i> Pesan Masuk dari Tamu (Inbound)
                 </span>
               </div>
               <p style="font-size: 0.85rem; color: var(--admin-text-muted); margin-bottom: 1rem;">
-                Tentukan nomor WhatsApp yang akan menerima kiriman konfirmasi kehadiran dari para tamu saat mereka mengisi formulir RSVP di halaman undangan.
+                Tentukan nomor WhatsApp milik Anda/Mempelai/Panitia yang akan menerima kiriman pesan konfirmasi kehadiran saat tamu menekan tombol <strong>"Kirim Konfirmasi via WhatsApp"</strong> di website undangan.
               </p>
 
               <div style="background: #fbf9f5; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--admin-border);">

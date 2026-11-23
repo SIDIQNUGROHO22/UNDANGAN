@@ -663,6 +663,29 @@ const AdminApp = (function () {
 
     if (searchInput) searchInput.addEventListener("input", applyFilter);
     if (statusFilter) statusFilter.addEventListener("change", applyFilter);
+
+    // Pintasan navigasi cepat dari Tabel RSVP ke Pengaturan Nomor WA Penerima
+    const gotoSettingsBtn = document.getElementById("btn-goto-rsvp-settings");
+    if (gotoSettingsBtn) {
+      gotoSettingsBtn.addEventListener("click", () => {
+        const settingsTab = document.querySelector('.admin-tab-nav .tab-link[data-tab="tab-settings"]');
+        if (settingsTab) {
+          settingsTab.click();
+          setTimeout(() => {
+            const sec = document.getElementById("section-rsvp-wa-config") || document.getElementById("cfg-rsvp-wa-number");
+            if (sec) {
+              sec.scrollIntoView({ behavior: "smooth", block: "center" });
+              const input = document.getElementById("cfg-rsvp-wa-number");
+              if (input) {
+                input.focus();
+                input.style.boxShadow = "0 0 0 3px rgba(37, 211, 102, 0.4)";
+                setTimeout(() => { input.style.boxShadow = ""; }, 2000);
+              }
+            }
+          }, 180);
+        }
+      });
+    }
   }
 
   // ==========================================

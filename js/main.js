@@ -1519,6 +1519,93 @@ const MainApp = (function () {
     });
   }
 
+  let lastAppliedTimestamp = Date.now();
+  let isRefreshing = false;
+
+  async function refreshFromApi(forceFresh = false) {
+    if (isRefreshing) return;
+    isRefreshing = true;
+    try {
+      if (window.API && window.API.getInvitationConfig) {
+        const configData = await window.API.getInvitationConfig(forceFresh);
+        if (configData) {
+          lastAppliedTimestamp = Date.now();
+          populateContent(configData);
+          setupScrollAnimations();
+        }
+      }
+    } catch (err) {
+      console.warn("[LiveSync] Refresh error:", err);
+    } finally {
+      isRefreshing = false;
+    }
+  }
+
+  function setupLiveSync() {
+    // 1. Sinkronisasi instan antar tab lewat BroadcastChannel (< 10 ms)
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const liveChannel = new BroadcastChannel("wedding_live_sync");
+        liveChannel.onmessage = function (ev) {
+          if (ev && ev.data) {
+            console.log("[LiveSync] Menerima sinyal update dari Admin Panel:", ev.data);
+            if (ev.data.data) {
+              lastAppliedTimestamp = ev.data.timestamp || Date.now();
+              populateContent(ev.data.data);
+              setupScrollAnimations();
+            } else {
+              refreshFromApi(true);
+            }
+          }
+        };
+      } catch (e) {
+        console.warn("[LiveSync] BroadcastChannel error:", e);
+      }
+    }
+
+    // 2. Storage event listener (Bekerja otomatis antar tab saat localStorage diperbarui)
+    window.addEventListener("storage", function (e) {
+      if (e.key === "wedding_custom_settings" || e.key === "wedding_update_timestamp") {
+        console.log("[LiveSync] Deteksi perubahan storage dari admin:", e.key);
+        if (e.key === "wedding_custom_settings" && e.newValue) {
+          try {
+            const parsed = JSON.parse(e.newValue);
+            populateContent(parsed);
+            setupScrollAnimations();
+            return;
+          } catch (_) {}
+        }
+        refreshFromApi(true);
+      }
+    });
+
+    // 3. Tab Visibility Change (Otomatis perbarui tampilan saat user berpindah tab ke undangan)
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "visible") {
+        console.log("[LiveSync] Tab undangan aktif/difokuskan, menyinkronkan data...");
+        refreshFromApi(true);
+      }
+    });
+
+    // 4. Window focus listener
+    window.addEventListener("focus", function () {
+      refreshFromApi(true);
+    });
+
+    // 5. Polling ringan setiap 3 detik jika tab sedang aktif
+    setInterval(function () {
+      if (document.visibilityState === "visible") {
+        try {
+          const storedTs = localStorage.getItem("wedding_update_timestamp");
+          if (storedTs && Number(storedTs) > lastAppliedTimestamp) {
+            lastAppliedTimestamp = Number(storedTs);
+            refreshFromApi(true);
+          }
+        } catch (_) {}
+      }
+    }, 3000);
+  }
+
   async function init() {
     // 0. Bersihkan data mock/stale lama di localStorage jika mengandung nama pengujian
     try {
@@ -1542,11 +1629,12 @@ const MainApp = (function () {
     setupNavigation();
     setupScrollAnimations();
     setupBackToTop();
+    setupLiveSync();
 
     // 4. Ambil data konfigurasi terbaru dari backend secara asynchronous
     try {
       if (window.API && window.API.getInvitationConfig) {
-        const configData = await window.API.getInvitationConfig();
+        const configData = await window.API.getInvitationConfig(true);
         if (configData) {
           populateContent(configData);
           setupScrollAnimations();

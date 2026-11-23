@@ -1864,6 +1864,27 @@ const AdminApp = (function () {
     setImg(document.getElementById("cfg-bride-photo")?.value, "preview-bride-photo", "assets/images/couple-2.jpg");
   }
 
+  function broadcastConfigUpdate(settings) {
+    const ts = Date.now();
+    try {
+      localStorage.setItem("wedding_update_timestamp", String(ts));
+      localStorage.setItem("wedding_custom_settings", JSON.stringify(settings));
+    } catch (_) {}
+
+    if (typeof BroadcastChannel !== "undefined") {
+      try {
+        const ch = new BroadcastChannel("wedding_live_sync");
+        ch.postMessage({
+          type: "CONFIG_UPDATED",
+          data: settings,
+          timestamp: ts
+        });
+      } catch (e) {
+        console.warn("[Admin LiveSync] Gagal broadcast:", e);
+      }
+    }
+  }
+
   async function saveCurrentSettings(options = {}) {
     if (!currentSettings) currentSettings = {};
 
@@ -2078,6 +2099,10 @@ const AdminApp = (function () {
           updateActivePresetAnimButton(res.data.animation.effect || "sakura");
           updateAdminAnimationPreview();
         }
+
+        // Broadcast real-time update ke seluruh tab browser undangan yang sedang terbuka
+        broadcastConfigUpdate(currentSettings);
+
         showToast(options.toastMsg || "Data kustomisasi undangan berhasil disimpan ke server!");
         return true;
       } else {
@@ -3393,13 +3418,23 @@ const AdminApp = (function () {
     initSettingsForm();
     initQuickScroll();
 
-    // Pastikan tombol Buka Undangan selalu mengarah ke URL yang sesuai (lokal jika sedang di localhost/LAN)
+    // Pastikan tombol Buka Undangan selalu mengarah ke URL yang sesuai (lokal jika sedang di localhost/LAN atau file://)
     const viewSiteBtn = document.querySelector(".btn-view-site") || document.getElementById("btn-view-site");
     if (viewSiteBtn) {
+      const isFileProto = window.location.protocol === 'file:';
       const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') || window.location.hostname.startsWith('10.');
-      const localTargetUrl = window.location.port ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}/` : '/';
-      viewSiteBtn.href = isLocalHost ? localTargetUrl : INVITATION_PUBLIC_URL;
-      viewSiteBtn.title = isLocalHost ? "Buka website undangan lokal" : "Buka website undangan resmi (GitHub Pages)";
+      if (isFileProto) {
+        viewSiteBtn.href = "index.html";
+        viewSiteBtn.title = "Buka website undangan lokal";
+      } else if (isLocalHost) {
+        const localTargetUrl = window.location.port ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}/index.html` : '/index.html';
+        viewSiteBtn.href = localTargetUrl;
+        viewSiteBtn.title = "Buka website undangan lokal";
+      } else {
+        viewSiteBtn.href = INVITATION_PUBLIC_URL;
+        viewSiteBtn.title = "Buka website undangan resmi (GitHub Pages)";
+      }
+      viewSiteBtn.target = "_blank";
     }
 
     // Shortcut Tombol Navigasi Cepat (Scroll Atas & Bawah)

@@ -64,7 +64,7 @@ const API = {
   },
 
   // 1. DATA KONFIGURASI UNDANGAN
-  async getInvitationConfig() {
+  async getInvitationConfig(forceFresh = false) {
     // Bersihkan data sampah atau nama mock di localStorage jika ada
     try {
       const localCustom = localStorage.getItem('wedding_custom_settings');
@@ -74,9 +74,11 @@ const API = {
     } catch (_) {}
 
     try {
-      const res = await this.request('/api/invitation');
+      const cacheBustUrl = `/api/invitation?_t=${Date.now()}`;
+      const res = await this.request(cacheBustUrl, { cache: 'no-store' });
       if (res && res.success && res.data) {
         this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(res.data));
+        this.safeSetLocalStorage('wedding_update_timestamp', String(Date.now()));
         return res.data;
       }
     } catch (_) {}
@@ -106,6 +108,7 @@ const API = {
   },
 
   async updateInvitationConfig(settingsData) {
+    const timestampStr = String(Date.now());
     try {
       const res = await this.request('/api/invitation', {
         method: 'POST',
@@ -113,11 +116,14 @@ const API = {
         timeout: 30000
       });
       // Sinkronkan juga salinan lokal di browser
-      this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(settingsData));
+      const dataToStore = (res && res.data) ? res.data : settingsData;
+      this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(dataToStore));
+      this.safeSetLocalStorage('wedding_update_timestamp', timestampStr);
       return res;
     } catch (err) {
       // Simpan lokal saat backend tidak terjangkau (Offline mode)
       this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(settingsData));
+      this.safeSetLocalStorage('wedding_update_timestamp', timestampStr);
       if (typeof WEDDING_CONFIG !== 'undefined') {
         Object.assign(WEDDING_CONFIG, settingsData);
       }

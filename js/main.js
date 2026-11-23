@@ -29,6 +29,20 @@ const MainApp = (function () {
   }
 
   /**
+   * Helper format hari dan tanggal agar tidak terjadi duplikasi kata hari
+   */
+  function formatEventDate(dayName, dateFormatted) {
+    if (!dateFormatted) return dayName || "";
+    const dateTrim = String(dateFormatted).trim();
+    if (!dayName) return dateTrim;
+    const dayTrim = String(dayName).trim();
+    if (dateTrim.toLowerCase().startsWith(dayTrim.toLowerCase())) {
+      return dateTrim;
+    }
+    return `${dayTrim}, ${dateTrim}`;
+  }
+
+  /**
    * Helper normalisasi URL media (gambar / audio) dari berbagai sumber:
    * - Pinterest (direct image cdn https://i.pinimg.com/...)
    * - Google Drive (auto-convert sharing link ke direct view/stream)
@@ -116,7 +130,7 @@ const MainApp = (function () {
 
     // 3. Detail Acara - Akad Nikah
     if (c.events && c.events.akad) {
-      setTextAll(".akad-day-date", `${c.events.akad.dayName || ""}, ${c.events.akad.dateFormatted || ""}`);
+      setTextAll(".akad-day-date", formatEventDate(c.events.akad.dayName, c.events.akad.dateFormatted));
       setTextAll(".akad-time", c.events.akad.timeFormatted);
       setTextAll(".akad-venue-name", c.events.akad.venueName);
       setTextAll(".akad-venue-address", c.events.akad.venueAddress);
@@ -125,7 +139,7 @@ const MainApp = (function () {
 
     // 4. Detail Acara - Resepsi
     if (c.events && c.events.resepsi) {
-      setTextAll(".resepsi-day-date", `${c.events.resepsi.dayName || ""}, ${c.events.resepsi.dateFormatted || ""}`);
+      setTextAll(".resepsi-day-date", formatEventDate(c.events.resepsi.dayName, c.events.resepsi.dateFormatted));
       setTextAll(".resepsi-time", c.events.resepsi.timeFormatted);
       setTextAll(".resepsi-venue-name", c.events.resepsi.venueName);
       setTextAll(".resepsi-venue-address", c.events.resepsi.venueAddress);
@@ -143,7 +157,7 @@ const MainApp = (function () {
       if (isEnabled) {
         const titleEl = document.getElementById("unduh-mantu-title");
         if (titleEl) titleEl.textContent = um.title || "Acara Unduh Mantu";
-        const dateStr = `${um.dayName ? um.dayName + ', ' : ''}${um.dateFormatted || ''}`;
+        const dateStr = formatEventDate(um.dayName, um.dateFormatted);
         setTextAll(".unduh-mantu-day-date", dateStr);
         setTextAll(".unduh-mantu-time", um.timeFormatted);
         setTextAll(".unduh-mantu-venue-name", um.venueName);
@@ -595,13 +609,16 @@ const MainApp = (function () {
       const imgWrapper = document.createElement("div");
       imgWrapper.className = "gallery-img-wrapper";
 
-      let cleanSrc = normalizeMediaUrl(item.src || "", "image");
+      const rawSrc = typeof item === "string" ? item : (item.src || item.url || item.image || "");
+      const captionText = typeof item === "string" ? "" : (item.caption || item.title || "");
+
+      let cleanSrc = normalizeMediaUrl(rawSrc || "", "image");
       if (cleanSrc && !cleanSrc.startsWith("data:") && !cleanSrc.includes("?") && cleanSrc.includes("assets/")) {
         cleanSrc += `?v=${Date.now()}`;
       }
       const img = document.createElement("img");
       img.src = cleanSrc || "assets/images/background.jpg";
-      img.alt = item.caption || `Foto Galeri ${index + 1}`;
+      img.alt = captionText || `Foto Galeri ${index + 1}`;
       img.className = "photo-reveal revealed";
       img.loading = "lazy";
       img.onerror = function () {
@@ -619,7 +636,7 @@ const MainApp = (function () {
         <div class="gallery-overlay-inner">
           <i class="fas fa-search-plus"></i>
           <span class="gallery-zoom-text">Perbesar</span>
-          ${item.caption ? `<p class="gallery-hover-caption">${escapeHtml(item.caption)}</p>` : ""}
+          ${captionText ? `<p class="gallery-hover-caption">${escapeHtml(captionText)}</p>` : ""}
         </div>
       `;
 
@@ -716,7 +733,10 @@ const MainApp = (function () {
       if (e.key === "ArrowRight") navigateLightbox(1);
     });
 
-    // Lightbox khusus QRIS
+    // Event click untuk item galeri awal yang sudah ada di HTML
+    document.querySelectorAll("#gallery-grid .gallery-item").forEach((el, idx) => {
+      el.addEventListener("click", () => openLightbox(idx));
+    });
     const qrisTrigger = document.getElementById("qris-preview-trigger");
     const qrisModal = document.getElementById("qris-modal");
     const qrisClose = document.getElementById("qris-modal-close");
@@ -780,12 +800,15 @@ const MainApp = (function () {
     const caption = document.getElementById("lightbox-caption");
     const counter = document.getElementById("lightbox-counter");
 
+    const rawSrc = typeof item === "string" ? item : (item.src || item.url || item.image || "");
+    const captionText = typeof item === "string" ? "" : (item.caption || item.title || "");
+
     if (img) {
-      img.src = normalizeMediaUrl(item.src, "image") || "assets/images/background.jpg";
-      img.alt = item.caption || "Foto Galeri";
+      img.src = normalizeMediaUrl(rawSrc, "image") || "assets/images/background.jpg";
+      img.alt = captionText || "Foto Galeri";
     }
     if (caption) {
-      caption.textContent = item.caption || "";
+      caption.textContent = captionText || "";
     }
     if (counter) {
       counter.textContent = `${currentLightboxIndex + 1} / ${items.length}`;
@@ -1578,8 +1601,8 @@ const MainApp = (function () {
 
 window.MainApp = MainApp;
 
-// Jalankan saat DOM telah siap
-document.addEventListener("DOMContentLoaded", function () {
+// Jalankan saat DOM telah siap (Mendukung async, interactive, & complete state)
+function runMainInit() {
   if (typeof GuestHandler !== "undefined") GuestHandler.init();
   if (typeof MusicHandler !== "undefined") MusicHandler.init();
   if (typeof CountdownHandler !== "undefined") CountdownHandler.init();
@@ -1592,4 +1615,10 @@ document.addEventListener("DOMContentLoaded", function () {
     WeddingParticles.init(animCfg);
   }
   if (typeof MainApp !== "undefined") MainApp.init();
-});
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", runMainInit);
+} else {
+  runMainInit();
+}

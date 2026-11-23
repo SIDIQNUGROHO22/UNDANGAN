@@ -398,6 +398,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization')
+        self.send_header('Access-Control-Allow-Private-Network', 'true')
 
     def do_HEAD(self):
         self.do_GET(head_only=True)

@@ -208,7 +208,6 @@ const WEDDING_CONFIG = {
     "copyright": "© 2026 Sidiq & Anisa Wedding Invitation. Dibuat dengan penuh cinta."
   }
 };
-
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = WEDDING_CONFIG;
 }

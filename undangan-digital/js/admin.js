@@ -3520,6 +3520,10 @@ const AdminApp = (function () {
 
 window.AdminApp = AdminApp;
 
-document.addEventListener("DOMContentLoaded", function () {
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", function () {
+    AdminApp.init();
+  });
+} else {
   AdminApp.init();
-});
+}

@@ -339,21 +339,7 @@ const MainApp = (function () {
       coverWayangBride.onerror = function () { this.onerror = null; this.src = defaultCoverBride; };
     }
 
-    // 5b. Foto Profil Pasangan di Dalam Kotak Sampul (Opsional)
-    const coverCoupleWrapper = document.getElementById("cover-couple-photo-wrapper");
-    const coverCoupleImg = document.getElementById("cover-couple-photo-img");
-    const showCoverCouple = Boolean(assets.showCoverCouplePhoto);
-    const coverCoupleSrc = normalizeMediaUrl(assets.coverCouplePhoto || "assets/images/cover.jpg", "image");
-
-    if (coverCoupleWrapper) {
-      coverCoupleWrapper.style.display = showCoverCouple ? "flex" : "none";
-      if (coverCoupleImg && coverCoupleSrc) {
-        coverCoupleImg.src = coverCoupleSrc;
-        coverCoupleImg.onerror = function () { this.onerror = null; this.src = "assets/images/cover.jpg"; };
-      }
-    }
-
-    // 5c. Foto Background Utama Isi Undangan (Layar Setelah Buka Undangan)
+    // 5b. Foto Background Utama Isi Undangan (Layar Setelah Buka Undangan)
     const mainBgImg = document.getElementById("main-bg-image");
     const bgPhotoSrc = assets.backgroundPhoto || activeConfig?.couple?.backgroundPhoto;
     if (mainBgImg && bgPhotoSrc) {

@@ -148,8 +148,6 @@ const WEDDING_CONFIG = {
     "showGununganCenter": true,
     "coverWayangGroomImage": "assets/images/wayang-kamajaya.svg",
     "coverWayangBrideImage": "assets/images/wayang-kamaratih.svg",
-    "showCoverCouplePhoto": false,
-    "coverCouplePhoto": "assets/images/cover.jpg",
     "adminLogo": "assets/images/gunungan-gold.svg",
     "adminTitle": "PANEL ADMIN",
     "backgroundPhoto": "assets/images/background.jpg",

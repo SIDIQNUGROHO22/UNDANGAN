@@ -1293,8 +1293,6 @@ const AdminApp = (function () {
     setCheckbox("cfg-show-cover-wayang", ta.showCoverWayang !== false);
     setValue("cfg-cover-wayang-groom-img", ta.coverWayangGroomImage || ta.wayangGroomImage || "assets/images/wayang-kamajaya.svg");
     setValue("cfg-cover-wayang-bride-img", ta.coverWayangBrideImage || ta.wayangBrideImage || "assets/images/wayang-kamaratih.svg");
-    setCheckbox("cfg-show-cover-couple-photo", Boolean(ta.showCoverCouplePhoto));
-    setValue("cfg-cover-couple-photo", ta.coverCouplePhoto || c.couple?.coverPhoto || "assets/images/cover.jpg");
 
     setValue("cfg-gunungan-left-img", ta.gununganLeftImage || ta.gununganImage || "assets/images/gunungan-gold.svg");
     setValue("cfg-gunungan-right-img", ta.gununganRightImage || "");
@@ -1840,14 +1838,12 @@ const AdminApp = (function () {
     const bgVal = document.getElementById("cfg-background-photo")?.value;
     const coverGroomVal = document.getElementById("cfg-cover-wayang-groom-img")?.value;
     const coverBrideVal = document.getElementById("cfg-cover-wayang-bride-img")?.value;
-    const coverCoupleVal = document.getElementById("cfg-cover-couple-photo")?.value || coverVal;
 
     setImg(coverVal, "preview-cover-photo", "assets/images/cover.jpg");
     setImg(bgVal, "preview-background-photo", "assets/images/background.jpg");
     setImg(centerVal, "preview-gunungan-center-img", "assets/images/gunungan-gold.svg");
     setImg(coverGroomVal, "preview-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg");
     setImg(coverBrideVal, "preview-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg");
-    setImg(coverCoupleVal, "preview-cover-couple-photo", "assets/images/cover.jpg");
 
     setImg(leftVal, "preview-gunungan-left-img", "assets/images/gunungan-gold.svg");
     setImg(rightVal, "preview-gunungan-right-img", "assets/images/gunungan-gold.svg");
@@ -2010,8 +2006,6 @@ const AdminApp = (function () {
       showCoverWayang: Boolean(document.getElementById("cfg-show-cover-wayang")?.checked),
       coverWayangGroomImage: getVal("cfg-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg"),
       coverWayangBrideImage: getVal("cfg-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg"),
-      showCoverCouplePhoto: Boolean(document.getElementById("cfg-show-cover-couple-photo")?.checked),
-      coverCouplePhoto: getVal("cfg-cover-couple-photo", "assets/images/cover.jpg"),
       wayangGroomImage: getVal("cfg-wayang-groom-img", "assets/images/wayang-kamajaya.svg"),
       showWayangGroom: Boolean(document.getElementById("cfg-show-wayang-groom")?.checked),
       wayangBrideImage: getVal("cfg-wayang-bride-img", "assets/images/wayang-kamaratih.svg"),
@@ -2385,7 +2379,6 @@ const AdminApp = (function () {
       "cfg-gunungan-center-img",
       "cfg-cover-wayang-groom-img",
       "cfg-cover-wayang-bride-img",
-      "cfg-cover-couple-photo",
       "cfg-groom-photo",
       "cfg-bride-photo",
       "cfg-gunungan-left-img",
@@ -2496,7 +2489,6 @@ const AdminApp = (function () {
     setupFileUpload("btn-upload-gunungan-center", "file-gunungan-center", "cfg-gunungan-center-img", "gunungan-center", "Lambang puncak kotak sampul");
     setupFileUpload("btn-upload-cover-wayang-groom", "file-cover-wayang-groom", "cfg-cover-wayang-groom-img", "cover-groom", "Figur pria kotak sampul");
     setupFileUpload("btn-upload-cover-wayang-bride", "file-cover-wayang-bride", "cfg-cover-wayang-bride-img", "cover-bride", "Figur wanita kotak sampul");
-    setupFileUpload("btn-upload-cover-couple-photo", "file-cover-couple-photo", "cfg-cover-couple-photo", "cover-couple", "Foto pasangan kotak sampul");
 
     // Wiring Tombol Upload Tirai Gunungan & Siluet Profil Mempelai
     setupFileUpload("btn-upload-gunungan-left", "file-gunungan-left", "cfg-gunungan-left-img", "gunungan-left", "Kayon gunungan kiri");

@@ -10,7 +10,7 @@ const WEDDING_CONFIG = {
       "fatherName": "Bpk. Bambang Sutrisno",
       "motherName": "Ibu Siti Rahmawati",
       "childOrder": "Putra pertama dari",
-      "instagram": "https://instagram.com/",
+      "instagram": "https://www.instagram.com/sidiqnugroho022/",
       "photo": "assets/images/couple-1.jpg",
       "bio": "Seorang insan yang bertekad menjaga komitmen suci, membimbing dalam kasih sayang, dan membangun bahtera rumah tangga yang sakinah, mawaddah, warahmah."
     },
@@ -20,7 +20,7 @@ const WEDDING_CONFIG = {
       "fatherName": "Bpk. H. Hendra Wijaya",
       "motherName": "Ibu Hj. Nurul Hasanah",
       "childOrder": "Putri kedua dari",
-      "instagram": "https://instagram.com/",
+      "instagram": "https://www.instagram.com/anszhra29/",
       "photo": "assets/images/couple-2.jpg",
       "bio": "Sosok wanita penyayang yang siap menyempurnakan separuh agama, melangkah bersama dalam suka dan duka menggapai ridho Allah SWT."
     },

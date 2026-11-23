@@ -244,9 +244,13 @@ const MainApp = (function () {
     const showGununganCenter = assets.showGununganCenter !== false;
     const defaultGunungan = "assets/images/gunungan-gold.svg";
 
-    const leftSrc = normalizeMediaUrl(assets.gununganLeftImage || assets.gununganImage || defaultGunungan, "image");
-    const rightSrc = normalizeMediaUrl(assets.gununganRightImage || assets.gununganLeftImage || assets.gununganImage || defaultGunungan, "image");
-    const centerSrc = normalizeMediaUrl(assets.gununganCenterImage || assets.gununganLeftImage || assets.gununganImage || defaultGunungan, "image");
+    const leftSrcRaw = normalizeMediaUrl(assets.gununganLeftImage || assets.gununganImage || defaultGunungan, "image");
+    const rightSrcRaw = normalizeMediaUrl(assets.gununganRightImage || assets.gununganLeftImage || assets.gununganImage || defaultGunungan, "image");
+    const centerSrcRaw = normalizeMediaUrl(assets.gununganCenterImage || assets.gununganLeftImage || assets.gununganImage || defaultGunungan, "image");
+    const bust = (u) => (u && !u.startsWith("data:") && !u.includes("?") && u.includes("assets/")) ? `${u}?v=${Date.now()}` : u;
+    const leftSrc = bust(leftSrcRaw);
+    const rightSrc = bust(rightSrcRaw);
+    const centerSrc = bust(centerSrcRaw);
     const isMirrorRight = assets.gununganRightMirror !== false;
 
     if (gununganLeft) gununganLeft.style.display = showGunungan ? "block" : "none";
@@ -292,7 +296,10 @@ const MainApp = (function () {
     const defaultGroom = "assets/images/wayang-arjuna.png";
     const groomWatermark = document.getElementById("wayang-groom-watermark");
     const showGroomWayang = assets.showWayangGroom !== false;
-    const groomWayangSrc = normalizeMediaUrl(assets.wayangGroomImage || defaultGroom, "image");
+    let groomWayangSrc = normalizeMediaUrl(assets.wayangGroomImage || defaultGroom, "image");
+    if (groomWayangSrc && !groomWayangSrc.startsWith("data:") && !groomWayangSrc.includes("?") && groomWayangSrc.includes("assets/")) {
+      groomWayangSrc += `?v=${Date.now()}`;
+    }
 
     if (groomWatermark) {
       groomWatermark.style.display = showGroomWayang ? "block" : "none";
@@ -306,7 +313,10 @@ const MainApp = (function () {
     const defaultBride = "assets/images/wayang-srikandi.png";
     const brideWatermark = document.getElementById("wayang-bride-watermark");
     const showBrideWayang = assets.showWayangBride !== false;
-    const brideWayangSrc = normalizeMediaUrl(assets.wayangBrideImage || defaultBride, "image");
+    let brideWayangSrc = normalizeMediaUrl(assets.wayangBrideImage || defaultBride, "image");
+    if (brideWayangSrc && !brideWayangSrc.startsWith("data:") && !brideWayangSrc.includes("?") && brideWayangSrc.includes("assets/")) {
+      brideWayangSrc += `?v=${Date.now()}`;
+    }
 
     if (brideWatermark) {
       brideWatermark.style.display = showBrideWayang ? "block" : "none";
@@ -469,7 +479,13 @@ const MainApp = (function () {
   function setImage(elementId, src, altText) {
     const el = document.getElementById(elementId);
     if (el) {
-      if (src) el.src = normalizeMediaUrl(src, "image");
+      if (src) {
+        let clean = normalizeMediaUrl(src, "image");
+        if (clean && !clean.startsWith("data:") && !clean.includes("?") && clean.includes("assets/")) {
+          clean += `?v=${Date.now()}`;
+        }
+        el.src = clean;
+      }
       if (altText) el.alt = altText;
       el.onerror = function () {
         this.onerror = null;
@@ -496,7 +512,10 @@ const MainApp = (function () {
       itemEl.className = `timeline-item ${isEven ? "left" : "right"} animate-on-scroll`;
 
       const imgSrc = item.image || item.photo || item.src;
-      const cleanImg = imgSrc ? normalizeMediaUrl(imgSrc, "image") : "";
+      let cleanImg = imgSrc ? normalizeMediaUrl(imgSrc, "image") : "";
+      if (cleanImg && !cleanImg.startsWith("data:") && !cleanImg.includes("?") && cleanImg.includes("assets/")) {
+        cleanImg += `?v=${Date.now()}`;
+      }
 
       itemEl.innerHTML = `
         <div class="timeline-dot" title="${escapeHtml(item.year || '')}">
@@ -571,20 +590,27 @@ const MainApp = (function () {
 
     galleryItems.forEach((item, index) => {
       const col = document.createElement("div");
-      col.className = "gallery-item animate-on-scroll";
+      col.className = "gallery-item animate-on-scroll animated";
 
       const imgWrapper = document.createElement("div");
       imgWrapper.className = "gallery-img-wrapper";
 
-      const cleanSrc = normalizeMediaUrl(item.src || "", "image");
+      let cleanSrc = normalizeMediaUrl(item.src || "", "image");
+      if (cleanSrc && !cleanSrc.startsWith("data:") && !cleanSrc.includes("?") && cleanSrc.includes("assets/")) {
+        cleanSrc += `?v=${Date.now()}`;
+      }
       const img = document.createElement("img");
       img.src = cleanSrc || "assets/images/background.jpg";
       img.alt = item.caption || `Foto Galeri ${index + 1}`;
-      img.className = "photo-reveal";
+      img.className = "photo-reveal revealed";
       img.loading = "lazy";
       img.onerror = function () {
         this.onerror = null;
         this.src = "assets/images/background.jpg";
+        this.classList.add("revealed");
+      };
+      img.onload = function () {
+        this.classList.add("revealed");
       };
 
       const overlay = document.createElement("div");
@@ -1504,6 +1530,14 @@ const MainApp = (function () {
   }
 
   async function init() {
+    // 0. Bersihkan data mock/stale lama di localStorage jika mengandung nama pengujian
+    try {
+      const localCustom = localStorage.getItem("wedding_custom_settings");
+      if (localCustom && /Prabowo|Teddy|Dimas|Anindya|agus|agis/i.test(localCustom)) {
+        localStorage.removeItem("wedding_custom_settings");
+      }
+    } catch (_) {}
+
     // 1. Setup fitur pembuka cover LANGSUNG secara sinkron agar tombol selalu siap diklik
     setupCoverUnlock();
 

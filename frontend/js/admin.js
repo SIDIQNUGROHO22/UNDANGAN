@@ -2077,6 +2077,7 @@ const AdminApp = (function () {
     const groomCallVal = getVal("cfg-groom-call", "Sidiq");
     const brideCallVal = getVal("cfg-bride-call", "Anisa");
     const fallbackCouple = `${groomCallVal} & ${brideCallVal}`;
+    updated.weddingTitle = `The Wedding of ${fallbackCouple} - Undangan Pernikahan Digital`;
 
     updated.footer = {
       coupleNames: getVal("cfg-footer-couple-names", fallbackCouple),
@@ -3408,10 +3409,13 @@ const AdminApp = (function () {
     initAdminQrGenerator();
     initSettingsForm();
 
-    // Pastikan tombol Buka Undangan selalu mengarah ke GitHub Pages publik resmi
+    // Pastikan tombol Buka Undangan selalu mengarah ke URL yang sesuai (lokal jika sedang di localhost/LAN)
     const viewSiteBtn = document.querySelector(".btn-view-site") || document.getElementById("btn-view-site");
     if (viewSiteBtn) {
-      viewSiteBtn.href = INVITATION_PUBLIC_URL;
+      const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.hostname.startsWith('192.168.') || window.location.hostname.startsWith('10.');
+      const localTargetUrl = window.location.port ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}/` : '/';
+      viewSiteBtn.href = isLocalHost ? localTargetUrl : INVITATION_PUBLIC_URL;
+      viewSiteBtn.title = isLocalHost ? "Buka website undangan lokal" : "Buka website undangan resmi (GitHub Pages)";
     }
 
     // Handler Tombol Refresh Data Real-Time di Ringkasan

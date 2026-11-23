@@ -65,9 +65,18 @@ const API = {
 
   // 1. DATA KONFIGURASI UNDANGAN
   async getInvitationConfig() {
+    // Bersihkan data sampah atau nama mock di localStorage jika ada
+    try {
+      const localCustom = localStorage.getItem('wedding_custom_settings');
+      if (localCustom && /Prabowo|Teddy|Dimas|Anindya|agus|agis/i.test(localCustom)) {
+        localStorage.removeItem('wedding_custom_settings');
+      }
+    } catch (_) {}
+
     try {
       const res = await this.request('/api/invitation');
       if (res && res.success && res.data) {
+        this.safeSetLocalStorage('wedding_custom_settings', JSON.stringify(res.data));
         return res.data;
       }
     } catch (_) {}

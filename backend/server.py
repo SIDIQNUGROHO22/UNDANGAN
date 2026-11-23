@@ -150,6 +150,8 @@ def update_settings(new_data):
         elif client_countdown.get('targetDate') == '2026-12-19T08:00:00':
             current['countdown']['targetDate'] = parsed_akad_iso
 
+    # Pastikan data uji tidak masuk
+    current.pop('test', None)
     write_json(FILES['settings'], current)
     
     # Sync config.js
@@ -164,8 +166,8 @@ def update_settings(new_data):
 
     # Sinkronisasi Favicon langsung ke tag HTML di ketiga direktori
     ta = current.get('themeAssets', {})
-    fav_inv = ta.get('favicon') or 'assets/images/gunungan-gold.svg'
-    fav_adm = ta.get('adminFavicon') or 'assets/images/gunungan-gold.svg'
+    fav_inv = ta.get('favicon') or 'assets/images/favicon.png'
+    fav_adm = ta.get('adminFavicon') or 'assets/images/favicon-admin.png'
 
     def update_html_fav(html_path, fav_val):
         if not os.path.exists(html_path):
@@ -951,8 +953,9 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
         self.send_json({'success': False, 'message': 'Endpoint DELETE tidak ditemukan'}, 404)
 
     def serve_static_file(self, rel_path, head_only=False):
-        # Normalisasi path
-        clean_path = rel_path.lstrip('/')
+        # Normalisasi path dan decode URL encoding (%20 -> spasi, dll)
+        decoded_rel = urllib.parse.unquote(rel_path)
+        clean_path = decoded_rel.lstrip('/')
         if not clean_path or clean_path == '/':
             file_name = 'index.html'
         elif clean_path in ['admin', 'admin/', 'admin/index.html']:
@@ -1065,7 +1068,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-Type', mime_type)
             self.send_header('Content-Length', str(len(content)))
-            if file_path.endswith(('.js', '.css', '.html', '.json', '.ico', '.png', '.svg', '.webp')):
+            if file_path.endswith(('.js', '.css', '.html', '.json', '.ico', '.png', '.svg', '.webp', '.jpg', '.jpeg', '.gif')):
                 self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
                 self.send_header('Pragma', 'no-cache')
                 self.send_header('Expires', '0')

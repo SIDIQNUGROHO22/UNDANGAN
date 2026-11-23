@@ -30,7 +30,8 @@ const GuestHandler = (function () {
     }
 
     // Fallback jika tidak ada parameter nama di URL
-    return WEDDING_CONFIG.guest.defaultName || "Tamu Undangan";
+    const guestCfg = window.CURRENT_CONFIG?.guest || (typeof WEDDING_CONFIG !== "undefined" ? WEDDING_CONFIG.guest : null);
+    return guestCfg?.defaultName || "Tamu Undangan";
   }
 
   /**
@@ -38,6 +39,9 @@ const GuestHandler = (function () {
    */
   function displayGuestName() {
     const guestName = getGuestNameFromUrl();
+    const guestCfg = window.CURRENT_CONFIG?.guest || (typeof WEDDING_CONFIG !== "undefined" ? WEDDING_CONFIG.guest : null);
+    const defaultName = guestCfg?.defaultName || "Tamu Undangan";
+    const prefixGreeting = guestCfg?.prefixGreeting || "Kepada Yth. Bapak/Ibu/Saudara/i:";
 
     // 1. Tampilkan di Halaman Sampul (Cover)
     const coverGuestEl = document.getElementById("cover-guest-name");
@@ -48,18 +52,18 @@ const GuestHandler = (function () {
     // 2. Tampilkan di Salam Pembuka Sampul
     const coverGreetingEl = document.getElementById("cover-guest-greeting");
     if (coverGreetingEl) {
-      coverGreetingEl.textContent = WEDDING_CONFIG.guest.prefixGreeting || "Kepada Yth. Bapak/Ibu/Saudara/i:";
+      coverGreetingEl.textContent = prefixGreeting;
     }
 
     // 3. Otomatis isi kolom nama di formulir RSVP jika bukan nama default
     const rsvpNameInput = document.getElementById("rsvp-name");
-    if (rsvpNameInput && guestName !== (WEDDING_CONFIG.guest.defaultName || "Tamu Undangan")) {
+    if (rsvpNameInput && guestName !== defaultName) {
       rsvpNameInput.value = guestName;
     }
 
     // 4. Otomatis isi kolom nama di Buku Tamu jika bukan default
     const guestbookNameInput = document.getElementById("guestbook-name");
-    if (guestbookNameInput && guestName !== (WEDDING_CONFIG.guest.defaultName || "Tamu Undangan")) {
+    if (guestbookNameInput && guestName !== defaultName) {
       guestbookNameInput.value = guestName;
     }
   }

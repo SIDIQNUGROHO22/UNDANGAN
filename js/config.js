@@ -7,7 +7,7 @@ const WEDDING_CONFIG = {
     "groom": {
       "callName": "Sidiq",
       "fullName": "Sidiq Nugroho",
-      "fatherName": "bambang",
+      "fatherName": "Bpk. Bambang Sutrisno",
       "motherName": "Ibu Siti Rahmawati",
       "childOrder": "Putra pertama dari",
       "instagram": "https://instagram.com/",
@@ -17,7 +17,7 @@ const WEDDING_CONFIG = {
     "bride": {
       "callName": "Anisa",
       "fullName": "Anisa Azzahroh, S.Pd.",
-      "fatherName": "michael",
+      "fatherName": "Bpk. H. Hendra Wijaya",
       "motherName": "Ibu Hj. Nurul Hasanah",
       "childOrder": "Putri kedua dari",
       "instagram": "https://instagram.com/",
@@ -104,19 +104,11 @@ const WEDDING_CONFIG = {
       "caption": "Saling menatap masa depan dengan penuh rasa syukur dan optimisme."
     },
     {
-      "src": "assets/images/gallery-1.jpg",
-      "caption": "Momen Bahagia Mempelai"
-    },
-    {
       "src": "assets/images/gallery-3.jpg",
       "caption": "Potret bahagia menyongsong lembaran hidup baru."
     },
     {
-      "src": "assets/images/gallery-1.jpg",
-      "caption": "Momen Bahagia Mempelai"
-    },
-    {
-      "src": "https://pin.it/1DgF8XTSN",
+      "src": "assets/images/gallery-4.jpg",
       "caption": "Bergandengan tangan dalam ikatan kasih yang tulus."
     }
   ],
@@ -131,9 +123,9 @@ const WEDDING_CONFIG = {
   },
   "themeAssets": {
     "showGunungan": true,
-    "gununganImage": "https://pin.it/1DgF8XTSN",
-    "gununganLeftImage": "https://pin.it/1DgF8XTSN",
-    "gununganRightImage": "https://pin.it/1DgF8XTSN",
+    "gununganImage": "assets/images/gunungan-gold.svg",
+    "gununganLeftImage": "assets/images/gunungan-gold.svg",
+    "gununganRightImage": "assets/images/gunungan-gold.svg",
     "gununganRightMirror": true,
     "gununganCenterImage": "assets/images/gunungan-gold.svg",
     "wayangGroomImage": "assets/images/wayang-arjuna.png",
@@ -143,8 +135,8 @@ const WEDDING_CONFIG = {
     "cornerOrnamentImage": "assets/images/javanese-corner.svg",
     "showCorners": true,
     "showCoverWayang": true,
-    "favicon": "assets/images/gunungan-gold.svg",
-    "adminFavicon": "assets/images/gunungan-gold.svg",
+    "favicon": "assets/images/favicon.png",
+    "adminFavicon": "assets/images/favicon-admin.png",
     "showGununganCenter": true,
     "coverWayangGroomImage": "assets/images/wayang-arjuna.png",
     "coverWayangBrideImage": "assets/images/wayang-srikandi.png",
@@ -216,6 +208,7 @@ const WEDDING_CONFIG = {
     "copyright": "© 2026 Sidiq & Anisa Wedding Invitation. Dibuat dengan penuh cinta."
   }
 };
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = WEDDING_CONFIG;
 }

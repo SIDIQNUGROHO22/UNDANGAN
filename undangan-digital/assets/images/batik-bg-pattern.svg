@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120">
+  <defs>
+    <!-- Gradien Emas Prada Halus -->
+    <linearGradient id="goldBatik" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dfb15b" stop-opacity="0.35"/>
+      <stop offset="50%" stop-color="#c59239" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#fae19c" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Base Grid Batik Kawung Jawa Tradisional -->
+  <!-- Lingkaran 4 Sisi (Kawung Prabu) -->
+  <g fill="none" stroke="url(#goldBatik)" stroke-width="1.2">
+    <!-- Center Kawung -->
+    <ellipse cx="60" cy="40" rx="14" ry="24" transform="rotate(45 60 40)"/>
+    <ellipse cx="60" cy="80" rx="14" ry="24" transform="rotate(-45 60 80)"/>
+    <ellipse cx="40" cy="60" rx="14" ry="24" transform="rotate(-45 40 60)"/>
+    <ellipse cx="80" cy="60" rx="14" ry="24" transform="rotate(45 80 60)"/>
+
+    <!-- Corner Kawungs (Seamless Repeating) -->
+    <!-- Top-Left -->
+    <ellipse cx="0" cy="0" rx="12" ry="20" transform="rotate(45 0 0)"/>
+    <ellipse cx="0" cy="0" rx="12" ry="20" transform="rotate(-45 0 0)"/>
+    <!-- Top-Right -->
+    <ellipse cx="120" cy="0" rx="12" ry="20" transform="rotate(45 120 0)"/>
+    <ellipse cx="120" cy="0" rx="12" ry="20" transform="rotate(-45 120 0)"/>
+    <!-- Bottom-Left -->
+    <ellipse cx="0" cy="120" rx="12" ry="20" transform="rotate(45 0 120)"/>
+    <ellipse cx="0" cy="120" rx="12" ry="20" transform="rotate(-45 0 120)"/>
+    <!-- Bottom-Right -->
+    <ellipse cx="120" cy="120" rx="12" ry="20" transform="rotate(45 120 120)"/>
+    <ellipse cx="120" cy="120" rx="12" ry="20" transform="rotate(-45 120 120)"/>
+
+    <!-- Garis Isen-Isen Parang / Cecek Jawa di Dalam Kelopak -->
+    <circle cx="60" cy="60" r="4" fill="#dfb15b" fill-opacity="0.3"/>
+    <circle cx="0" cy="0" r="3" fill="#dfb15b" fill-opacity="0.3"/>
+    <circle cx="120" cy="0" r="3" fill="#dfb15b" fill-opacity="0.3"/>
+    <circle cx="0" cy="120" r="3" fill="#dfb15b" fill-opacity="0.3"/>
+    <circle cx="120" cy="120" r="3" fill="#dfb15b" fill-opacity="0.3"/>
+
+    <!-- Silang Melati Pusat -->
+    <line x1="55" y1="60" x2="65" y2="60" stroke="#fae19c" stroke-opacity="0.4"/>
+    <line x1="60" y1="55" x2="60" y2="65" stroke="#fae19c" stroke-opacity="0.4"/>
+  </g>
+</svg>
+

@@ -303,7 +303,7 @@ const MainApp = (function () {
     }
 
     // 4. Siluet Wayang Mempelai Wanita (Bride)
-    const defaultBride = "assets/images/wayang-kamaratih.svg";
+    const defaultBride = "assets/images/wayang-srikandi.png";
     const brideWatermark = document.getElementById("wayang-bride-watermark");
     const showBrideWayang = assets.showWayangBride !== false;
     const brideWayangSrc = normalizeMediaUrl(assets.wayangBrideImage || defaultBride, "image");
@@ -326,7 +326,7 @@ const MainApp = (function () {
     const coverWayangGroom = document.getElementById("cover-wayang-groom-mini");
     const coverWayangBride = document.getElementById("cover-wayang-bride-mini");
     const defaultCoverGroom = "assets/images/wayang-arjuna.png";
-    const defaultCoverBride = "assets/images/wayang-kamaratih.svg";
+    const defaultCoverBride = "assets/images/wayang-srikandi.png";
     const coverGroomSrc = normalizeMediaUrl(assets.coverWayangGroomImage || assets.wayangGroomImage || defaultCoverGroom, "image");
     const coverBrideSrc = normalizeMediaUrl(assets.coverWayangBrideImage || assets.wayangBrideImage || defaultCoverBride, "image");
 

@@ -733,12 +733,100 @@ const AdminApp = (function () {
     const confirmInput = document.getElementById("acc-admin-password-confirm");
     const alertBox = document.getElementById("account-modal-alert");
 
-    const openModal = () => {
+    // Elemen Tampilkan / Salin Kata Sandi Saat Ini
+    let currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+    let isCurrentPwdVisible = false;
+
+    const currentPwdDisplay = document.getElementById("current-pwd-display");
+    const btnToggleCurrent = document.getElementById("btn-toggle-current-pwd");
+    const lblToggleCurrent = document.getElementById("lbl-toggle-current-pwd");
+    const btnCopyCurrent = document.getElementById("btn-copy-current-pwd");
+
+    function renderCurrentPwd() {
+      if (!currentPwdDisplay) return;
+      if (isCurrentPwdVisible) {
+        currentPwdDisplay.textContent = currentRawPassword;
+        currentPwdDisplay.style.letterSpacing = "0.5px";
+        if (lblToggleCurrent) lblToggleCurrent.textContent = "Sembunyikan";
+        if (btnToggleCurrent) {
+          btnToggleCurrent.title = "Sembunyikan Kata Sandi Saat Ini";
+          const ic = btnToggleCurrent.querySelector("i");
+          if (ic) {
+            ic.classList.remove("fa-eye");
+            ic.classList.add("fa-eye-slash");
+          }
+        }
+      } else {
+        currentPwdDisplay.textContent = "••••••••";
+        currentPwdDisplay.style.letterSpacing = "2px";
+        if (lblToggleCurrent) lblToggleCurrent.textContent = "Tampilkan";
+        if (btnToggleCurrent) {
+          btnToggleCurrent.title = "Tampilkan Kata Sandi Saat Ini";
+          const ic = btnToggleCurrent.querySelector("i");
+          if (ic) {
+            ic.classList.remove("fa-eye-slash");
+            ic.classList.add("fa-eye");
+          }
+        }
+      }
+    }
+
+    if (btnToggleCurrent) {
+      btnToggleCurrent.addEventListener("click", function (e) {
+        e.preventDefault();
+        isCurrentPwdVisible = !isCurrentPwdVisible;
+        renderCurrentPwd();
+      });
+    }
+
+    if (btnCopyCurrent) {
+      btnCopyCurrent.addEventListener("click", function (e) {
+        e.preventDefault();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(currentRawPassword).then(() => {
+            showToast("Kata sandi saat ini berhasil disalin ke clipboard!");
+          }).catch(() => {
+            showToast("Gagal menyalin kata sandi.");
+          });
+        }
+      });
+    }
+
+    const openModal = async () => {
       const currentEmail = localStorage.getItem("wedding_admin_email") || "admin";
       if (emailInput) emailInput.value = currentEmail;
-      if (passInput) passInput.value = "";
-      if (confirmInput) confirmInput.value = "";
+      if (passInput) {
+        passInput.value = "";
+        passInput.type = "password";
+      }
+      if (confirmInput) {
+        confirmInput.value = "";
+        confirmInput.type = "password";
+      }
+      if (modal) {
+        modal.querySelectorAll(".btn-toggle-pwd i").forEach(ic => {
+          ic.classList.remove("fa-eye-slash");
+          ic.classList.add("fa-eye");
+        });
+      }
       if (alertBox) alertBox.style.display = "none";
+
+      // Coba ambil password terbaru dari backend jika tersedia
+      try {
+        const me = await window.API.checkAdminAuth();
+        if (me && me.password) {
+          currentRawPassword = me.password;
+          localStorage.setItem("wedding_admin_password", me.password);
+        } else {
+          currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+        }
+      } catch (_) {
+        currentRawPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+      }
+      isCurrentPwdVisible = false;
+      renderCurrentPwd();
+      initPasswordToggles();
+
       if (modal) modal.classList.add("active");
     };
 
@@ -797,7 +885,9 @@ const AdminApp = (function () {
             const activeIdentifier = newEmail || res.username || res.email;
             localStorage.setItem("wedding_admin_email", activeIdentifier);
             if (newPassword) {
+              currentRawPassword = newPassword;
               localStorage.setItem("wedding_admin_password", newPassword);
+              renderCurrentPwd();
             }
 
             const navbarEmail = document.getElementById("navbar-user-email");
@@ -840,7 +930,14 @@ const AdminApp = (function () {
   // Helper Toggle Lihat/Sembunyikan Password
   function initPasswordToggles() {
     document.querySelectorAll(".btn-toggle-pwd").forEach(btn => {
-      btn.addEventListener("click", function () {
+      const clone = btn.cloneNode(true);
+      btn.parentNode.replaceChild(clone, btn);
+    });
+
+    document.querySelectorAll(".btn-toggle-pwd").forEach(btn => {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        e.stopPropagation();
         const targetId = this.getAttribute("data-target");
         const input = document.getElementById(targetId);
         if (!input) return;
@@ -852,13 +949,15 @@ const AdminApp = (function () {
             icon.classList.add("fa-eye-slash");
           }
           this.title = "Sembunyikan kata sandi";
+          this.setAttribute("aria-label", "Sembunyikan kata sandi");
         } else {
           input.type = "password";
           if (icon) {
             icon.classList.remove("fa-eye-slash");
             icon.classList.add("fa-eye");
           }
-          this.title = "Lihat kata sandi";
+          this.title = "Tampilkan kata sandi";
+          this.setAttribute("aria-label", "Tampilkan kata sandi");
         }
       });
     });

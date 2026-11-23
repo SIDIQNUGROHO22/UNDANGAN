@@ -74,9 +74,9 @@
 
         <div class="form-group">
           <label for="admin-password" class="form-label">Password</label>
-          <div style="position: relative;">
-            <input type="password" id="admin-password" class="form-control" placeholder="Masukkan kata sandi" required autocomplete="current-password" style="padding-right: 40px;">
-            <button type="button" class="btn-toggle-pwd" data-target="admin-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;" title="Lihat/Sembunyikan Password" aria-label="Lihat Password">
+          <div class="password-input-wrapper">
+            <input type="password" id="admin-password" class="form-control" placeholder="Masukkan kata sandi" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pwd" data-target="admin-password" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi">
               <i class="fas fa-eye"></i>
             </button>
           </div>
@@ -1889,6 +1889,22 @@ Tersimpan di Sistem Server Undangan Digital</pre>
 
       <div id="account-modal-alert" class="login-alert" style="display: none; margin-bottom: 1rem;"></div>
 
+      <!-- Kartu Info Kata Sandi Dasbor Saat Ini -->
+      <div style="background: rgba(223, 177, 91, 0.08); border: 1px dashed rgba(223, 177, 91, 0.45); border-radius: 8px; padding: 12px 14px; margin-bottom: 1.25rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+          <span style="font-size: 0.8rem; color: var(--admin-text-muted); font-weight: 600;">Kata Sandi Dasbor Saat Ini:</span>
+          <div style="display: flex; gap: 6px;">
+            <button type="button" class="btn-sm" id="btn-toggle-current-pwd" style="padding: 4px 10px; font-size: 0.75rem; background: #fff; border: 1px solid #cbd5e1; color: #334155; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;" title="Tampilkan/Sembunyikan Kata Sandi Saat Ini">
+              <i class="fas fa-eye"></i> <span id="lbl-toggle-current-pwd">Tampilkan</span>
+            </button>
+            <button type="button" class="btn-sm" id="btn-copy-current-pwd" style="padding: 4px 10px; font-size: 0.75rem; background: #fff; border: 1px solid #cbd5e1; color: #334155; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 600;" title="Salin Kata Sandi">
+              <i class="far fa-copy"></i> Salin
+            </button>
+          </div>
+        </div>
+        <div id="current-pwd-display" style="font-family: 'Courier New', monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; color: var(--admin-text-dark, #2c2a29); word-break: break-all;">••••••••</div>
+      </div>
+
       <form id="admin-account-form">
         <div class="form-group">
           <label for="acc-admin-email" class="form-label">Username / Email Baru</label>
@@ -1898,9 +1914,9 @@ Tersimpan di Sistem Server Undangan Digital</pre>
 
         <div class="form-group">
           <label for="acc-admin-password" class="form-label">Password Baru (Opsional)</label>
-          <div style="position: relative;">
-            <input type="password" id="acc-admin-password" class="form-control" placeholder="Kosongkan jika password tidak ingin diganti" minlength="6" autocomplete="new-password" style="padding-right: 40px;">
-            <button type="button" class="btn-toggle-pwd" data-target="acc-admin-password" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;" title="Lihat/Sembunyikan Password" aria-label="Lihat Password">
+          <div class="password-input-wrapper">
+            <input type="password" id="acc-admin-password" class="form-control" placeholder="Kosongkan jika password tidak ingin diganti" minlength="6" autocomplete="new-password">
+            <button type="button" class="btn-toggle-pwd" data-target="acc-admin-password" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi">
               <i class="fas fa-eye"></i>
             </button>
           </div>
@@ -1909,9 +1925,9 @@ Tersimpan di Sistem Server Undangan Digital</pre>
 
         <div class="form-group">
           <label for="acc-admin-password-confirm" class="form-label">Konfirmasi Password Baru</label>
-          <div style="position: relative;">
-            <input type="password" id="acc-admin-password-confirm" class="form-control" placeholder="Ulangi password baru (jika diubah)" minlength="6" autocomplete="new-password" style="padding-right: 40px;">
-            <button type="button" class="btn-toggle-pwd" data-target="acc-admin-password-confirm" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #94a3b8; cursor: pointer; padding: 4px;" title="Lihat/Sembunyikan Password" aria-label="Lihat Password">
+          <div class="password-input-wrapper">
+            <input type="password" id="acc-admin-password-confirm" class="form-control" placeholder="Ulangi password baru (jika diubah)" minlength="6" autocomplete="new-password">
+            <button type="button" class="btn-toggle-pwd" data-target="acc-admin-password-confirm" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi">
               <i class="fas fa-eye"></i>
             </button>
           </div>

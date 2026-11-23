@@ -517,7 +517,7 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
                 return
             admin = get_admin_data()
             curr_user = admin.get('username') or admin.get('email')
-            self.send_json({'success': True, 'email': curr_user, 'username': curr_user}, head_only=head_only)
+            self.send_json({'success': True, 'email': curr_user, 'username': curr_user, 'password': admin.get('password')}, head_only=head_only)
             return
 
         # 7. EXPORT EXCEL & CSV

@@ -279,15 +279,21 @@ const MainApp = (function () {
     if (gununganCenter) gununganCenter.style.display = (showGunungan && showGununganCenter) ? "block" : "none";
 
     if (gununganLeftImg && leftSrc) {
-      gununganLeftImg.src = leftSrc;
+      let finalLeft = leftSrc;
+      if (!finalLeft.startsWith("data:") && !finalLeft.includes("?") && finalLeft.includes("assets/")) finalLeft += `?v=${Date.now()}`;
+      gununganLeftImg.src = finalLeft;
       gununganLeftImg.onerror = function () { this.onerror = null; this.src = defaultGunungan; };
     }
     if (gununganRightImg && rightSrc) {
-      gununganRightImg.src = rightSrc;
+      let finalRight = rightSrc;
+      if (!finalRight.startsWith("data:") && !finalRight.includes("?") && finalRight.includes("assets/")) finalRight += `?v=${Date.now()}`;
+      gununganRightImg.src = finalRight;
       gununganRightImg.onerror = function () { this.onerror = null; this.src = defaultGunungan; };
     }
     if (gununganCenterImg && centerSrc) {
-      gununganCenterImg.src = centerSrc;
+      let finalCenter = centerSrc;
+      if (!finalCenter.startsWith("data:") && !finalCenter.includes("?") && finalCenter.includes("assets/")) finalCenter += `?v=${Date.now()}`;
+      gununganCenterImg.src = finalCenter;
       gununganCenterImg.onerror = function () { this.onerror = null; this.src = defaultGunungan; };
     }
 
@@ -367,7 +373,10 @@ const MainApp = (function () {
     const mainBgImg = document.getElementById("main-bg-image");
     const bgPhotoSrc = assets.backgroundPhoto || activeConfig?.couple?.backgroundPhoto;
     if (mainBgImg && bgPhotoSrc) {
-      const bgSrc = normalizeMediaUrl(bgPhotoSrc, "image");
+      let bgSrc = normalizeMediaUrl(bgPhotoSrc, "image");
+      if (bgSrc && !bgSrc.startsWith("data:") && !bgSrc.includes("?") && bgSrc.includes("assets/")) {
+        bgSrc += `?v=${Date.now()}`;
+      }
       mainBgImg.src = bgSrc;
       mainBgImg.onerror = function () { this.onerror = null; this.src = "assets/images/background.jpg"; };
     }

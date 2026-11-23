@@ -1851,7 +1851,10 @@ const AdminApp = (function () {
     const setImg = (inputVal, previewId, fallback) => {
       const img = document.getElementById(previewId);
       if (img) {
-        const cleanUrl = normalizeMediaUrl((inputVal && inputVal.trim()) ? inputVal.trim() : fallback, "image");
+        let cleanUrl = normalizeMediaUrl((inputVal && inputVal.trim()) ? inputVal.trim() : fallback, "image");
+        if (cleanUrl && !cleanUrl.startsWith("data:") && !cleanUrl.includes("?") && cleanUrl.includes("assets/")) {
+          cleanUrl += `?v=${Date.now()}`;
+        }
         img.src = cleanUrl;
         img.onerror = function() { this.src = fallback; };
       }
@@ -1891,7 +1894,10 @@ const AdminApp = (function () {
     const setImg = (inputVal, previewId, fallback) => {
       const img = document.getElementById(previewId);
       if (img) {
-        const cleanUrl = normalizeMediaUrl((inputVal && inputVal.trim()) ? inputVal.trim() : fallback, "image");
+        let cleanUrl = normalizeMediaUrl((inputVal && inputVal.trim()) ? inputVal.trim() : fallback, "image");
+        if (cleanUrl && !cleanUrl.startsWith("data:") && !cleanUrl.includes("?") && cleanUrl.includes("assets/")) {
+          cleanUrl += `?v=${Date.now()}`;
+        }
         img.src = cleanUrl;
         img.onerror = function() { this.src = fallback; };
       }
@@ -2580,6 +2586,21 @@ const AdminApp = (function () {
         document.querySelectorAll(".btn-preset-admin-logo").forEach(b => b.classList.remove("active"));
         this.classList.add("active");
         showToast("Preset logo admin diterapkan!");
+      });
+    });
+
+    // Listener Tombol Preset Cepat Background Isi Undangan (1-Klik)
+    document.querySelectorAll(".btn-preset-bg-photo").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const src = this.getAttribute("data-src");
+        if (!src) return;
+        const input = document.getElementById("cfg-background-photo");
+        if (input) {
+          input.value = src;
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+          input.dispatchEvent(new Event("change", { bubbles: true }));
+        }
+        saveCurrentSettings({ toastMsg: "✨ Foto background isi undangan berhasil diterapkan!" });
       });
     });
 

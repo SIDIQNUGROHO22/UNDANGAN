@@ -144,7 +144,7 @@ const WEDDING_CONFIG = {
     "adminTitle": "PANEL ADMIN",
     "backgroundPhoto": "assets/images/background.jpg",
     "backgroundOverlay": "medium",
-    "showBackgroundBatik": true
+    "showBackgroundBatik": false
   },
   "adminLogo": "assets/images/gunungan-gold.svg",
   "adminTitle": "PANEL ADMIN",

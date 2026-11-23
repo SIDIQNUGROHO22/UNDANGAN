@@ -3412,6 +3412,7 @@ const AdminApp = (function () {
     initAdminWaBroadcast();
     initAdminQrGenerator();
     initSettingsForm();
+    initQuickScroll();
 
     // Pastikan tombol Buka Undangan selalu mengarah ke URL yang sesuai (lokal jika sedang di localhost/LAN)
     const viewSiteBtn = document.querySelector(".btn-view-site") || document.getElementById("btn-view-site");
@@ -3420,6 +3421,58 @@ const AdminApp = (function () {
       const localTargetUrl = window.location.port ? `${window.location.protocol}//${window.location.hostname}:${window.location.port}/` : '/';
       viewSiteBtn.href = isLocalHost ? localTargetUrl : INVITATION_PUBLIC_URL;
       viewSiteBtn.title = isLocalHost ? "Buka website undangan lokal" : "Buka website undangan resmi (GitHub Pages)";
+    }
+
+    // Shortcut Tombol Navigasi Cepat (Scroll Atas & Bawah)
+    function initQuickScroll() {
+      const btnTop = document.getElementById("btn-scroll-top");
+      const btnBottom = document.getElementById("btn-scroll-bottom");
+
+      if (btnTop) {
+        btnTop.addEventListener("click", () => {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+      }
+
+      if (btnBottom) {
+        btnBottom.addEventListener("click", () => {
+          const targetBottom = document.documentElement.scrollHeight || document.body.scrollHeight;
+          window.scrollTo({ top: targetBottom, behavior: "smooth" });
+        });
+      }
+
+      // Keyboard Shortcut: Home (ke paling atas) & End (ke paling bawah) saat tidak sedang mengetik
+      window.addEventListener("keydown", (e) => {
+        const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : "";
+        if (activeTag === "input" || activeTag === "textarea" || activeTag === "select") {
+          return;
+        }
+        if (e.key === "Home") {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else if (e.key === "End") {
+          e.preventDefault();
+          const targetBottom = document.documentElement.scrollHeight || document.body.scrollHeight;
+          window.scrollTo({ top: targetBottom, behavior: "smooth" });
+        }
+      });
+
+      // Sesuaikan kontras/transparansi tombol saat berada di puncak atau dasar halaman
+      const updateScrollVisibility = () => {
+        const scrollY = window.scrollY || window.pageYOffset;
+        const maxScroll = (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight;
+
+        if (btnTop) {
+          btnTop.style.opacity = scrollY > 80 ? "1" : "0.45";
+        }
+
+        if (btnBottom) {
+          btnBottom.style.opacity = (maxScroll - scrollY) > 80 ? "1" : "0.45";
+        }
+      };
+
+      window.addEventListener("scroll", updateScrollVisibility, { passive: true });
+      updateScrollVisibility();
     }
 
     // Handler Tombol Refresh Data Real-Time di Ringkasan

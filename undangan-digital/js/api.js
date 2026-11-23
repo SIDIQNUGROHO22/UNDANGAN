@@ -501,25 +501,38 @@ const API = {
 
   // 6. ADMIN AUTH
   async adminLogin(email, password) {
+    const cleanEmail = (email || '').trim();
+    const cleanPassword = (password || '').trim();
     try {
-      return await this.request('/api/auth/login', {
+      const res = await this.request('/api/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email: cleanEmail, password: cleanPassword })
       });
+      if (res && res.success) {
+        const identifier = res.username || res.email || cleanEmail;
+        localStorage.setItem('wedding_admin_email', identifier);
+        localStorage.setItem('wedding_admin_password', cleanPassword);
+      }
+      return res;
     } catch (err) {
       // Fallback offline jika server backend belum dinyalakan atau dibuka via file://
-      const cleanEmail = (email || '').trim().toLowerCase();
+      const inputUser = cleanEmail.toLowerCase();
       const savedEmail = (localStorage.getItem('wedding_admin_email') || 'admin@wedding.com').toLowerCase();
       const savedPassword = localStorage.getItem('wedding_admin_password') || 'admin123';
 
-      if ((cleanEmail === 'admin@wedding.com' && password === 'admin123') ||
-          (cleanEmail === savedEmail && password === savedPassword)) {
+      const isUserMatch = (inputUser === savedEmail) || (inputUser === 'admin') || (inputUser === 'admin@wedding.com');
+      const isPassMatch = (cleanPassword === savedPassword) || (savedEmail === 'admin@wedding.com' && cleanPassword === 'admin123');
+
+      if (isUserMatch && isPassMatch) {
         const dummyToken = 'offline-token-' + Date.now();
         localStorage.setItem('wedding_is_offline', 'true');
+        localStorage.setItem('wedding_admin_email', cleanEmail);
+        localStorage.setItem('wedding_admin_password', cleanPassword);
         return {
           success: true,
           token: dummyToken,
           email: cleanEmail,
+          username: cleanEmail,
           isOffline: true,
           message: 'Login berhasil dalam mode mandiri/offline.'
         };
@@ -532,12 +545,15 @@ const API = {
     try {
       const res = await this.request('/api/auth/me');
       localStorage.removeItem('wedding_is_offline');
+      if (res && (res.email || res.username)) {
+        localStorage.setItem('wedding_admin_email', res.username || res.email);
+      }
       return res;
     } catch (err) {
       const token = localStorage.getItem('wedding_admin_token');
       const email = localStorage.getItem('wedding_admin_email') || 'admin@wedding.com';
       if (token && (token.startsWith('offline-token-') || localStorage.getItem('wedding_is_offline') === 'true')) {
-        return { success: true, email: email, isOffline: true };
+        return { success: true, email: email, username: email, isOffline: true };
       }
       throw err;
     }
@@ -545,11 +561,16 @@ const API = {
 
   async updateCredentials(email, password) {
     const cleanEmail = (email || '').trim();
-    const cleanPassword = (password || '').trim();
+    const cleanPassword = (password && typeof password === 'string') ? password.trim() : null;
+    const payload = { email: cleanEmail };
+    if (cleanPassword) {
+      payload.password = cleanPassword;
+    }
+
     try {
       const res = await this.request('/api/auth/credentials', {
         method: 'POST',
-        body: JSON.stringify({ email: cleanEmail, password: cleanPassword })
+        body: JSON.stringify(payload)
       });
       if (cleanEmail) localStorage.setItem('wedding_admin_email', cleanEmail);
       if (cleanPassword) localStorage.setItem('wedding_admin_password', cleanPassword);
@@ -561,6 +582,7 @@ const API = {
       return {
         success: true,
         email: cleanEmail,
+        username: cleanEmail,
         isOffline: true,
         message: 'Kredensial login admin berhasil diperbarui secara lokal!'
       };
@@ -572,8 +594,8 @@ const API = {
       await this.request('/api/auth/logout', { method: 'POST' });
     } catch (_) {}
     localStorage.removeItem('wedding_admin_token');
-    localStorage.removeItem('wedding_admin_email');
     localStorage.removeItem('wedding_is_offline');
+    // wedding_admin_email tetap dipertahankan agar form login tetap mengingat akun admin yang sah
   }
 };
 

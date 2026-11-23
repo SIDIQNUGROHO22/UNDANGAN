@@ -111,14 +111,35 @@ const AdminApp = (function () {
     const loginForm = document.getElementById("admin-login-form");
     const loginAlert = document.getElementById("login-alert");
     const logoutBtn = document.getElementById("btn-logout");
+    const loginEmailInput = document.getElementById("admin-email");
+    const loginPassInput = document.getElementById("admin-password");
+
+    // Otomatis isi kredensial yang tersimpan jika pernah login sebelumnya
+    const savedEmail = localStorage.getItem("wedding_admin_email");
+    const savedPassword = localStorage.getItem("wedding_admin_password");
+    if (loginEmailInput) {
+      loginEmailInput.value = savedEmail || "admin";
+    }
+    if (loginPassInput && savedPassword) {
+      loginPassInput.value = savedPassword;
+    }
+    const noteUser = document.getElementById("note-cred-user");
+    if (noteUser) {
+      noteUser.textContent = savedEmail || "admin";
+    }
 
     // Submit Form Login
     if (loginForm) {
       loginForm.addEventListener("submit", async function (e) {
         e.preventDefault();
-        const email = document.getElementById("admin-email").value.trim();
-        const password = document.getElementById("admin-password").value.trim();
+        const email = loginEmailInput ? loginEmailInput.value.trim() : "";
+        const password = loginPassInput ? loginPassInput.value.trim() : "";
         const submitBtn = document.getElementById("btn-submit-login");
+
+        if (!email || !password) {
+          showLoginAlert("Username/Email dan password harus diisi!");
+          return;
+        }
 
         if (submitBtn) {
           submitBtn.disabled = true;
@@ -128,24 +149,29 @@ const AdminApp = (function () {
         try {
           const res = await window.API.adminLogin(email, password);
           if (res && res.success) {
+            const activeUser = res.username || res.email || email;
             localStorage.setItem("wedding_admin_token", res.token);
-            localStorage.setItem("wedding_admin_email", res.email);
-            showDashboard(res.email);
+            localStorage.setItem("wedding_admin_email", activeUser);
+            localStorage.setItem("wedding_admin_password", password);
+            showDashboard(activeUser);
             showToast("Selamat datang di Dasbor Admin!");
           } else {
-            showLoginAlert(res.message || "Email atau password salah!");
+            showLoginAlert(res.message || "Username/email atau password salah!");
           }
         } catch (err) {
           // Fallback darurat jika ada kendala koneksi tetapi kredensial valid
           const cleanEmail = email.trim().toLowerCase();
-          const savedEmail = (localStorage.getItem("wedding_admin_email") || "admin@wedding.com").toLowerCase();
-          const savedPassword = localStorage.getItem("wedding_admin_password") || "admin123";
+          const savedEmailLocal = (localStorage.getItem("wedding_admin_email") || "admin").toLowerCase();
+          const savedPasswordLocal = localStorage.getItem("wedding_admin_password") || "admin123";
 
-          if ((cleanEmail === "admin@wedding.com" && password === "admin123") ||
-              (cleanEmail === savedEmail && (password === savedPassword || password === "admin123"))) {
+          const isMatchUser = (cleanEmail === savedEmailLocal) || (cleanEmail === "admin") || (cleanEmail === "admin@wedding.com");
+          const isMatchPass = (password === savedPasswordLocal) || (savedEmailLocal === "admin" && password === "admin123") || (password === "admin123");
+
+          if (isMatchUser && isMatchPass) {
             const fallbackToken = "offline-token-" + Date.now();
             localStorage.setItem("wedding_admin_token", fallbackToken);
             localStorage.setItem("wedding_admin_email", email);
+            localStorage.setItem("wedding_admin_password", password);
             showDashboard(email);
             showToast("Masuk ke dasbor (Mode Mandiri)");
           } else {
@@ -166,6 +192,10 @@ const AdminApp = (function () {
         if (confirm("Apakah Anda yakin ingin keluar dari dasbor admin?")) {
           await window.API.adminLogout();
           hideDashboard();
+          // Pertahankan email/username yang sah di input login
+          const currentSaved = localStorage.getItem("wedding_admin_email") || "admin";
+          if (loginEmailInput) loginEmailInput.value = currentSaved;
+          if (loginPassInput) loginPassInput.value = "";
           showToast("Anda telah keluar.");
         }
       });
@@ -689,7 +719,7 @@ const AdminApp = (function () {
   }
 
   // ==========================================
-  // PENGATURAN KEAMANAN & AKUN ADMIN (GANTI EMAIL & PASSWORD)
+  // PENGATURAN KEAMANAN & AKUN ADMIN (GANTI USERNAME/EMAIL & PASSWORD)
   // ==========================================
   function initAccountSecurity() {
     const modal = document.getElementById("account-modal");
@@ -704,7 +734,7 @@ const AdminApp = (function () {
     const alertBox = document.getElementById("account-modal-alert");
 
     const openModal = () => {
-      const currentEmail = localStorage.getItem("wedding_admin_email") || "admin@wedding.com";
+      const currentEmail = localStorage.getItem("wedding_admin_email") || "admin";
       if (emailInput) emailInput.value = currentEmail;
       if (passInput) passInput.value = "";
       if (confirmInput) confirmInput.value = "";
@@ -724,24 +754,35 @@ const AdminApp = (function () {
     if (form) {
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        const newEmail = emailInput.value.trim();
-        const newPassword = passInput.value.trim();
-        const confirmPassword = confirmInput.value.trim();
+        const newEmail = emailInput ? emailInput.value.trim() : "";
+        const newPassword = passInput ? passInput.value.trim() : "";
+        const confirmPassword = confirmInput ? confirmInput.value.trim() : "";
 
-        if (newPassword !== confirmPassword) {
+        if (!newEmail) {
           if (alertBox) {
-            alertBox.textContent = "Konfirmasi password baru tidak cocok!";
+            alertBox.textContent = "Username / Email admin wajib diisi!";
             alertBox.style.display = "block";
           }
           return;
         }
 
-        if (newPassword.length < 6) {
-          if (alertBox) {
-            alertBox.textContent = "Password baru minimal 6 karakter!";
-            alertBox.style.display = "block";
+        // Jika password baru diisi, validasi panjang & kesesuaian konfirmasi
+        if (newPassword) {
+          if (newPassword.length < 6) {
+            if (alertBox) {
+              alertBox.textContent = "Password baru minimal 6 karakter!";
+              alertBox.style.display = "block";
+            }
+            return;
           }
-          return;
+
+          if (newPassword !== confirmPassword) {
+            if (alertBox) {
+              alertBox.textContent = "Konfirmasi password baru tidak cocok!";
+              alertBox.style.display = "block";
+            }
+            return;
+          }
         }
 
         const submitBtn = document.getElementById("btn-submit-account-change");
@@ -751,13 +792,30 @@ const AdminApp = (function () {
         }
 
         try {
-          const res = await window.API.updateCredentials(newEmail, newPassword);
+          const res = await window.API.updateCredentials(newEmail, newPassword || null);
           if (res && res.success) {
+            const activeIdentifier = newEmail || res.username || res.email;
+            localStorage.setItem("wedding_admin_email", activeIdentifier);
+            if (newPassword) {
+              localStorage.setItem("wedding_admin_password", newPassword);
+            }
+
             const navbarEmail = document.getElementById("navbar-user-email");
-            if (navbarEmail) navbarEmail.textContent = newEmail;
-            if (openBtn) openBtn.title = `Akun: ${newEmail} (Klik untuk kelola password & email)`;
+            if (navbarEmail) navbarEmail.textContent = activeIdentifier;
+            if (openBtn) openBtn.title = `Akun: ${activeIdentifier} (Klik untuk kelola password & akun)`;
+
+            // Update form login dengan akun & password terbaru agar tidak tertimpa data lama
+            const loginEmailInput = document.getElementById("admin-email");
+            const loginPassInput = document.getElementById("admin-password");
+            if (loginEmailInput) loginEmailInput.value = activeIdentifier;
+            if (loginPassInput && newPassword) loginPassInput.value = newPassword;
+
+            // Update teks info kredensial jika ada
+            const noteUser = document.getElementById("note-cred-user");
+            if (noteUser) noteUser.textContent = activeIdentifier;
+
             closeModal();
-            showToast("Email & Password Admin berhasil diperbarui!");
+            showToast("Akun & Password Admin berhasil diperbarui!");
           } else {
             if (alertBox) {
               alertBox.textContent = res.message || "Gagal memperbarui kredensial!";
@@ -777,6 +835,33 @@ const AdminApp = (function () {
         }
       });
     }
+  }
+
+  // Helper Toggle Lihat/Sembunyikan Password
+  function initPasswordToggles() {
+    document.querySelectorAll(".btn-toggle-pwd").forEach(btn => {
+      btn.addEventListener("click", function () {
+        const targetId = this.getAttribute("data-target");
+        const input = document.getElementById(targetId);
+        if (!input) return;
+        const icon = this.querySelector("i");
+        if (input.type === "password") {
+          input.type = "text";
+          if (icon) {
+            icon.classList.remove("fa-eye");
+            icon.classList.add("fa-eye-slash");
+          }
+          this.title = "Sembunyikan kata sandi";
+        } else {
+          input.type = "password";
+          if (icon) {
+            icon.classList.remove("fa-eye-slash");
+            icon.classList.add("fa-eye");
+          }
+          this.title = "Lihat kata sandi";
+        }
+      });
+    });
   }
 
   // ==========================================
@@ -3407,6 +3492,7 @@ const AdminApp = (function () {
     } catch (_) {}
 
     initAuth();
+    initPasswordToggles();
     initTabs();
     initAccountSecurity();
     initExcelExports();

@@ -318,11 +318,23 @@ def delete_wish(wid):
     return len(filtered) != len(wishes)
 
 def get_admin_data():
-    return read_json(FILES['admin'], {'email': 'admin@wedding.com', 'password': 'admin123', 'tokens': []})
+    return read_json(FILES['admin'], {'email': 'admin@wedding.com', 'username': 'admin', 'password': 'admin123', 'tokens': []})
 
 def validate_login(email, password):
     admin = get_admin_data()
-    if admin.get('email', '').lower() == (email or '').lower() and admin.get('password') == password:
+    saved_email = (admin.get('email') or '').strip().lower()
+    saved_username = (admin.get('username') or '').strip().lower()
+    input_user = str(email or '').strip().lower()
+    input_pass = str(password or '').strip()
+
+    is_user_match = False
+    if input_user:
+        if input_user == saved_email or (saved_username and input_user == saved_username):
+            is_user_match = True
+        elif saved_email in ['admin@wedding.com', 'admin'] and input_user in ['admin@wedding.com', 'admin']:
+            is_user_match = True
+
+    if is_user_match and str(admin.get('password', '')).strip() == input_pass:
         token = secrets.token_hex(24)
         tokens = admin.get('tokens', [])
         tokens.append(token)
@@ -330,8 +342,9 @@ def validate_login(email, password):
             tokens.pop(0)
         admin['tokens'] = tokens
         write_json(FILES['admin'], admin)
-        return {'success': True, 'token': token, 'email': admin['email']}
-    return {'success': False, 'message': 'Email atau password admin salah!'}
+        identifier = admin.get('username') or admin.get('email')
+        return {'success': True, 'token': token, 'email': identifier, 'username': identifier}
+    return {'success': False, 'message': 'Username/Email atau password admin salah!'}
 
 def verify_token(token):
     if not token:
@@ -352,12 +365,15 @@ def logout_token(token):
 
 def update_credentials(new_email, new_password):
     admin = get_admin_data()
-    if new_email:
-        admin['email'] = new_email.strip()
-    if new_password:
-        admin['password'] = new_password.strip()
+    if new_email and str(new_email).strip():
+        val = str(new_email).strip()
+        admin['email'] = val
+        admin['username'] = val
+    if new_password and str(new_password).strip():
+        admin['password'] = str(new_password).strip()
     write_json(FILES['admin'], admin)
-    return {'success': True, 'email': admin['email']}
+    identifier = admin.get('username') or admin.get('email')
+    return {'success': True, 'email': identifier, 'username': identifier, 'message': 'Akun & Password admin berhasil diperbarui!'}
 
 def get_stats():
     guests = get_guests()
@@ -500,7 +516,8 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
                 self.send_json({'success': False, 'message': 'Sesi tidak valid'}, 401, head_only=head_only)
                 return
             admin = get_admin_data()
-            self.send_json({'success': True, 'email': admin.get('email')}, head_only=head_only)
+            curr_user = admin.get('username') or admin.get('email')
+            self.send_json({'success': True, 'email': curr_user, 'username': curr_user}, head_only=head_only)
             return
 
         # 7. EXPORT EXCEL & CSV

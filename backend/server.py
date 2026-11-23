@@ -161,6 +161,32 @@ def update_settings(new_data):
                     f.write(js_content)
         except Exception as e:
             print(f"Gagal sinkron config.js ke {dest}: {e}")
+
+    # Sinkronisasi Favicon langsung ke tag HTML di ketiga direktori
+    ta = current.get('themeAssets', {})
+    fav_inv = ta.get('favicon') or 'assets/images/gunungan-gold.svg'
+    fav_adm = ta.get('adminFavicon') or 'assets/images/gunungan-gold.svg'
+
+    def update_html_fav(html_path, fav_val):
+        if not os.path.exists(html_path):
+            return
+        try:
+            with open(html_path, 'r', encoding='utf-8') as f:
+                h_text = f.read()
+            is_svg = fav_val.endswith('.svg') or 'image/svg+xml' in fav_val
+            mime = 'image/svg+xml' if is_svg else 'image/png'
+            sizes = 'sizes="any"' if is_svg else 'sizes="32x32"'
+            tag = f'<link rel="icon" type="{mime}" {sizes} id="browser-favicon" href="{fav_val}">'
+            new_text = re.sub(r'<link[^>]*id=["\']browser-favicon["\'][^>]*>', tag, h_text)
+            if new_text != h_text:
+                with open(html_path, 'w', encoding='utf-8') as f:
+                    f.write(new_text)
+        except Exception as e:
+            print(f"Gagal update favicon di {html_path}: {e}")
+
+    for base_dir in [ROOT_DIR, FRONTEND_DIR, UNDANGAN_DIR]:
+        update_html_fav(os.path.join(base_dir, 'index.html'), fav_inv)
+        update_html_fav(os.path.join(base_dir, 'admin.html'), fav_adm)
             
     return current
 
@@ -962,6 +988,29 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
         try:
             with open(file_path, 'rb') as f:
                 content = f.read()
+
+            # Injeksi Favicon Dinamis & Anti-Cache ke index.html dan admin.html
+            if file_name in ['index.html', 'admin.html']:
+                try:
+                    text_html = content.decode('utf-8', errors='replace')
+                    settings = get_settings()
+                    ta = settings.get('themeAssets', {})
+                    if file_name == 'index.html':
+                        fav = ta.get('favicon') or 'assets/images/gunungan-gold.svg'
+                    else:
+                        fav = ta.get('adminFavicon') or 'assets/images/gunungan-gold.svg'
+
+                    is_svg = fav.endswith('.svg') or 'image/svg+xml' in fav
+                    mime = 'image/svg+xml' if is_svg else 'image/png'
+                    sizes = 'sizes="any"' if is_svg else 'sizes="32x32"'
+                    cache_bust = fav if fav.startswith('data:') else f"{fav}{'&' if '?' in fav else '?'}v={int(datetime.now().timestamp())}"
+
+                    fav_tag = f'<link rel="icon" type="{mime}" {sizes} id="browser-favicon" href="{cache_bust}">'
+                    text_html = re.sub(r'<link[^>]*id=["\']browser-favicon["\'][^>]*>', fav_tag, text_html)
+                    content = text_html.encode('utf-8')
+                except Exception as e_inj:
+                    print(f"Error injecting dynamic favicon into {file_name}: {e_inj}")
+
             self.send_response(200)
             self.send_header('Content-Type', mime_type)
             self.send_header('Content-Length', str(len(content)))

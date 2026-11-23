@@ -195,8 +195,8 @@ const MainApp = (function () {
     }
 
     // 10. Bagian Penutup & Footer (Bawah Pol)
-    const groomCall = c.couple?.groom?.callName || "agus";
-    const brideCall = c.couple?.bride?.callName || "agis";
+    const groomCall = c.couple?.groom?.callName || "Sidiq";
+    const brideCall = c.couple?.bride?.callName || "Anisa";
     const defaultCoupleText = `${groomCall} & ${brideCall}`;
     
     const footerNamesEl = document.getElementById("footer-couple-names");
@@ -364,44 +364,78 @@ const MainApp = (function () {
   function updateBrowserFavicon(iconUrl) {
     if (!iconUrl) return;
     const cleanUrl = normalizeMediaUrl(iconUrl, "image");
-    
-    let mimeType = "image/png";
-    if (cleanUrl.endsWith(".svg")) mimeType = "image/svg+xml";
-    else if (cleanUrl.endsWith(".jpg") || cleanUrl.endsWith(".jpeg")) mimeType = "image/jpeg";
-    else if (cleanUrl.endsWith(".webp")) mimeType = "image/webp";
-    else if (cleanUrl.endsWith(".ico")) mimeType = "image/x-icon";
+    if (!cleanUrl) return;
 
-    // 1. Icon standard desktop
-    let favEl = document.getElementById("browser-favicon");
-    if (!favEl) {
-      favEl = document.createElement("link");
-      favEl.id = "browser-favicon";
-      favEl.rel = "icon";
-      document.head.appendChild(favEl);
-    }
+    try {
+      localStorage.setItem("wedding_custom_favicon", cleanUrl);
+    } catch (_) {}
+
+    const isSvg = cleanUrl.endsWith(".svg") || cleanUrl.startsWith("data:image/svg+xml");
+    const isIco = cleanUrl.endsWith(".ico");
+    const mimeType = isSvg ? "image/svg+xml" : (isIco ? "image/x-icon" : (cleanUrl.endsWith(".webp") ? "image/webp" : "image/png"));
+    const cacheBust = cleanUrl.startsWith("data:") ? cleanUrl : (cleanUrl + (cleanUrl.includes("?") ? "&" : "?") + "v=" + Date.now());
+
+    // Hapus seluruh tag link icon lama agar browser (khususnya Google Chrome) dipaksa merefresh icon tab
+    document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => el.remove());
+
+    // 1. Desktop standard tab icon
+    const favEl = document.createElement("link");
+    favEl.id = "browser-favicon";
+    favEl.rel = "icon";
     favEl.type = mimeType;
-    favEl.href = cleanUrl;
+    if (isSvg) {
+      favEl.setAttribute("sizes", "any");
+    } else {
+      favEl.setAttribute("sizes", "32x32");
+    }
+    favEl.href = cacheBust;
+    document.head.appendChild(favEl);
 
     // 2. Shortcut icon legacy
-    let shortcutEl = document.getElementById("browser-shortcut-icon");
-    if (!shortcutEl) {
-      shortcutEl = document.createElement("link");
-      shortcutEl.id = "browser-shortcut-icon";
-      shortcutEl.rel = "shortcut icon";
-      document.head.appendChild(shortcutEl);
-    }
+    const shortcutEl = document.createElement("link");
+    shortcutEl.id = "browser-shortcut-icon";
+    shortcutEl.rel = "shortcut icon";
     shortcutEl.type = mimeType;
-    shortcutEl.href = cleanUrl;
+    shortcutEl.href = cacheBust;
+    document.head.appendChild(shortcutEl);
 
-    // 3. Apple touch icon untuk browser layar HP
-    let appleEl = document.getElementById("browser-apple-touch-icon");
-    if (!appleEl) {
-      appleEl = document.createElement("link");
-      appleEl.id = "browser-apple-touch-icon";
-      appleEl.rel = "apple-touch-icon";
-      document.head.appendChild(appleEl);
+    // 3. Apple Touch Icon & Layar Ponsel (Mobile Home Screen)
+    const appleEl = document.createElement("link");
+    appleEl.id = "browser-apple-touch-icon";
+    appleEl.rel = "apple-touch-icon";
+    appleEl.setAttribute("sizes", "180x180");
+
+    if (isSvg) {
+      // Perangkat mobile (iOS / Android) membutuhkan format raster PNG untuk home screen icon
+      try {
+        const tempImg = new Image();
+        tempImg.crossOrigin = "anonymous";
+        tempImg.onload = function () {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = 180;
+            canvas.height = 180;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#1b1713";
+            ctx.fillRect(0, 0, 180, 180);
+            const pad = 18;
+            ctx.drawImage(tempImg, pad, pad, 180 - pad * 2, 180 - pad * 2);
+            appleEl.href = canvas.toDataURL("image/png");
+          } catch (_) {
+            appleEl.href = cacheBust;
+          }
+        };
+        tempImg.onerror = function () {
+          appleEl.href = "assets/images/favicon.png";
+        };
+        tempImg.src = cleanUrl;
+      } catch (_) {
+        appleEl.href = cacheBust;
+      }
+    } else {
+      appleEl.href = cacheBust;
     }
-    appleEl.href = cleanUrl;
+    document.head.appendChild(appleEl);
   }
 
   function setTextAll(selector, text) {

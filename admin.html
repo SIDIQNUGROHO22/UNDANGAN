@@ -11,10 +11,30 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Great+Vibes&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-  <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Mobile) -->
-  <link rel="icon" type="image/png" sizes="32x32" id="browser-favicon" href="assets/images/favicon-admin.png">
+  <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Layar HP Mobile) -->
+  <link rel="icon" type="image/svg+xml" sizes="any" id="browser-favicon" href="assets/images/gunungan-gold.svg">
   <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon-admin.png">
   <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon-admin.png">
+
+  <!-- Immediate Admin Favicon Loader (Desktop & Mobile) -->
+  <script>
+    (function() {
+      try {
+        var fav = localStorage.getItem("wedding_admin_favicon") || "assets/images/gunungan-gold.svg";
+        var isSvg = fav.indexOf(".svg") !== -1 || fav.indexOf("image/svg+xml") !== -1;
+        var existing = document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']");
+        existing.forEach(function(el) { el.remove(); });
+        var l = document.createElement("link");
+        l.id = "browser-favicon";
+        l.rel = "icon";
+        l.type = isSvg ? "image/svg+xml" : "image/png";
+        if (isSvg) l.setAttribute("sizes", "any");
+        else l.setAttribute("sizes", "32x32");
+        l.href = fav + (fav.indexOf("?") === -1 ? "?v=" : "&v=") + Date.now();
+        document.head.appendChild(l);
+      } catch(e) {}
+    })();
+  </script>
 
   <!-- Admin Stylesheet -->
   <link rel="stylesheet" href="css/admin.css?v=2.5">

@@ -1306,6 +1306,10 @@ const AdminApp = (function () {
     setCheckbox("cfg-show-corners", ta.showCorners !== false);
     setValue("cfg-favicon-invitation", ta.favicon || "assets/images/favicon.png");
     setValue("cfg-favicon-admin", ta.adminFavicon || "assets/images/favicon-admin.png");
+    try {
+      if (ta.favicon) localStorage.setItem("wedding_custom_favicon", ta.favicon);
+      if (ta.adminFavicon) localStorage.setItem("wedding_admin_favicon", ta.adminFavicon);
+    } catch (_) {}
 
     // Update browser tab favicon for admin page (desktop & mobile)
     updateAdminTabFavicon(ta.adminFavicon || "assets/images/favicon-admin.png");
@@ -1339,8 +1343,8 @@ const AdminApp = (function () {
 
     // 8. Footer & Teks Bawah Pol
     const footerData = c.footer || {};
-    const groomCallName = c.couple?.groom?.callName || "agus";
-    const brideCallName = c.couple?.bride?.callName || "agis";
+    const groomCallName = c.couple?.groom?.callName || "Sidiq";
+    const brideCallName = c.couple?.bride?.callName || "Anisa";
     const defaultCoupleFooter = `${groomCallName} & ${brideCallName}`;
     setValue("cfg-footer-couple-names", footerData.coupleNames || defaultCoupleFooter);
     setValue("cfg-footer-closing-greeting", footerData.closingGreeting || c.quotes?.closingGreeting || "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.");
@@ -1686,41 +1690,73 @@ const AdminApp = (function () {
   function updateAdminTabFavicon(iconUrl) {
     if (!iconUrl) return;
     const cleanUrl = normalizeMediaUrl(iconUrl, "image");
-    
-    let mimeType = "image/png";
-    if (cleanUrl.endsWith(".svg")) mimeType = "image/svg+xml";
-    else if (cleanUrl.endsWith(".jpg") || cleanUrl.endsWith(".jpeg")) mimeType = "image/jpeg";
-    else if (cleanUrl.endsWith(".webp")) mimeType = "image/webp";
-    else if (cleanUrl.endsWith(".ico")) mimeType = "image/x-icon";
+    if (!cleanUrl) return;
 
-    let favEl = document.getElementById("browser-favicon");
-    if (!favEl) {
-      favEl = document.createElement("link");
-      favEl.id = "browser-favicon";
-      favEl.rel = "icon";
-      document.head.appendChild(favEl);
-    }
+    try {
+      localStorage.setItem("wedding_admin_favicon", cleanUrl);
+    } catch (_) {}
+
+    const isSvg = cleanUrl.endsWith(".svg") || cleanUrl.startsWith("data:image/svg+xml");
+    const isIco = cleanUrl.endsWith(".ico");
+    const mimeType = isSvg ? "image/svg+xml" : (isIco ? "image/x-icon" : (cleanUrl.endsWith(".webp") ? "image/webp" : "image/png"));
+    const cacheBust = cleanUrl.startsWith("data:") ? cleanUrl : (cleanUrl + (cleanUrl.includes("?") ? "&" : "?") + "v=" + Date.now());
+
+    // Hapus seluruh tag link icon lama agar browser Google Chrome dipaksa memuat ulang tab icon
+    document.querySelectorAll("link[rel*='icon'], link[rel='apple-touch-icon']").forEach(el => el.remove());
+
+    const favEl = document.createElement("link");
+    favEl.id = "browser-favicon";
+    favEl.rel = "icon";
     favEl.type = mimeType;
-    favEl.href = cleanUrl;
-
-    let shortcutEl = document.getElementById("browser-shortcut-icon");
-    if (!shortcutEl) {
-      shortcutEl = document.createElement("link");
-      shortcutEl.id = "browser-shortcut-icon";
-      shortcutEl.rel = "shortcut icon";
-      document.head.appendChild(shortcutEl);
+    if (isSvg) {
+      favEl.setAttribute("sizes", "any");
+    } else {
+      favEl.setAttribute("sizes", "32x32");
     }
+    favEl.href = cacheBust;
+    document.head.appendChild(favEl);
+
+    const shortcutEl = document.createElement("link");
+    shortcutEl.id = "browser-shortcut-icon";
+    shortcutEl.rel = "shortcut icon";
     shortcutEl.type = mimeType;
-    shortcutEl.href = cleanUrl;
+    shortcutEl.href = cacheBust;
+    document.head.appendChild(shortcutEl);
 
-    let appleEl = document.getElementById("browser-apple-touch-icon");
-    if (!appleEl) {
-      appleEl = document.createElement("link");
-      appleEl.id = "browser-apple-touch-icon";
-      appleEl.rel = "apple-touch-icon";
-      document.head.appendChild(appleEl);
+    const appleEl = document.createElement("link");
+    appleEl.id = "browser-apple-touch-icon";
+    appleEl.rel = "apple-touch-icon";
+    appleEl.setAttribute("sizes", "180x180");
+    if (isSvg) {
+      try {
+        const tempImg = new Image();
+        tempImg.crossOrigin = "anonymous";
+        tempImg.onload = function () {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = 180;
+            canvas.height = 180;
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "#1b1713";
+            ctx.fillRect(0, 0, 180, 180);
+            const pad = 18;
+            ctx.drawImage(tempImg, pad, pad, 180 - pad * 2, 180 - pad * 2);
+            appleEl.href = canvas.toDataURL("image/png");
+          } catch (_) {
+            appleEl.href = cacheBust;
+          }
+        };
+        tempImg.onerror = function () {
+          appleEl.href = "assets/images/favicon-admin.png";
+        };
+        tempImg.src = cleanUrl;
+      } catch (_) {
+        appleEl.href = cacheBust;
+      }
+    } else {
+      appleEl.href = cacheBust;
     }
-    appleEl.href = cleanUrl;
+    document.head.appendChild(appleEl);
   }
 
   function applyAdminLogo(logoUrl, titleText) {
@@ -2022,10 +2058,14 @@ const AdminApp = (function () {
     };
     updated.adminLogo = updated.themeAssets.adminLogo;
     updated.adminTitle = updated.themeAssets.adminTitle;
+    updated.favicon = updated.themeAssets.favicon;
+    updated.adminFavicon = updated.themeAssets.adminFavicon;
 
     try {
       localStorage.setItem("wedding_admin_logo", updated.adminLogo);
       localStorage.setItem("wedding_admin_title", updated.adminTitle);
+      localStorage.setItem("wedding_custom_favicon", updated.themeAssets.favicon);
+      localStorage.setItem("wedding_admin_favicon", updated.themeAssets.adminFavicon);
     } catch (_) {}
     applyAdminLogo(updated.adminLogo, updated.adminTitle);
 
@@ -2044,8 +2084,8 @@ const AdminApp = (function () {
     };
 
     // Update Footer (Bawah Pol)
-    const groomCallVal = getVal("cfg-groom-call", "agus");
-    const brideCallVal = getVal("cfg-bride-call", "agis");
+    const groomCallVal = getVal("cfg-groom-call", "Sidiq");
+    const brideCallVal = getVal("cfg-bride-call", "Anisa");
     const fallbackCouple = `${groomCallVal} & ${brideCallVal}`;
 
     updated.footer = {
@@ -2395,7 +2435,13 @@ const AdminApp = (function () {
         el.addEventListener("input", () => {
           updateThemePreviews();
           updateCouplePreviews();
-          if (inputId === "cfg-favicon-admin") updateAdminTabFavicon(el.value);
+          if (inputId === "cfg-favicon-admin") {
+            updateAdminTabFavicon(el.value);
+            try { localStorage.setItem("wedding_admin_favicon", el.value); } catch (_) {}
+          }
+          if (inputId === "cfg-favicon-invitation") {
+            try { localStorage.setItem("wedding_custom_favicon", el.value); } catch (_) {}
+          }
           if (inputId === "cfg-admin-logo-img") applyAdminLogo(el.value, document.getElementById("cfg-admin-brand-title")?.value);
         });
         el.addEventListener("change", () => {
@@ -2465,7 +2511,13 @@ const AdminApp = (function () {
                 }
                 updateThemePreviews();
                 updateCouplePreviews();
-                if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
+                if (textInputId === "cfg-favicon-admin") {
+                  updateAdminTabFavicon(res.filePath);
+                  try { localStorage.setItem("wedding_admin_favicon", res.filePath); } catch (_) {}
+                }
+                if (textInputId === "cfg-favicon-invitation") {
+                  try { localStorage.setItem("wedding_custom_favicon", res.filePath); } catch (_) {}
+                }
                 if (textInputId === "cfg-admin-logo-img") applyAdminLogo(res.filePath, document.getElementById("cfg-admin-brand-title")?.value);
                 await saveCurrentSettings({ toastMsg: `✅ ${toastLabel || "Foto"} berhasil disimpan & LANGSUNG DITERAPKAN ke website!` });
                 return;

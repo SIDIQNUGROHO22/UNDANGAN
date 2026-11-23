@@ -289,7 +289,7 @@ const MainApp = (function () {
     });
 
     // 3. Siluet Wayang Mempelai Pria (Groom)
-    const defaultGroom = "assets/images/wayang-kamajaya.svg";
+    const defaultGroom = "assets/images/wayang-arjuna.png";
     const groomWatermark = document.getElementById("wayang-groom-watermark");
     const showGroomWayang = assets.showWayangGroom !== false;
     const groomWayangSrc = normalizeMediaUrl(assets.wayangGroomImage || defaultGroom, "image");
@@ -325,7 +325,7 @@ const MainApp = (function () {
 
     const coverWayangGroom = document.getElementById("cover-wayang-groom-mini");
     const coverWayangBride = document.getElementById("cover-wayang-bride-mini");
-    const defaultCoverGroom = "assets/images/wayang-kamajaya.svg";
+    const defaultCoverGroom = "assets/images/wayang-arjuna.png";
     const defaultCoverBride = "assets/images/wayang-kamaratih.svg";
     const coverGroomSrc = normalizeMediaUrl(assets.coverWayangGroomImage || assets.wayangGroomImage || defaultCoverGroom, "image");
     const coverBrideSrc = normalizeMediaUrl(assets.coverWayangBrideImage || assets.wayangBrideImage || defaultCoverBride, "image");

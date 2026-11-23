@@ -1268,14 +1268,14 @@ const AdminApp = (function () {
     setCheckbox("cfg-show-gunungan-center", ta.showGununganCenter !== false);
     setValue("cfg-gunungan-center-img", ta.gununganCenterImage || ta.gununganLeftImage || ta.gununganImage || "assets/images/gunungan-gold.svg");
     setCheckbox("cfg-show-cover-wayang", ta.showCoverWayang !== false);
-    setValue("cfg-cover-wayang-groom-img", ta.coverWayangGroomImage || ta.wayangGroomImage || "assets/images/wayang-kamajaya.svg");
+    setValue("cfg-cover-wayang-groom-img", ta.coverWayangGroomImage || ta.wayangGroomImage || "assets/images/wayang-arjuna.png");
     setValue("cfg-cover-wayang-bride-img", ta.coverWayangBrideImage || ta.wayangBrideImage || "assets/images/wayang-kamaratih.svg");
 
     setValue("cfg-gunungan-left-img", ta.gununganLeftImage || ta.gununganImage || "assets/images/gunungan-gold.svg");
     setValue("cfg-gunungan-right-img", ta.gununganRightImage || "");
     setCheckbox("cfg-gunungan-right-mirror", ta.gununganRightMirror !== false);
     setCheckbox("cfg-show-gunungan", ta.showGunungan !== false);
-    setValue("cfg-wayang-groom-img", ta.wayangGroomImage || "assets/images/wayang-kamajaya.svg");
+    setValue("cfg-wayang-groom-img", ta.wayangGroomImage || "assets/images/wayang-arjuna.png");
     setCheckbox("cfg-show-wayang-groom", ta.showWayangGroom !== false);
     setValue("cfg-wayang-bride-img", ta.wayangBrideImage || "assets/images/wayang-kamaratih.svg");
     setCheckbox("cfg-show-wayang-bride", ta.showWayangBride !== false);
@@ -1855,12 +1855,12 @@ const AdminApp = (function () {
     setImg(coverVal, "preview-cover-photo", "assets/images/cover.jpg");
     setImg(bgVal, "preview-background-photo", "assets/images/background.jpg");
     setImg(centerVal, "preview-gunungan-center-img", "assets/images/gunungan-gold.svg");
-    setImg(coverGroomVal, "preview-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg");
+    setImg(coverGroomVal, "preview-cover-wayang-groom-img", "assets/images/wayang-arjuna.png");
     setImg(coverBrideVal, "preview-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg");
 
     setImg(leftVal, "preview-gunungan-left-img", "assets/images/gunungan-gold.svg");
     setImg(rightVal, "preview-gunungan-right-img", "assets/images/gunungan-gold.svg");
-    setImg(document.getElementById("cfg-wayang-groom-img")?.value, "preview-wayang-groom-img", "assets/images/wayang-kamajaya.svg");
+    setImg(document.getElementById("cfg-wayang-groom-img")?.value, "preview-wayang-groom-img", "assets/images/wayang-arjuna.png");
     setImg(document.getElementById("cfg-wayang-bride-img")?.value, "preview-wayang-bride-img", "assets/images/wayang-kamaratih.svg");
     setImg(document.getElementById("cfg-corner-img")?.value, "preview-corner-img", "assets/images/javanese-corner.svg");
     setImg(document.getElementById("cfg-favicon-invitation")?.value, "preview-favicon-invitation", "assets/images/favicon.png");
@@ -2017,9 +2017,9 @@ const AdminApp = (function () {
       showGununganCenter: Boolean(document.getElementById("cfg-show-gunungan-center")?.checked),
       gununganCenterImage: centerGunungan,
       showCoverWayang: Boolean(document.getElementById("cfg-show-cover-wayang")?.checked),
-      coverWayangGroomImage: getVal("cfg-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg"),
+      coverWayangGroomImage: getVal("cfg-cover-wayang-groom-img", "assets/images/wayang-arjuna.png"),
       coverWayangBrideImage: getVal("cfg-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg"),
-      wayangGroomImage: getVal("cfg-wayang-groom-img", "assets/images/wayang-kamajaya.svg"),
+      wayangGroomImage: getVal("cfg-wayang-groom-img", "assets/images/wayang-arjuna.png"),
       showWayangGroom: Boolean(document.getElementById("cfg-show-wayang-groom")?.checked),
       wayangBrideImage: getVal("cfg-wayang-bride-img", "assets/images/wayang-kamaratih.svg"),
       showWayangBride: Boolean(document.getElementById("cfg-show-wayang-bride")?.checked),
@@ -2364,11 +2364,11 @@ const AdminApp = (function () {
           setValue("cfg-gunungan-center-img", "assets/images/gunungan-gold.svg");
           setCheckbox("cfg-show-gunungan-center", true);
           setCheckbox("cfg-show-gunungan", true);
-          setValue("cfg-wayang-groom-img", "assets/images/wayang-kamajaya.svg");
+          setValue("cfg-wayang-groom-img", "assets/images/wayang-arjuna.png");
           setCheckbox("cfg-show-wayang-groom", true);
           setValue("cfg-wayang-bride-img", "assets/images/wayang-kamaratih.svg");
           setCheckbox("cfg-show-wayang-bride", true);
-          setValue("cfg-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg");
+          setValue("cfg-cover-wayang-groom-img", "assets/images/wayang-arjuna.png");
           setValue("cfg-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg");
           setCheckbox("cfg-show-cover-wayang", true);
           setValue("cfg-corner-img", "assets/images/javanese-corner.svg");

@@ -1019,7 +1019,6 @@ const AdminApp = (function () {
   // 8. BROADCAST WHATSAPP
   // ==========================================
   function initAdminWaBroadcast() {
-    const guestSelect = document.getElementById("admin-wa-guest-select");
     const inputName = document.getElementById("admin-wa-name");
     const inputPhone = document.getElementById("admin-wa-phone");
     const selectStyle = document.getElementById("admin-wa-style");
@@ -1029,28 +1028,6 @@ const AdminApp = (function () {
     const btnCopyMsg = document.getElementById("btn-admin-copy-wa-msg");
     const btnOpenWa = document.getElementById("btn-admin-open-wa");
     const broadcastTbody = document.getElementById("admin-broadcast-table-body");
-
-    // Isi dropdown Tamu dari Database
-    if (guestSelect && Array.isArray(cachedGuests)) {
-      const currentSelected = guestSelect.value;
-      guestSelect.innerHTML = `<option value="">-- Pilih Tamu Terdaftar di Database Server (${cachedGuests.length} Tamu) --</option>` + 
-        cachedGuests.map(g => `<option value="${escapeHtml(g.name)}" data-phone="${escapeHtml(g.phone || '')}">👤 ${escapeHtml(g.name)} (${escapeHtml(g.category || 'Umum')})</option>`).join("");
-      if (currentSelected) guestSelect.value = currentSelected;
-
-      // Event listener sekali saja
-      if (!guestSelect.dataset.hasListener) {
-        guestSelect.dataset.hasListener = "true";
-        guestSelect.addEventListener("change", function () {
-          const selectedOpt = this.options[this.selectedIndex];
-          if (selectedOpt && selectedOpt.value) {
-            if (inputName) inputName.value = selectedOpt.value;
-            if (inputPhone) inputPhone.value = selectedOpt.getAttribute("data-phone") || "";
-            updatePreview();
-            showToast(`Data tamu "${selectedOpt.value}" dimuat ke generator.`);
-          }
-        });
-      }
-    }
 
     if (!inputName || !previewBox) return;
 

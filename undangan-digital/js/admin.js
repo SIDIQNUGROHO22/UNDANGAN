@@ -1878,223 +1878,238 @@ const AdminApp = (function () {
     setImg(document.getElementById("cfg-bride-photo")?.value, "preview-bride-photo", "assets/images/couple-2.jpg");
   }
 
+  async function saveCurrentSettings(options = {}) {
+    if (!currentSettings) currentSettings = {};
+
+    // Salin struktur dan perbarui dengan nilai dari input form
+    const updated = JSON.parse(JSON.stringify(currentSettings));
+
+    updated.couple = updated.couple || {};
+    updated.couple.groom = updated.couple.groom || {};
+    updated.couple.bride = updated.couple.bride || {};
+    updated.events = updated.events || {};
+    updated.events.akad = updated.events.akad || {};
+    updated.events.resepsi = updated.events.resepsi || {};
+    updated.gift = updated.gift || {};
+    updated.gift.bankAccounts = updated.gift.bankAccounts || [{}, {}];
+
+    const getVal = (id, fallback = "") => {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : fallback;
+    };
+
+    // Update Groom
+    updated.couple.groom.callName = getVal("cfg-groom-call", updated.couple.groom.callName || "Dimas");
+    updated.couple.groom.fullName = getVal("cfg-groom-full", updated.couple.groom.fullName || "");
+    updated.couple.groom.fatherName = getVal("cfg-groom-father", updated.couple.groom.fatherName || "");
+    updated.couple.groom.motherName = getVal("cfg-groom-mother", updated.couple.groom.motherName || "");
+    updated.couple.groom.childOrder = getVal("cfg-groom-order", updated.couple.groom.childOrder || "");
+    updated.couple.groom.instagram = getVal("cfg-groom-ig", updated.couple.groom.instagram || "");
+    updated.couple.groom.photo = getVal("cfg-groom-photo", updated.couple.groom.photo || "assets/images/couple-1.jpg");
+
+    // Update Bride
+    updated.couple.bride.callName = getVal("cfg-bride-call", updated.couple.bride.callName || "Anindya");
+    updated.couple.bride.fullName = getVal("cfg-bride-full", updated.couple.bride.fullName || "");
+    updated.couple.bride.fatherName = getVal("cfg-bride-father", updated.couple.bride.fatherName || "");
+    updated.couple.bride.motherName = getVal("cfg-bride-mother", updated.couple.bride.motherName || "");
+    updated.couple.bride.childOrder = getVal("cfg-bride-order", updated.couple.bride.childOrder || "");
+    updated.couple.bride.instagram = getVal("cfg-bride-ig", updated.couple.bride.instagram || "");
+    updated.couple.bride.photo = getVal("cfg-bride-photo", updated.couple.bride.photo || "assets/images/couple-2.jpg");
+
+    // Update Cover Photo Halaman Pembuka & Background Isi Undangan
+    updated.couple.coverPhoto = getVal("cfg-cover-photo", updated.couple.coverPhoto || "assets/images/cover.jpg");
+    updated.couple.backgroundPhoto = getVal("cfg-background-photo", updated.couple.backgroundPhoto || "assets/images/background.jpg");
+
+    // Update Akad
+    updated.events.akad.dateFormatted = getVal("cfg-akad-date", updated.events.akad.dateFormatted || "");
+    updated.events.akad.timeFormatted = getVal("cfg-akad-time", updated.events.akad.timeFormatted || "");
+    updated.events.akad.venueName = getVal("cfg-akad-venue", updated.events.akad.venueName || "");
+    updated.events.akad.venueAddress = getVal("cfg-akad-address", updated.events.akad.venueAddress || "");
+    updated.events.akad.googleMapsUrl = getVal("cfg-akad-maps", updated.events.akad.googleMapsUrl || "");
+
+    // Update Resepsi
+    updated.events.resepsi.dateFormatted = getVal("cfg-resepsi-date", updated.events.resepsi.dateFormatted || "");
+    updated.events.resepsi.timeFormatted = getVal("cfg-resepsi-time", updated.events.resepsi.timeFormatted || "");
+    updated.events.resepsi.venueName = getVal("cfg-resepsi-venue", updated.events.resepsi.venueName || "");
+    updated.events.resepsi.venueAddress = getVal("cfg-resepsi-address", updated.events.resepsi.venueAddress || "");
+    updated.events.resepsi.googleMapsUrl = getVal("cfg-resepsi-maps", updated.events.resepsi.googleMapsUrl || "");
+
+    // Update Unduh Mantu
+    updated.events.unduhMantu = {
+      enable: Boolean(document.getElementById("cfg-unduh-enable")?.checked),
+      title: getVal("cfg-unduh-title", "Acara Unduh Mantu"),
+      dateFormatted: getVal("cfg-unduh-date", ""),
+      timeFormatted: getVal("cfg-unduh-time", ""),
+      venueName: getVal("cfg-unduh-venue", ""),
+      venueAddress: getVal("cfg-unduh-address", ""),
+      googleMapsUrl: getVal("cfg-unduh-maps", ""),
+      iconClass: "fa-home-user"
+    };
+
+    // Update Target Waktu Hitung Mundur (Countdown)
+    let targetCountdownIso = getVal("cfg-countdown-target", "");
+    if (targetCountdownIso) {
+      if (targetCountdownIso.length === 16) {
+        targetCountdownIso += ":00";
+      }
+    } else {
+      targetCountdownIso = parseIndoDateToIso(
+        document.getElementById("cfg-akad-date")?.value,
+        document.getElementById("cfg-akad-time")?.value
+      ) || "2026-11-21T08:00:00";
+    }
+
+    updated.countdown = {
+      targetDate: targetCountdownIso,
+      eventPassedMessage: getVal("cfg-countdown-passed-msg", "Alhamdulillah, rangkaian acara pernikahan telah selesai diselenggarakan dengan penuh kebahagiaan. Terima kasih banyak atas kehadiran dan doa restu Anda!")
+    };
+
+    // Update Bank Kado Digital Dinamis
+    syncBankAccountsFromInputs();
+    if (!updated.gift) updated.gift = {};
+    updated.gift.bankAccounts = currentBankAccounts;
+
+    // Update RSVP WhatsApp
+    let cleanRsvpWa = getVal("cfg-rsvp-wa-number", "6281234567890").replace(/[^0-9]/g, "");
+    if (cleanRsvpWa.startsWith("0")) cleanRsvpWa = "62" + cleanRsvpWa.slice(1);
+    updated.rsvp = {
+      whatsappNumber: cleanRsvpWa || "6281234567890",
+      contactPersonName: getVal("cfg-rsvp-wa-name", ""),
+      autoOpenWhatsApp: Boolean(document.getElementById("cfg-rsvp-auto-wa")?.checked)
+    };
+
+    // Update Musik Pengiring (Multi-Sumber: YouTube, Offline, Online)
+    const musicSourceType = getVal("cfg-music-source-type", "local");
+    const ytUrl = getVal("cfg-music-youtube-url", "");
+    const ytId = extractYouTubeId(ytUrl);
+    const localUrl = getVal("cfg-music-url", "assets/music/lagu-undangan.mp3");
+
+    updated.music = {
+      sourceType: musicSourceType,
+      youtubeUrl: ytUrl,
+      youtubeId: ytId,
+      filePath: localUrl,
+      title: getVal("cfg-music-title", "Romantic Wedding Music"),
+      artist: getVal("cfg-music-artist", ""),
+      autoplayAfterOpen: true
+    };
+
+    // Update Aset Gambar Tema (Dual Kayon Gunungan Kiri/Kanan, Sampul, Wayang, Ornamen)
+    const leftGunungan = getVal("cfg-gunungan-left-img", "assets/images/gunungan-gold.svg");
+    const rightGunungan = getVal("cfg-gunungan-right-img", "");
+    const centerGunungan = getVal("cfg-gunungan-center-img", leftGunungan);
+
+    updated.themeAssets = {
+      showGunungan: Boolean(document.getElementById("cfg-show-gunungan")?.checked),
+      gununganImage: leftGunungan,
+      gununganLeftImage: leftGunungan,
+      gununganRightImage: rightGunungan,
+      gununganRightMirror: Boolean(document.getElementById("cfg-gunungan-right-mirror")?.checked),
+      showGununganCenter: Boolean(document.getElementById("cfg-show-gunungan-center")?.checked),
+      gununganCenterImage: centerGunungan,
+      showCoverWayang: Boolean(document.getElementById("cfg-show-cover-wayang")?.checked),
+      coverWayangGroomImage: getVal("cfg-cover-wayang-groom-img", "assets/images/wayang-kamajaya.svg"),
+      coverWayangBrideImage: getVal("cfg-cover-wayang-bride-img", "assets/images/wayang-kamaratih.svg"),
+      showCoverCouplePhoto: Boolean(document.getElementById("cfg-show-cover-couple-photo")?.checked),
+      coverCouplePhoto: getVal("cfg-cover-couple-photo", "assets/images/cover.jpg"),
+      wayangGroomImage: getVal("cfg-wayang-groom-img", "assets/images/wayang-kamajaya.svg"),
+      showWayangGroom: Boolean(document.getElementById("cfg-show-wayang-groom")?.checked),
+      wayangBrideImage: getVal("cfg-wayang-bride-img", "assets/images/wayang-kamaratih.svg"),
+      showWayangBride: Boolean(document.getElementById("cfg-show-wayang-bride")?.checked),
+      cornerOrnamentImage: getVal("cfg-corner-img", "assets/images/javanese-corner.svg"),
+      showCorners: Boolean(document.getElementById("cfg-show-corners")?.checked),
+      favicon: getVal("cfg-favicon-invitation", "assets/images/favicon.png"),
+      adminFavicon: getVal("cfg-favicon-admin", "assets/images/favicon-admin.png"),
+      adminLogo: getVal("cfg-admin-logo-img", "assets/images/gunungan-gold.svg"),
+      adminTitle: getVal("cfg-admin-brand-title", "PANEL ADMIN"),
+      backgroundPhoto: getVal("cfg-background-photo", "assets/images/background.jpg"),
+      backgroundOverlay: getVal("cfg-bg-overlay", "medium"),
+      showBackgroundBatik: Boolean(document.getElementById("cfg-show-bg-batik")?.checked)
+    };
+    updated.adminLogo = updated.themeAssets.adminLogo;
+    updated.adminTitle = updated.themeAssets.adminTitle;
+
+    try {
+      localStorage.setItem("wedding_admin_logo", updated.adminLogo);
+      localStorage.setItem("wedding_admin_title", updated.adminTitle);
+    } catch (_) {}
+    applyAdminLogo(updated.adminLogo, updated.adminTitle);
+
+    // Update Love Story & Gallery
+    syncLoveStoryFromInputs();
+    syncGalleryFromInputs();
+    updated.loveStory = currentLoveStories;
+    updated.gallery = currentGalleryItems;
+
+    // Update Efek Animasi Partikel Latar Belakang (Salju, Sakura, Bintang Emas, Hati, dll)
+    updated.animation = {
+      enabled: Boolean(document.getElementById("cfg-animation-enabled")?.checked),
+      effect: getVal("cfg-animation-effect", "sakura"),
+      intensity: getVal("cfg-animation-intensity", "medium"),
+      speed: getVal("cfg-animation-speed", "normal")
+    };
+
+    // Update Footer (Bawah Pol)
+    const groomCallVal = getVal("cfg-groom-call", "agus");
+    const brideCallVal = getVal("cfg-bride-call", "agis");
+    const fallbackCouple = `${groomCallVal} & ${brideCallVal}`;
+
+    updated.footer = {
+      coupleNames: getVal("cfg-footer-couple-names", fallbackCouple),
+      closingGreeting: getVal("cfg-footer-closing-greeting", "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai."),
+      copyright: getVal("cfg-footer-copyright", `© 2026 ${fallbackCouple} Wedding Invitation. Dibuat dengan penuh cinta.`)
+    };
+    if (updated.quotes) {
+      updated.quotes.closingGreeting = updated.footer.closingGreeting;
+    }
+
+    try {
+      const res = await window.API.updateInvitationConfig(updated);
+      if (res && res.success) {
+        currentSettings = res.data;
+        if (Array.isArray(res.data.loveStory)) {
+          currentLoveStories = JSON.parse(JSON.stringify(res.data.loveStory));
+          renderAdminLoveStories();
+        }
+        if (Array.isArray(res.data.gallery)) {
+          currentGalleryItems = JSON.parse(JSON.stringify(res.data.gallery));
+          renderAdminGallery();
+        }
+        if (Array.isArray(res.data.gift?.bankAccounts)) {
+          currentBankAccounts = JSON.parse(JSON.stringify(res.data.gift.bankAccounts));
+          renderAdminBankAccounts();
+        }
+        if (updated.themeAssets?.adminFavicon) {
+          updateAdminTabFavicon(updated.themeAssets.adminFavicon);
+        }
+        if (res.data?.animation) {
+          updateAdminAnimationStatusText(res.data.animation.enabled !== false);
+          updateActivePresetAnimButton(res.data.animation.effect || "sakura");
+          updateAdminAnimationPreview();
+        }
+        showToast(options.toastMsg || "Data kustomisasi undangan berhasil disimpan ke server!");
+        return true;
+      } else {
+        if (!options.silent) {
+          alert("Gagal menyimpan perubahan: " + (res.message || ""));
+        }
+        return false;
+      }
+    } catch (err) {
+      if (!options.silent) {
+        alert("Error server saat menyimpan konfigurasi: " + err.message);
+      }
+      return false;
+    }
+  }
+
   function initSettingsForm() {
     const form = document.getElementById("settings-form");
     const topSaveBtn = document.getElementById("btn-save-settings");
 
     const handleSave = async (e) => {
       if (e) e.preventDefault();
-
-      if (!currentSettings) currentSettings = {};
-
-      // Salin struktur dan perbarui dengan nilai dari input form
-      const updated = JSON.parse(JSON.stringify(currentSettings));
-
-      updated.couple = updated.couple || {};
-      updated.couple.groom = updated.couple.groom || {};
-      updated.couple.bride = updated.couple.bride || {};
-      updated.events = updated.events || {};
-      updated.events.akad = updated.events.akad || {};
-      updated.events.resepsi = updated.events.resepsi || {};
-      updated.gift = updated.gift || {};
-      updated.gift.bankAccounts = updated.gift.bankAccounts || [{}, {}];
-
-      // Update Groom
-      updated.couple.groom.callName = document.getElementById("cfg-groom-call").value.trim();
-      updated.couple.groom.fullName = document.getElementById("cfg-groom-full").value.trim();
-      updated.couple.groom.fatherName = document.getElementById("cfg-groom-father").value.trim();
-      updated.couple.groom.motherName = document.getElementById("cfg-groom-mother").value.trim();
-      updated.couple.groom.childOrder = document.getElementById("cfg-groom-order").value.trim();
-      updated.couple.groom.instagram = document.getElementById("cfg-groom-ig").value.trim();
-      updated.couple.groom.photo = (document.getElementById("cfg-groom-photo")?.value || "assets/images/couple-1.jpg").trim();
-
-      // Update Bride
-      updated.couple.bride.callName = document.getElementById("cfg-bride-call").value.trim();
-      updated.couple.bride.fullName = document.getElementById("cfg-bride-full").value.trim();
-      updated.couple.bride.fatherName = document.getElementById("cfg-bride-father").value.trim();
-      updated.couple.bride.motherName = document.getElementById("cfg-bride-mother").value.trim();
-      updated.couple.bride.childOrder = document.getElementById("cfg-bride-order").value.trim();
-      updated.couple.bride.instagram = document.getElementById("cfg-bride-ig").value.trim();
-      updated.couple.bride.photo = (document.getElementById("cfg-bride-photo")?.value || "assets/images/couple-2.jpg").trim();
-
-      // Update Cover Photo Halaman Pembuka & Background Isi Undangan
-      updated.couple.coverPhoto = (document.getElementById("cfg-cover-photo")?.value || "assets/images/cover.jpg").trim();
-      updated.couple.backgroundPhoto = (document.getElementById("cfg-background-photo")?.value || "assets/images/background.jpg").trim();
-
-      // Update Akad
-      updated.events.akad.dateFormatted = document.getElementById("cfg-akad-date").value.trim();
-      updated.events.akad.timeFormatted = document.getElementById("cfg-akad-time").value.trim();
-      updated.events.akad.venueName = document.getElementById("cfg-akad-venue").value.trim();
-      updated.events.akad.venueAddress = document.getElementById("cfg-akad-address").value.trim();
-      updated.events.akad.googleMapsUrl = document.getElementById("cfg-akad-maps").value.trim();
-
-      // Update Resepsi
-      updated.events.resepsi.dateFormatted = document.getElementById("cfg-resepsi-date").value.trim();
-      updated.events.resepsi.timeFormatted = document.getElementById("cfg-resepsi-time").value.trim();
-      updated.events.resepsi.venueName = document.getElementById("cfg-resepsi-venue").value.trim();
-      updated.events.resepsi.venueAddress = document.getElementById("cfg-resepsi-address").value.trim();
-      updated.events.resepsi.googleMapsUrl = document.getElementById("cfg-resepsi-maps").value.trim();
-
-      // Update Unduh Mantu
-      updated.events.unduhMantu = {
-        enable: Boolean(document.getElementById("cfg-unduh-enable")?.checked),
-        title: (document.getElementById("cfg-unduh-title")?.value || "Acara Unduh Mantu").trim(),
-        dateFormatted: (document.getElementById("cfg-unduh-date")?.value || "").trim(),
-        timeFormatted: (document.getElementById("cfg-unduh-time")?.value || "").trim(),
-        venueName: (document.getElementById("cfg-unduh-venue")?.value || "").trim(),
-        venueAddress: (document.getElementById("cfg-unduh-address")?.value || "").trim(),
-        googleMapsUrl: (document.getElementById("cfg-unduh-maps")?.value || "").trim(),
-        iconClass: "fa-home-user"
-      };
-
-      // Update Target Waktu Hitung Mundur (Countdown)
-      let targetCountdownIso = (document.getElementById("cfg-countdown-target")?.value || "").trim();
-      if (targetCountdownIso) {
-        if (targetCountdownIso.length === 16) {
-          targetCountdownIso += ":00";
-        }
-      } else {
-        targetCountdownIso = parseIndoDateToIso(
-          document.getElementById("cfg-akad-date")?.value,
-          document.getElementById("cfg-akad-time")?.value
-        ) || "2026-11-21T08:00:00";
-      }
-
-      updated.countdown = {
-        targetDate: targetCountdownIso,
-        eventPassedMessage: (document.getElementById("cfg-countdown-passed-msg")?.value || "Alhamdulillah, rangkaian acara pernikahan telah selesai diselenggarakan dengan penuh kebahagiaan. Terima kasih banyak atas kehadiran dan doa restu Anda!").trim()
-      };
-
-      // Update Bank Kado Digital Dinamis
-      syncBankAccountsFromInputs();
-      if (!updated.gift) updated.gift = {};
-      updated.gift.bankAccounts = currentBankAccounts;
-
-      // Update RSVP WhatsApp
-      let cleanRsvpWa = (document.getElementById("cfg-rsvp-wa-number")?.value || "").trim().replace(/[^0-9]/g, "");
-      if (cleanRsvpWa.startsWith("0")) cleanRsvpWa = "62" + cleanRsvpWa.slice(1);
-      updated.rsvp = {
-        whatsappNumber: cleanRsvpWa || "6281234567890",
-        contactPersonName: (document.getElementById("cfg-rsvp-wa-name")?.value || "").trim(),
-        autoOpenWhatsApp: Boolean(document.getElementById("cfg-rsvp-auto-wa")?.checked)
-      };
-
-      // Update Musik Pengiring (Multi-Sumber: YouTube, Offline, Online)
-      const musicSourceType = document.getElementById("cfg-music-source-type")?.value || "local";
-      const ytUrl = (document.getElementById("cfg-music-youtube-url")?.value || "").trim();
-      const ytId = extractYouTubeId(ytUrl);
-      const localUrl = (document.getElementById("cfg-music-url")?.value || "assets/music/lagu-undangan.mp3").trim();
-
-      updated.music = {
-        sourceType: musicSourceType,
-        youtubeUrl: ytUrl,
-        youtubeId: ytId,
-        filePath: localUrl,
-        title: (document.getElementById("cfg-music-title")?.value || "Romantic Wedding Music").trim(),
-        artist: (document.getElementById("cfg-music-artist")?.value || "").trim(),
-        autoplayAfterOpen: true
-      };
-
-      // Update Aset Gambar Tema (Dual Kayon Gunungan Kiri/Kanan, Sampul, Wayang, Ornamen)
-      const leftGunungan = (document.getElementById("cfg-gunungan-left-img")?.value || "assets/images/gunungan-gold.svg").trim();
-      const rightGunungan = (document.getElementById("cfg-gunungan-right-img")?.value || "").trim();
-      const centerGunungan = (document.getElementById("cfg-gunungan-center-img")?.value || leftGunungan).trim();
-
-      updated.themeAssets = {
-        showGunungan: Boolean(document.getElementById("cfg-show-gunungan")?.checked),
-        gununganImage: leftGunungan,
-        gununganLeftImage: leftGunungan,
-        gununganRightImage: rightGunungan,
-        gununganRightMirror: Boolean(document.getElementById("cfg-gunungan-right-mirror")?.checked),
-        showGununganCenter: Boolean(document.getElementById("cfg-show-gunungan-center")?.checked),
-        gununganCenterImage: centerGunungan,
-        showCoverWayang: Boolean(document.getElementById("cfg-show-cover-wayang")?.checked),
-        coverWayangGroomImage: (document.getElementById("cfg-cover-wayang-groom-img")?.value || "assets/images/wayang-kamajaya.svg").trim(),
-        coverWayangBrideImage: (document.getElementById("cfg-cover-wayang-bride-img")?.value || "assets/images/wayang-kamaratih.svg").trim(),
-        showCoverCouplePhoto: Boolean(document.getElementById("cfg-show-cover-couple-photo")?.checked),
-        coverCouplePhoto: (document.getElementById("cfg-cover-couple-photo")?.value || "assets/images/cover.jpg").trim(),
-        wayangGroomImage: (document.getElementById("cfg-wayang-groom-img")?.value || "assets/images/wayang-kamajaya.svg").trim(),
-        showWayangGroom: Boolean(document.getElementById("cfg-show-wayang-groom")?.checked),
-        wayangBrideImage: (document.getElementById("cfg-wayang-bride-img")?.value || "assets/images/wayang-kamaratih.svg").trim(),
-        showWayangBride: Boolean(document.getElementById("cfg-show-wayang-bride")?.checked),
-        cornerOrnamentImage: (document.getElementById("cfg-corner-img")?.value || "assets/images/javanese-corner.svg").trim(),
-        showCorners: Boolean(document.getElementById("cfg-show-corners")?.checked),
-        favicon: (document.getElementById("cfg-favicon-invitation")?.value || "assets/images/favicon.png").trim(),
-        adminFavicon: (document.getElementById("cfg-favicon-admin")?.value || "assets/images/favicon-admin.png").trim(),
-        adminLogo: (document.getElementById("cfg-admin-logo-img")?.value || "assets/images/gunungan-gold.svg").trim(),
-        adminTitle: (document.getElementById("cfg-admin-brand-title")?.value || "PANEL ADMIN").trim(),
-        backgroundPhoto: (document.getElementById("cfg-background-photo")?.value || "assets/images/background.jpg").trim(),
-        backgroundOverlay: document.getElementById("cfg-bg-overlay")?.value || "medium",
-        showBackgroundBatik: Boolean(document.getElementById("cfg-show-bg-batik")?.checked)
-      };
-      updated.adminLogo = updated.themeAssets.adminLogo;
-      updated.adminTitle = updated.themeAssets.adminTitle;
-
-      try {
-        localStorage.setItem("wedding_admin_logo", updated.adminLogo);
-        localStorage.setItem("wedding_admin_title", updated.adminTitle);
-      } catch (_) {}
-      applyAdminLogo(updated.adminLogo, updated.adminTitle);
-
-      // Update Love Story & Gallery
-      syncLoveStoryFromInputs();
-      syncGalleryFromInputs();
-      updated.loveStory = currentLoveStories;
-      updated.gallery = currentGalleryItems;
-
-      // Update Efek Animasi Partikel Latar Belakang (Salju, Sakura, Bintang Emas, Hati, dll)
-      updated.animation = {
-        enabled: Boolean(document.getElementById("cfg-animation-enabled")?.checked),
-        effect: document.getElementById("cfg-animation-effect")?.value || "sakura",
-        intensity: document.getElementById("cfg-animation-intensity")?.value || "medium",
-        speed: document.getElementById("cfg-animation-speed")?.value || "normal"
-      };
-
-      // Update Footer (Bawah Pol)
-      const groomCallVal = document.getElementById("cfg-groom-call")?.value.trim() || "agus";
-      const brideCallVal = document.getElementById("cfg-bride-call")?.value.trim() || "agis";
-      const fallbackCouple = `${groomCallVal} & ${brideCallVal}`;
-
-      updated.footer = {
-        coupleNames: (document.getElementById("cfg-footer-couple-names")?.value || fallbackCouple).trim(),
-        closingGreeting: (document.getElementById("cfg-footer-closing-greeting")?.value || "Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan doa restu kepada kedua mempelai.").trim(),
-        copyright: (document.getElementById("cfg-footer-copyright")?.value || `© 2026 ${fallbackCouple} Wedding Invitation. Dibuat dengan penuh cinta.`).trim()
-      };
-      if (updated.quotes) {
-        updated.quotes.closingGreeting = updated.footer.closingGreeting;
-      }
-
-      try {
-        const res = await window.API.updateInvitationConfig(updated);
-        if (res && res.success) {
-          currentSettings = res.data;
-          if (Array.isArray(res.data.loveStory)) {
-            currentLoveStories = JSON.parse(JSON.stringify(res.data.loveStory));
-            renderAdminLoveStories();
-          }
-          if (Array.isArray(res.data.gallery)) {
-            currentGalleryItems = JSON.parse(JSON.stringify(res.data.gallery));
-            renderAdminGallery();
-          }
-          if (Array.isArray(res.data.gift?.bankAccounts)) {
-            currentBankAccounts = JSON.parse(JSON.stringify(res.data.gift.bankAccounts));
-            renderAdminBankAccounts();
-          }
-          if (updated.themeAssets?.adminFavicon) {
-            updateAdminTabFavicon(updated.themeAssets.adminFavicon);
-          }
-          if (res.data?.animation) {
-            updateAdminAnimationStatusText(res.data.animation.enabled !== false);
-            updateActivePresetAnimButton(res.data.animation.effect || "sakura");
-            updateAdminAnimationPreview();
-          }
-          showToast("Data kustomisasi undangan berhasil disimpan ke server!");
-        } else {
-          alert("Gagal menyimpan perubahan: " + (res.message || ""));
-        }
-      } catch (err) {
-        alert("Error server saat menyimpan konfigurasi: " + err.message);
-      }
+      await saveCurrentSettings();
     };
 
     if (form) form.addEventListener("submit", handleSave);
@@ -2390,9 +2405,24 @@ const AdminApp = (function () {
           if (inputId === "cfg-favicon-admin") updateAdminTabFavicon(el.value);
           if (inputId === "cfg-admin-logo-img") applyAdminLogo(el.value, document.getElementById("cfg-admin-brand-title")?.value);
         });
-        el.addEventListener("change", () => handleUrlPasteOrInput(el));
-        el.addEventListener("paste", () => setTimeout(() => handleUrlPasteOrInput(el), 100));
+        el.addEventListener("change", () => {
+          handleUrlPasteOrInput(el);
+          saveCurrentSettings({ toastMsg: "Pengaturan gambar diperbarui & langsung diterapkan!" });
+        });
+        el.addEventListener("paste", () => setTimeout(() => {
+          handleUrlPasteOrInput(el);
+          saveCurrentSettings({ toastMsg: "Pengaturan gambar diperbarui & langsung diterapkan!" });
+        }, 150));
       }
+    });
+
+    document.getElementById("cfg-bg-overlay")?.addEventListener("change", function () {
+      updateThemePreviews();
+      saveCurrentSettings({ toastMsg: "Lapisan gelap background diperbarui & diterapkan!" });
+    });
+    document.getElementById("cfg-show-bg-batik")?.addEventListener("change", function () {
+      updateThemePreviews();
+      saveCurrentSettings({ toastMsg: "Tampilan motif batik latar diperbarui & diterapkan!" });
     });
 
     // Helper Universal Upload Gambar via API dengan Fallback Otomatis
@@ -2444,14 +2474,14 @@ const AdminApp = (function () {
                 updateCouplePreviews();
                 if (textInputId === "cfg-favicon-admin") updateAdminTabFavicon(res.filePath);
                 if (textInputId === "cfg-admin-logo-img") applyAdminLogo(res.filePath, document.getElementById("cfg-admin-brand-title")?.value);
-                showToast(`✅ ${toastLabel || "Foto"} tersimpan ke server!`);
+                await saveCurrentSettings({ toastMsg: `✅ ${toastLabel || "Foto"} berhasil disimpan & LANGSUNG DITERAPKAN ke website!` });
                 return;
               }
             } catch (uploadErr) {
               console.warn("[Upload] Backend offline, menggunakan mode penyimpanan lokal DataURL:", uploadErr.message);
             }
 
-            showToast(`✨ ${toastLabel || "Foto"} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
+            await saveCurrentSettings({ toastMsg: `✨ ${toastLabel || "Foto"} berhasil dipasang & LANGSUNG DITERAPKAN ke website!` });
           } catch (err) {
             console.error(`[Upload ${toastLabel}] Error:`, err);
             showToast(`Gagal memproses ${toastLabel || "foto"}: ${err.message || err}`);
@@ -2939,7 +2969,7 @@ const AdminApp = (function () {
                   srcInput.dispatchEvent(new Event("change", { bubbles: true }));
                 }
                 if (img) img.src = res.filePath;
-                showToast(`✅ Foto momen #${idx + 1} tersimpan ke server!`);
+                await saveCurrentSettings({ toastMsg: `✅ Foto momen #${idx + 1} berhasil disimpan & LANGSUNG DITERAPKAN ke website!` });
                 return;
               }
             } catch (upErr) {
@@ -2947,7 +2977,7 @@ const AdminApp = (function () {
             }
           }
 
-          showToast(`✨ Foto momen #${idx + 1} berhasil diimpor! Klik "Simpan Seluruh Perubahan" di atas.`);
+          await saveCurrentSettings({ toastMsg: `✨ Foto momen #${idx + 1} berhasil dipasang & LANGSUNG DITERAPKAN ke website!` });
         } catch (err) {
           console.error("[Upload Story] Error:", err);
           showToast(`Gagal memproses foto: ${err.message || err}`);
@@ -3170,7 +3200,7 @@ const AdminApp = (function () {
                   srcInput.dispatchEvent(new Event("change", { bubbles: true }));
                 }
                 if (img) img.src = res.filePath;
-                showToast(`✅ Foto galeri #${idx + 1} tersimpan ke server!`);
+                await saveCurrentSettings({ toastMsg: `✅ Foto galeri #${idx + 1} berhasil disimpan & LANGSUNG DITERAPKAN ke website!` });
                 return;
               }
             } catch (upErr) {
@@ -3178,7 +3208,7 @@ const AdminApp = (function () {
             }
           }
 
-          showToast(`✨ Foto galeri #${idx + 1} berhasil dipasang! Klik "Simpan Seluruh Perubahan" di atas.`);
+          await saveCurrentSettings({ toastMsg: `✨ Foto galeri #${idx + 1} berhasil dipasang & LANGSUNG DITERAPKAN ke website!` });
         } catch (err) {
           console.error("[Upload Gallery] Error:", err);
           showToast(`Gagal memproses foto: ${err.message || err}`);

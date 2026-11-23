@@ -4,6 +4,27 @@
 const WEDDING_CONFIG = {
   "weddingTitle": "The Wedding of Dimas & Anindya - Undangan Pernikahan Digital",
   "couple": {
+    "groom": {
+      "callName": "Prabowo",
+      "fullName": "prabiwi subiinti",
+      "fatherName": "bambang",
+      "motherName": "Ibu Siti Rahmawati",
+      "childOrder": "Putra pertama dari",
+      "instagram": "https://instagram.com/",
+      "photo": "assets/images/couple-1.jpg",
+      "bio": "Seorang insan yang bertekad menjaga komitmen suci, membimbing dalam kasih sayang, dan membangun bahtera rumah tangga yang sakinah, mawaddah, warahmah."
+    },
+    "bride": {
+      "callName": "Teddy",
+      "fullName": "mayor tidi",
+      "fatherName": "michael",
+      "motherName": "Ibu Hj. Nurul Hasanah",
+      "childOrder": "Putri kedua dari",
+      "instagram": "https://instagram.com/",
+      "photo": "assets/images/couple-2.jpg",
+      "bio": "Sosok wanita penyayang yang siap menyempurnakan separuh agama, melangkah bersama dalam suka dan duka menggapai ridho Allah SWT."
+    },
+    "coverPhoto": "assets/images/cover.jpg",
     "backgroundPhoto": "assets/images/background.jpg"
   },
   "quotes": {
@@ -109,6 +130,28 @@ const WEDDING_CONFIG = {
     "autoplayAfterOpen": true
   },
   "themeAssets": {
+    "showGunungan": true,
+    "gununganImage": "https://pin.it/1DgF8XTSN",
+    "gununganLeftImage": "https://pin.it/1DgF8XTSN",
+    "gununganRightImage": "https://pin.it/1DgF8XTSN",
+    "gununganRightMirror": true,
+    "gununganCenterImage": "assets/images/gunungan-gold.svg",
+    "wayangGroomImage": "assets/images/wayang-kamajaya.svg",
+    "showWayangGroom": true,
+    "wayangBrideImage": "assets/images/wayang-kamaratih.svg",
+    "showWayangBride": true,
+    "cornerOrnamentImage": "assets/images/javanese-corner.svg",
+    "showCorners": true,
+    "showCoverWayang": true,
+    "favicon": "assets/images/gunungan-gold.svg",
+    "adminFavicon": "assets/images/gunungan-gold.svg",
+    "showGununganCenter": true,
+    "coverWayangGroomImage": "assets/images/wayang-kamajaya.svg",
+    "coverWayangBrideImage": "assets/images/wayang-kamaratih.svg",
+    "showCoverCouplePhoto": false,
+    "coverCouplePhoto": "assets/images/cover.jpg",
+    "adminLogo": "assets/images/gunungan-gold.svg",
+    "adminTitle": "PANEL ADMIN",
     "backgroundPhoto": "assets/images/background.jpg",
     "backgroundOverlay": "medium",
     "showBackgroundBatik": true

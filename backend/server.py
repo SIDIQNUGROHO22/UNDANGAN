@@ -119,12 +119,23 @@ def parse_indo_date_to_iso(date_str, time_str=''):
 
     return f"{year:04d}-{month:02d}-{day:02d}T{hour:02d}:{minute:02d}:00"
 
+def deep_merge(target, source):
+    if not isinstance(source, dict):
+        return target
+    for key, value in source.items():
+        if isinstance(value, dict) and key in target and isinstance(target[key], dict):
+            deep_merge(target[key], value)
+        else:
+            target[key] = value
+    return target
+
 def get_settings():
     return read_json(FILES['settings'], read_json(FILES['defaultConfig'], {}))
 
 def update_settings(new_data):
     current = get_settings()
-    current.update(new_data)
+    if isinstance(new_data, dict):
+        deep_merge(current, new_data)
 
     # Pastikan countdown targetDate selalu tersinkronisasi jika tanggal akad nikah berubah
     akad = current.get('events', {}).get('akad', {})

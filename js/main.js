@@ -355,8 +355,9 @@ const MainApp = (function () {
 
     // 5c. Foto Background Utama Isi Undangan (Layar Setelah Buka Undangan)
     const mainBgImg = document.getElementById("main-bg-image");
-    if (mainBgImg && assets.backgroundPhoto) {
-      const bgSrc = normalizeMediaUrl(assets.backgroundPhoto, "image");
+    const bgPhotoSrc = assets.backgroundPhoto || activeConfig?.couple?.backgroundPhoto;
+    if (mainBgImg && bgPhotoSrc) {
+      const bgSrc = normalizeMediaUrl(bgPhotoSrc, "image");
       mainBgImg.src = bgSrc;
       mainBgImg.onerror = function () { this.onerror = null; this.src = "assets/images/background.jpg"; };
     }

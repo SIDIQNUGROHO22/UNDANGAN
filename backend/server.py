@@ -965,22 +965,31 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             file_name = clean_path
 
         # Penanganan khusus favicon.ico dan favicon.png untuk browser Google Chrome / Firefox / Safari
-        if file_name in ['favicon.ico', 'favicon.png']:
-            settings = get_settings()
-            ta = settings.get('themeAssets', {})
-            fav_src = ta.get('favicon') or 'assets/images/favicon.png'
-            clean_fav = fav_src.lstrip('/')
-            fav_candidate = os.path.normpath(os.path.join(FRONTEND_DIR, clean_fav))
-            if os.path.exists(fav_candidate) and os.path.isfile(fav_candidate) and not fav_candidate.endswith('.svg'):
-                file_path = fav_candidate
-                mime_type = 'image/png' if fav_candidate.endswith('.png') else 'image/x-icon'
+        if file_name in ['favicon.ico', 'favicon.png', 'favicon-admin.png', 'favicon-admin.ico']:
+            if file_name.endswith('.ico'):
+                ico_name = 'favicon-admin.ico' if 'admin' in file_name else 'favicon.ico'
+                for base in [ROOT_DIR, FRONTEND_DIR, os.path.join(ROOT_DIR, 'assets', 'images')]:
+                    c_path = os.path.join(base, ico_name)
+                    if os.path.exists(c_path):
+                        file_path = c_path
+                        mime_type = 'image/x-icon'
+                        break
             else:
-                default_fav = os.path.normpath(os.path.join(FRONTEND_DIR, 'assets', 'images', 'favicon.png'))
-                if os.path.exists(default_fav):
-                    file_path = default_fav
-                    mime_type = 'image/png'
-                else:
-                    file_path = None
+                settings = get_settings()
+                ta = settings.get('themeAssets', {})
+                fav_src = (ta.get('adminFavicon') if 'admin' in file_name else ta.get('favicon')) or f'assets/images/{file_name}'
+                clean_fav = fav_src.lstrip('/')
+                for base in [ROOT_DIR, FRONTEND_DIR, UNDANGAN_DIR]:
+                    c_path = os.path.normpath(os.path.join(base, clean_fav))
+                    if os.path.exists(c_path) and os.path.isfile(c_path):
+                        file_path = c_path
+                        mime_type = 'image/png'
+                        break
+                if not file_path:
+                    def_path = os.path.normpath(os.path.join(ROOT_DIR, 'assets', 'images', file_name))
+                    if os.path.exists(def_path):
+                        file_path = def_path
+                        mime_type = 'image/png'
 
             if file_path and os.path.exists(file_path):
                 try:
@@ -990,6 +999,8 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
                     self.send_header('Content-Type', mime_type)
                     self.send_header('Content-Length', str(len(content)))
                     self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                    self.send_header('Pragma', 'no-cache')
+                    self.send_header('Expires', '0')
                     self.send_cors()
                     self.end_headers()
                     if not head_only:

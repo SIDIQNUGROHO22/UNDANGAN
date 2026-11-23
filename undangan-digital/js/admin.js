@@ -1685,15 +1685,15 @@ const AdminApp = (function () {
       favEl.id = "browser-favicon";
       favEl.rel = "icon";
       favEl.type = type;
-      favEl.setAttribute("sizes", "64x64");
+      favEl.setAttribute("sizes", "192x192");
       favEl.href = hrefUrl;
       document.head.appendChild(favEl);
 
       const shortcutEl = document.createElement("link");
       shortcutEl.id = "browser-shortcut-icon";
       shortcutEl.rel = "shortcut icon";
-      shortcutEl.type = type;
-      shortcutEl.href = hrefUrl;
+      shortcutEl.type = "image/x-icon";
+      shortcutEl.href = "assets/images/favicon-admin.ico?v=" + Date.now();
       document.head.appendChild(shortcutEl);
 
       const appleEl = document.createElement("link");
@@ -1704,49 +1704,7 @@ const AdminApp = (function () {
       document.head.appendChild(appleEl);
     }
 
-    // Gunakan rasterisasi HTML5 Canvas untuk menghasilkan Data URL PNG 64x64 instan
-    // Google Chrome tab strip memperbarui ikon seketika (0ms) jika diberikan format PNG Data URL
-    try {
-      const tempImg = new Image();
-      tempImg.crossOrigin = "anonymous";
-      tempImg.onload = function () {
-        try {
-          const canvas = document.createElement("canvas");
-          canvas.width = 64;
-          canvas.height = 64;
-          const ctx = canvas.getContext("2d");
-          if (ctx) {
-            // Latar belakang mewah rounded badge agar kontras sempurna di tab Chrome gelap maupun terang
-            ctx.clearRect(0, 0, 64, 64);
-            ctx.beginPath();
-            if (ctx.roundRect) {
-              ctx.roundRect(2, 2, 60, 60, 12);
-            } else {
-              ctx.arc(32, 32, 28, 0, Math.PI * 2);
-            }
-            ctx.fillStyle = "#1b1713";
-            ctx.fill();
-            ctx.lineWidth = 2.5;
-            ctx.strokeStyle = "#dfb15b";
-            ctx.stroke();
-
-            // Gambar ikon di tengah
-            const pad = 8;
-            ctx.drawImage(tempImg, pad, pad, 64 - pad * 2, 64 - pad * 2);
-            const pngDataUrl = canvas.toDataURL("image/png");
-            setBrowserFavicon(pngDataUrl, "image/png");
-            return;
-          }
-        } catch (_) {}
-        setBrowserFavicon(cacheBust, mimeType);
-      };
-      tempImg.onerror = function () {
-        setBrowserFavicon(cacheBust, mimeType);
-      };
-      tempImg.src = cacheBust;
-    } catch (_) {
-      setBrowserFavicon(cacheBust, mimeType);
-    }
+    setBrowserFavicon(cacheBust, mimeType);
   }
 
   function applyAdminLogo(logoUrl, titleText) {

@@ -605,6 +605,55 @@ const API = {
     }
   },
 
+  async resetCredentials(payload = {}) {
+    const action = payload.action || 'default';
+    const cleanUser = (payload.username || payload.email || 'admin').trim();
+    const cleanPass = (payload.password || 'admin123').trim();
+    const recoveryKey = (payload.recoveryKey || payload.recovery_key || '').trim();
+
+    try {
+      const res = await this.request('/api/auth/reset', {
+        method: 'POST',
+        body: JSON.stringify({
+          action,
+          username: cleanUser,
+          email: cleanUser,
+          password: cleanPass,
+          recovery_key: recoveryKey
+        })
+      });
+      if (res && res.success) {
+        const identifier = res.username || res.email || cleanUser;
+        const finalPass = res.password || cleanPass;
+        localStorage.setItem('wedding_admin_email', identifier);
+        localStorage.setItem('wedding_admin_password', finalPass);
+      }
+      return res;
+    } catch (err) {
+      if (err && (err.status === 400 || err.status === 401)) {
+        return {
+          success: false,
+          message: (err.data && err.data.message) || err.message || 'Gagal mereset kredensial!'
+        };
+      }
+      // Fallback offline jika server tidak terhubung
+      const targetUser = action === 'default' ? 'admin' : cleanUser;
+      const targetPass = action === 'default' ? 'admin123' : cleanPass;
+      localStorage.setItem('wedding_admin_email', targetUser);
+      localStorage.setItem('wedding_admin_password', targetPass);
+      return {
+        success: true,
+        email: targetUser,
+        username: targetUser,
+        password: targetPass,
+        isOffline: true,
+        message: action === 'default'
+          ? 'Kredensial berhasil di-reset ke bawaan (mode offline)!'
+          : 'Kredensial baru berhasil disimpan (mode offline)!'
+      };
+    }
+  },
+
   async adminLogout() {
     try {
       await this.request('/api/auth/logout', { method: 'POST' });

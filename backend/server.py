@@ -375,6 +375,50 @@ def update_credentials(new_email, new_password):
     identifier = admin.get('username') or admin.get('email')
     return {'success': True, 'email': identifier, 'username': identifier, 'password': admin.get('password'), 'message': 'Akun & Password admin berhasil diperbarui!'}
 
+def reset_credentials(action='default', recovery_key=None, new_email=None, new_password=None):
+    admin = get_admin_data()
+    expected_key = admin.get('recovery_key', 'wedding2026')
+    clean_key = str(recovery_key or '').strip()
+
+    if action == 'default':
+        admin['email'] = 'admin'
+        admin['username'] = 'admin'
+        admin['password'] = 'admin123'
+        admin['tokens'] = []
+        write_json(FILES['admin'], admin)
+        return {
+            'success': True,
+            'email': 'admin',
+            'username': 'admin',
+            'password': 'admin123',
+            'message': 'Kredensial berhasil di-reset ke bawaan (admin / admin123)!'
+        }
+
+    # action == 'custom'
+    if clean_key != expected_key:
+        return {'success': False, 'message': 'Kode Pemulihan Master salah! Gunakan wedding2026 atau kode yang telah diatur.'}
+
+    clean_user = str(new_email or 'admin').strip()
+    clean_pass = str(new_password or '').strip()
+
+    if not clean_user:
+        return {'success': False, 'message': 'Username atau email baru wajib diisi!'}
+    if len(clean_pass) < 6:
+        return {'success': False, 'message': 'Password baru minimal 6 karakter!'}
+
+    admin['email'] = clean_user
+    admin['username'] = clean_user
+    admin['password'] = clean_pass
+    admin['tokens'] = []
+    write_json(FILES['admin'], admin)
+    return {
+        'success': True,
+        'email': clean_user,
+        'username': clean_user,
+        'password': clean_pass,
+        'message': f'Kredensial berhasil di-reset ke akun baru: {clean_user}!'
+    }
+
 def get_stats():
     guests = get_guests()
     rsvps = get_rsvps()
@@ -607,6 +651,17 @@ class WeddingServerHandler(BaseHTTPRequestHandler):
             password = body.get('password', '')
             res = validate_login(email, password)
             status = 200 if res.get('success') else 401
+            self.send_json(res, status)
+            return
+
+        # RESET CREDENTIALS (LUPA EMAIL ATAU PASSWORD)
+        if path == '/api/auth/reset':
+            action = body.get('action', 'default')
+            rec_key = body.get('recovery_key') or body.get('recoveryKey')
+            new_user = body.get('username') or body.get('email')
+            new_pass = body.get('password')
+            res = reset_credentials(action=action, recovery_key=rec_key, new_email=new_user, new_password=new_pass)
+            status = 200 if res.get('success') else 400
             self.send_json(res, status)
             return
 

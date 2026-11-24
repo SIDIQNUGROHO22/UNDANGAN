@@ -85,6 +85,12 @@
         <button type="submit" class="btn-primary" id="btn-submit-login">
           <i class="fas fa-sign-in-alt"></i> Masuk ke Dasbor
         </button>
+
+        <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 10px;">
+          <button type="button" id="btn-open-reset-modal" style="background: none; border: none; color: #b45309; font-size: 0.82rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; text-decoration: underline; padding: 4px 0;" title="Lupa email atau kata sandi admin? Klik untuk reset kredensial">
+            <i class="fas fa-undo-alt"></i> Lupa Akun atau Password?
+          </button>
+        </div>
       </form>
 
       <div class="demo-credentials-note" id="login-credentials-note">
@@ -103,6 +109,7 @@
         </p>
         <p style="margin-top: 8px; font-size: 0.75rem; color: var(--admin-text-muted); line-height: 1.4;">
           Akun &amp; password dapat diganti kapan saja melalui menu <em>"Ganti Akun &amp; Password"</em> di navbar atas setelah masuk.
+          Lupa kredensial? <a href="#" id="link-open-reset-modal" style="color: #b45309; font-weight: 600; text-decoration: underline;">Reset di sini</a>.
         </p>
       </div>
     </div>
@@ -1971,6 +1978,105 @@ Tersimpan di Sistem Server Undangan Digital</pre>
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL RESET SANDI & AKUN SAAT KELUPAAN EMAIL / PASSWORD         -->
+  <!-- ============================================================== -->
+  <div id="reset-modal" class="modal-admin-backdrop">
+    <div class="modal-admin-card" style="max-width: 490px;">
+      <button type="button" class="modal-close-icon" id="btn-close-reset-modal">&times;</button>
+      
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 0.5rem;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(223, 177, 91, 0.15); display: flex; align-items: center; justify-content: center; color: var(--admin-gold); font-size: 1.25rem;">
+          <i class="fas fa-undo-alt"></i>
+        </div>
+        <div>
+          <h3 class="modal-admin-title" style="margin: 0; font-size: 1.15rem;">Pemulihan Akun &amp; Sandi</h3>
+          <span style="font-size: 0.78rem; color: var(--admin-text-muted);">Reset kredensial saat kelupaan email atau kata sandi</span>
+        </div>
+      </div>
+
+      <div id="reset-modal-alert" class="login-alert" style="display: none; margin-bottom: 1rem;"></div>
+
+      <!-- Tab Opsi Reset -->
+      <div style="display: flex; gap: 6px; margin-bottom: 1.25rem; background: #f1f5f9; padding: 4px; border-radius: 8px;">
+        <button type="button" id="tab-btn-reset-default" class="reset-tab-btn active" style="flex: 1; padding: 8px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: none; background: #fff; color: #1e293b; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: all 0.2s;">
+          <i class="fas fa-history"></i> Reset ke Bawaan
+        </button>
+        <button type="button" id="tab-btn-reset-custom" class="reset-tab-btn" style="flex: 1; padding: 8px 10px; font-size: 0.8rem; font-weight: 700; border-radius: 6px; border: none; background: transparent; color: #64748b; cursor: pointer; transition: all 0.2s;">
+          <i class="fas fa-edit"></i> Buat Kredensial Baru
+        </button>
+      </div>
+
+      <!-- PANEL 1: RESET CEPAT KE DEFAULT (admin / admin123) -->
+      <div id="panel-reset-default">
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 14px; margin-bottom: 1.25rem; font-size: 0.84rem; color: #92400e; line-height: 1.5;">
+          <strong><i class="fas fa-info-circle"></i> Pemulihan Cepat Instan:</strong><br>
+          Kredensial login Anda akan segera dikembalikan ke pengaturan awal sistem:
+          <ul style="margin: 6px 0 6px 16px; padding: 0;">
+            <li>Akun / Username: <strong style="font-family: monospace; font-size: 0.95rem;">admin</strong></li>
+            <li>Password: <strong style="font-family: monospace; font-size: 0.95rem;">admin123</strong></li>
+          </ul>
+          <span style="font-size: 0.76rem; color: #b45309; display: block;">
+            Setelah di-reset, form login akan otomatis terisi dan Anda dapat langsung masuk ke dasbor.
+          </span>
+        </div>
+
+        <button type="button" class="btn-primary" id="btn-confirm-reset-default" style="width: 100%; padding: 12px; font-size: 0.95rem; justify-content: center;">
+          <i class="fas fa-check-circle"></i> Konfirmasi Reset ke admin / admin123
+        </button>
+      </div>
+
+      <!-- PANEL 2: ATUR LANGSUNG USERNAME & PASSWORD BARU -->
+      <div id="panel-reset-custom" style="display: none;">
+        <form id="form-reset-custom">
+          <div class="form-group">
+            <label for="reset-new-username" class="form-label">Username / Email Baru</label>
+            <input type="text" id="reset-new-username" class="form-control" placeholder="Contoh: admin atau sidiq" required autocomplete="username">
+          </div>
+
+          <div class="form-group">
+            <label for="reset-new-password" class="form-label">Password Baru</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="reset-new-password" class="form-control" placeholder="Minimal 6 karakter" required minlength="6" autocomplete="new-password">
+              <button type="button" class="btn-toggle-pwd" data-target="reset-new-password" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reset-confirm-password" class="form-label">Konfirmasi Password Baru</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="reset-confirm-password" class="form-control" placeholder="Ulangi password baru" required minlength="6" autocomplete="new-password">
+              <button type="button" class="btn-toggle-pwd" data-target="reset-confirm-password" title="Tampilkan kata sandi" aria-label="Tampilkan kata sandi">
+                <i class="fas fa-eye"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="reset-recovery-key" class="form-label">
+              Kode Pemulihan Master (Master Recovery PIN)
+              <span style="font-weight: normal; color: var(--admin-text-muted); font-size: 0.75rem;">(Bawaan: <code>wedding2026</code>)</span>
+            </label>
+            <input type="text" id="reset-recovery-key" class="form-control" placeholder="wedding2026" value="wedding2026" required>
+            <span style="font-size: 0.74rem; color: var(--admin-text-muted);">Gunakan kode pemulihan bawaan sistem: <code>wedding2026</code></span>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 1.25rem;">
+            <button type="button" class="btn-sm btn-outline" id="btn-cancel-reset-modal" style="flex: 1; padding: 0.6rem; justify-content: center;">
+              Batal
+            </button>
+            <button type="submit" class="btn-primary" id="btn-submit-reset-custom" style="flex: 2; margin-top: 0; padding: 0.6rem; justify-content: center;">
+              <i class="fas fa-save"></i> Reset &amp; Simpan
+            </button>
+          </div>
+        </form>
+      </div>
+
     </div>
   </div>
 

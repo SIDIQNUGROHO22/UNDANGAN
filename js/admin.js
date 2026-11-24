@@ -995,6 +995,207 @@ const AdminApp = (function () {
     }
   }
 
+  // ==========================================
+  // PEMULIHAN & RESET AKUN / PASSWORD (LUPA KREDENSIAL)
+  // ==========================================
+  function initResetModal() {
+    const modal = document.getElementById("reset-modal");
+    const openBtn = document.getElementById("btn-open-reset-modal");
+    const openLink = document.getElementById("link-open-reset-modal");
+    const closeBtn = document.getElementById("btn-close-reset-modal");
+    const cancelBtn = document.getElementById("btn-cancel-reset-modal");
+    const alertBox = document.getElementById("reset-modal-alert");
+
+    const tabDefaultBtn = document.getElementById("tab-btn-reset-default");
+    const tabCustomBtn = document.getElementById("tab-btn-reset-custom");
+    const panelDefault = document.getElementById("panel-reset-default");
+    const panelCustom = document.getElementById("panel-reset-custom");
+
+    const btnConfirmDefault = document.getElementById("btn-confirm-reset-default");
+    const formCustom = document.getElementById("form-reset-custom");
+    const inputNewUser = document.getElementById("reset-new-username");
+    const inputNewPass = document.getElementById("reset-new-password");
+    const inputConfirmPass = document.getElementById("reset-confirm-password");
+    const inputRecKey = document.getElementById("reset-recovery-key");
+
+    const showTab = (tab) => {
+      if (alertBox) alertBox.style.display = "none";
+      if (tab === "default") {
+        if (tabDefaultBtn) {
+          tabDefaultBtn.style.background = "#fff";
+          tabDefaultBtn.style.color = "#1e293b";
+          tabDefaultBtn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+        }
+        if (tabCustomBtn) {
+          tabCustomBtn.style.background = "transparent";
+          tabCustomBtn.style.color = "#64748b";
+          tabCustomBtn.style.boxShadow = "none";
+        }
+        if (panelDefault) panelDefault.style.display = "block";
+        if (panelCustom) panelCustom.style.display = "none";
+      } else {
+        if (tabDefaultBtn) {
+          tabDefaultBtn.style.background = "transparent";
+          tabDefaultBtn.style.color = "#64748b";
+          tabDefaultBtn.style.boxShadow = "none";
+        }
+        if (tabCustomBtn) {
+          tabCustomBtn.style.background = "#fff";
+          tabCustomBtn.style.color = "#1e293b";
+          tabCustomBtn.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)";
+        }
+        if (panelDefault) panelDefault.style.display = "none";
+        if (panelCustom) panelCustom.style.display = "block";
+      }
+    };
+
+    if (tabDefaultBtn) {
+      tabDefaultBtn.addEventListener("click", () => showTab("default"));
+    }
+    if (tabCustomBtn) {
+      tabCustomBtn.addEventListener("click", () => showTab("custom"));
+    }
+
+    const openModal = () => {
+      if (alertBox) alertBox.style.display = "none";
+      showTab("default");
+      if (inputNewUser) inputNewUser.value = "";
+      if (inputNewPass) {
+        inputNewPass.value = "";
+        inputNewPass.type = "password";
+      }
+      if (inputConfirmPass) {
+        inputConfirmPass.value = "";
+        inputConfirmPass.type = "password";
+      }
+      if (inputRecKey) inputRecKey.value = "wedding2026";
+      initPasswordToggles();
+      if (modal) modal.classList.add("active");
+    };
+
+    const closeModal = () => {
+      if (modal) modal.classList.remove("active");
+    };
+
+    if (openBtn) openBtn.addEventListener("click", (e) => { e.preventDefault(); openModal(); });
+    if (openLink) openLink.addEventListener("click", (e) => { e.preventDefault(); openModal(); });
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    if (cancelBtn) cancelBtn.addEventListener("click", closeModal);
+
+    // 1. Eksekusi Reset Default
+    if (btnConfirmDefault) {
+      btnConfirmDefault.addEventListener("click", async function (e) {
+        e.preventDefault();
+        btnConfirmDefault.disabled = true;
+        btnConfirmDefault.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Mereset kredensial...`;
+
+        try {
+          const res = await window.API.resetCredentials({ action: "default" });
+          if (res && res.success) {
+            const loginEmailInput = document.getElementById("admin-email");
+            const loginPassInput = document.getElementById("admin-password");
+            if (loginEmailInput) loginEmailInput.value = "admin";
+            if (loginPassInput) loginPassInput.value = "admin123";
+
+            renderLoginHintPwd();
+            closeModal();
+            showToast("Kredensial berhasil di-reset ke bawaan (admin / admin123)!");
+          } else {
+            if (alertBox) {
+              alertBox.textContent = res.message || "Gagal mereset kredensial.";
+              alertBox.style.display = "block";
+            }
+          }
+        } catch (err) {
+          if (alertBox) {
+            alertBox.textContent = err.message || "Terjadi kesalahan saat mereset kredensial.";
+            alertBox.style.display = "block";
+          }
+        } finally {
+          btnConfirmDefault.disabled = false;
+          btnConfirmDefault.innerHTML = `<i class="fas fa-check-circle"></i> Konfirmasi Reset ke admin / admin123`;
+        }
+      });
+    }
+
+    // 2. Eksekusi Reset Custom
+    if (formCustom) {
+      formCustom.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        const newUser = inputNewUser ? inputNewUser.value.trim() : "";
+        const newPass = inputNewPass ? inputNewPass.value.trim() : "";
+        const confirmPass = inputConfirmPass ? inputConfirmPass.value.trim() : "";
+        const recKey = inputRecKey ? inputRecKey.value.trim() : "";
+
+        if (!newUser) {
+          if (alertBox) {
+            alertBox.textContent = "Username / email baru wajib diisi!";
+            alertBox.style.display = "block";
+          }
+          return;
+        }
+
+        if (newPass.length < 6) {
+          if (alertBox) {
+            alertBox.textContent = "Password baru minimal 6 karakter!";
+            alertBox.style.display = "block";
+          }
+          return;
+        }
+
+        if (newPass !== confirmPass) {
+          if (alertBox) {
+            alertBox.textContent = "Konfirmasi password baru tidak cocok!";
+            alertBox.style.display = "block";
+          }
+          return;
+        }
+
+        const submitBtn = document.getElementById("btn-submit-reset-custom");
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Menyimpan...`;
+        }
+
+        try {
+          const res = await window.API.resetCredentials({
+            action: "custom",
+            username: newUser,
+            email: newUser,
+            password: newPass,
+            recoveryKey: recKey
+          });
+
+          if (res && res.success) {
+            const loginEmailInput = document.getElementById("admin-email");
+            const loginPassInput = document.getElementById("admin-password");
+            if (loginEmailInput) loginEmailInput.value = newUser;
+            if (loginPassInput) loginPassInput.value = newPass;
+
+            renderLoginHintPwd();
+            closeModal();
+            showToast(`Kredensial berhasil di-reset ke akun ${newUser}!`);
+          } else {
+            if (alertBox) {
+              alertBox.textContent = res.message || "Gagal mereset kredensial.";
+              alertBox.style.display = "block";
+            }
+          }
+        } catch (err) {
+          if (alertBox) {
+            alertBox.textContent = err.message || "Terjadi kesalahan saat mereset.";
+            alertBox.style.display = "block";
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = `<i class="fas fa-save"></i> Reset &amp; Simpan`;
+          }
+        }
+      });
+    }
+  }
+
   // Helper Toggle Lihat/Sembunyikan Password
   function initPasswordToggles() {
     document.querySelectorAll(".btn-toggle-pwd").forEach(btn => {
@@ -3659,6 +3860,7 @@ const AdminApp = (function () {
     } catch (_) {}
 
     initAuth();
+    initResetModal();
     initPasswordToggles();
     initTabs();
     initAccountSecurity();

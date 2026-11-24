@@ -1,17 +1,7 @@
 {
   "email": "admin",
   "password": "admin123",
-  "tokens": [
-    "244f32a0639ab0f815fc0cee1aa42c4689e55e81208cd62b",
-    "1e79ab6b4b754903c6c53a11417655767a56ad9ad8c4fb22",
-    "8d08141b722bb8deaa68cf898515fb7686cc616fe4875d27",
-    "a7fca951f8ac6f7289763f6fed92e3226691adde855b060e",
-    "302bfca11c0c53eb6e72173379bc50191336719ef0b64288",
-    "9a34e12d6e2b4905c4bfb907788106ca6e7e4c006685b406",
-    "4cdd78dd962e06452ef58b0c8413b3e1df5d6892268b3398",
-    "e1e9527e2fbf63d623242628fe22601652786afcf269ad85",
-    "8a2c767a6c715d6703e918c0a29f145421c0aa4a2716e603",
-    "a381bb3c34534373b1e13a8c5598f2db520bfabc4e0af36c"
-  ],
-  "username": "admin"
+  "tokens": [],
+  "username": "admin",
+  "recovery_key": "wedding2026"
 }

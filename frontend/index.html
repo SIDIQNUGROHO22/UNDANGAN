@@ -8,16 +8,18 @@
   <meta name="description" content="Undangan Pernikahan Digital Sidiq Nugroho & Anisa Azzahroh. Kami mengundang Anda untuk merayakan momen bahagia pernikahan kami.">
 
   <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Layar HP Mobile) -->
-  <link rel="icon" type="image/png" sizes="32x32" id="browser-favicon" href="assets/images/favicon.png">
-  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="favicon.ico?v=20261123-tab">
-  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon.png?v=20261123-tab">
+  <link rel="icon" type="image/png" sizes="192x192" id="browser-favicon" href="assets/images/favicon.png?v=20261124-tab">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png?v=20261124-tab">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png?v=20261124-tab">
+  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="favicon.ico?v=20261124-tab">
+  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/apple-touch-icon.png?v=20261124-tab">
 
-  <!-- Immediate Favicon Loader (Desktop & Mobile) -->
+  <!-- Immediate Favicon Loader (Desktop Chrome & Mobile) -->
   <script>
     (function() {
       try {
         var fav = localStorage.getItem("wedding_custom_favicon") || "assets/images/favicon.png";
-        if (fav === "assets/images/gunungan-gold.svg") {
+        if (fav === "assets/images/gunungan-gold.svg" || fav.indexOf("favicon-emblem") !== -1) {
           fav = "assets/images/favicon.png";
         }
         var isSvg = fav.indexOf(".svg") !== -1 || fav.indexOf("image/svg+xml") !== -1;

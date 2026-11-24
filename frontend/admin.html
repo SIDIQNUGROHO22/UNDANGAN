@@ -12,16 +12,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Favicon / Ikon Tab Browser (Desktop Chrome & Layar HP Mobile) -->
-  <link rel="icon" type="image/png" sizes="32x32" id="browser-favicon" href="assets/images/favicon-admin.png">
-  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon-admin.ico?v=20261123-adm">
-  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/favicon-admin.png?v=20261123-adm">
+  <link rel="icon" type="image/png" sizes="192x192" id="browser-favicon" href="assets/images/favicon-admin.png?v=20261124-adm">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32x32.png?v=20261124-adm">
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon-16x16.png?v=20261124-adm">
+  <link rel="shortcut icon" type="image/x-icon" id="browser-shortcut-icon" href="assets/images/favicon-admin.ico?v=20261124-adm">
+  <link rel="apple-touch-icon" sizes="180x180" id="browser-apple-touch-icon" href="assets/images/apple-touch-icon.png?v=20261124-adm">
 
   <!-- Immediate Admin Favicon Loader (Desktop & Mobile) -->
   <script>
     (function() {
       try {
         var fav = localStorage.getItem("wedding_admin_favicon");
-        if (!fav || fav === "assets/images/gunungan-gold.svg") {
+        if (!fav || fav === "assets/images/gunungan-gold.svg" || fav.indexOf("favicon-emblem") !== -1) {
           fav = "assets/images/favicon-admin.png";
         }
         var isSvg = fav.indexOf(".svg") !== -1 || fav.indexOf("image/svg+xml") !== -1;
@@ -38,11 +40,12 @@
         var s = document.createElement("link");
         s.id = "browser-shortcut-icon";
         s.rel = "shortcut icon";
-        s.type = isSvg ? "image/svg+xml" : "image/png";
-        s.href = l.href;
+        s.type = isSvg ? "image/svg+xml" : "image/x-icon";
+        s.href = "assets/images/favicon-admin.ico?v=" + Date.now();
         document.head.appendChild(s);
       } catch(e) {}
     })();
+  </script>
   </script>
 
   <!-- Admin Stylesheet -->
